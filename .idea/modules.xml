@@ -6,6 +6,7 @@
       <module fileurl="file://$PROJECT_DIR$/QNote_Android.iml" filepath="$PROJECT_DIR$/QNote_Android.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://E:\androidstudioFile\QNote_Android\app\app.iml" filepath="E:\androidstudioFile\QNote_Android\app\app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/model/model.iml" filepath="$PROJECT_DIR$/model/model.iml" />
     </modules>
   </component>
 </project>

@@ -1,9 +1,10 @@
-package com.ace.qnote;
+package com.ace.qnote.activity;
 
 import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
 
+import com.ace.qnote.R;
 import com.ace.qnote.base.BaseActivity;
 
 public class LoginActivity extends BaseActivity {

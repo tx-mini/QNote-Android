@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="text_size_welcome">20sp</dimen>
+    <dimen name="leftGridWidth">20dp</dimen>
+    <dimen name="weekHeight">50dp</dimen>
+    <dimen name="gridHeight">60dp</dimen>
 </resources>
