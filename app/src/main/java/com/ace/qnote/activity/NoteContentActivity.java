@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
 
+import com.ace.qnote.R;
 import com.ace.qnote.base.BaseActivity;
 
 public class NoteContentActivity extends BaseActivity{
@@ -15,7 +16,7 @@ public class NoteContentActivity extends BaseActivity{
 
     @Override
     public int bindLayout() {
-        return 0;
+        return R.layout.activity_note_content;
     }
 
     @Override
@@ -30,7 +31,7 @@ public class NoteContentActivity extends BaseActivity{
 
     @Override
     public void setListener() {
-        
+
     }
 
     @Override

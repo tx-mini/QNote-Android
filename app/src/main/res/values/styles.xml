@@ -1,11 +1,27 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="white_title_bar_text">
+        <item name="android:gravity">center</item>
+        <item name="android:maxEms">10</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">middle</item>
+        <item name="android:textColor">@color/title_bar_text</item>
+        <item name="android:textSize">@dimen/title_bar_text_size</item>
+        <item name="android:layout_centerInParent">true</item>
+    </style>
+
+    <style name="title_bar_divider">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:background">@color/global_grey_background</item>
     </style>
 
 </resources>
