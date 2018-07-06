@@ -8,4 +8,6 @@
     <color name="title_bar_text">#353535</color>
     <color name="global_grey_background">#D8D8D8</color>
 
+    <color name="grey">#d8d8d8</color>
+    <color name="green">#65df65</color>
 </resources>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="10dp"
+    android:orientation="vertical"
+    tools:context="com.ace.qnote.activity.ChooseSchoolActivity">
+
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <TextView
+            android:text="欢迎"
+            android:textSize="@dimen/text_size_welcome"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:layout_marginLeft="10dp"
+            android:textSize="@dimen/text_size_welcome"
+            android:text="昵称"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <TextView
+        android:text="为给您提供更好的使用体验，请导入课程表"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <EditText
+        style="@style/welcome_edittext"
+        android:hint="选择学校"
+        android:layout_marginTop="20dp" />
+    <EditText
+        style="@style/welcome_edittext"
+        android:hint="学号"
+        android:layout_marginTop="20dp" />
+    <EditText
+        style="@style/welcome_edittext"
+        android:hint="教务管理系统密码"
+        android:layout_marginTop="20dp" />
+
+    <Button
+        android:layout_marginTop="20dp"
+        android:layout_gravity="center_horizontal"
+        android:text="导入课程"
+        android:background="@drawable/welcome_button_shape"
+        android:layout_width="150dp"
+        android:layout_height="40dp" />
+
+    <TextView
+        android:layout_marginTop="10dp"
+        android:layout_gravity="center"
+        android:text="下次再说"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>
