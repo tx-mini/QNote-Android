@@ -5,4 +5,7 @@
     <dimen name="back_arrow_width">20dp</dimen>
     <dimen name="back_arrow_height">20dp</dimen>
     <dimen name="text_size_welcome">20sp</dimen>
+    <dimen name="leftGridWidth">20dp</dimen>
+    <dimen name="weekHeight">50dp</dimen>
+    <dimen name="gridHeight">60dp</dimen>
 </resources>
