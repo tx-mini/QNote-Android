@@ -122,11 +122,11 @@
                 </LinearLayout>
 
 
-                <csu.edu.ice.coursetable.widget.CourseLayout
+                <com.ace.qnote.view.CourseLayout
                     android:id="@+id/courseLayout"
                     android:layout_weight="1"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"></csu.edu.ice.coursetable.widget.CourseLayout>
+                    android:layout_height="match_parent"></com.ace.qnote.view.CourseLayout>
 
             </LinearLayout>
 

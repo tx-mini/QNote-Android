@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import csu.edu.ice.model.CustomCourse;
+import csu.edu.ice.model.ICourse;
 
 public class CourseActivity extends AppCompatActivity {
 
@@ -146,10 +147,14 @@ public class CourseActivity extends AppCompatActivity {
         if (customCourseList == null) return;
 
         for (CustomCourse customCourse : customCourseList) {
-            courseLayout.addCourse(customCourse, v -> {
-                Toast.makeText(this, "点击了课程" + customCourse.getName(), Toast.LENGTH_SHORT).show();
-            });
+            courseLayout.addCourse(customCourse);
         }
+        courseLayout.setOnCourseClickListener(new CourseLayout.OnCourseClickListener() {
+            @Override
+            public void onClick(ICourse customCourse) {
+                Toast.makeText(CourseActivity.this, "点击了课程" + customCourse.getCourseName(), Toast.LENGTH_SHORT).show();
+            }
+        });
         courseLayout.requestLayout();
     }
 

@@ -7,22 +7,21 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatButton;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
-import android.view.MotionEvent;
+import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.Toast;
 
 import com.ace.qnote.R;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import csu.edu.ice.model.CustomCourse;
+import csu.edu.ice.model.ICourse;
 
-public class CourseLayout extends ViewGroup {
+public class CourseLayout extends ViewGroup implements View.OnClickListener {
     private static final String TAG = "CourseLayout";
     private List<CourseView> courseViewList = new ArrayList<>();
-    private List<CustomCourse> courseList = new ArrayList<>();
+    private List<ICourse> courseList = new ArrayList<>();
     private int width;//布局宽度
     private int height;//布局高度
     private int sectionHeight;//每节课高度
@@ -31,6 +30,7 @@ public class CourseLayout extends ViewGroup {
     private int dayNumber = 7;//一周的天数
     private int pideWidth = 0;//分隔线宽度,dp
     private int pideHeight = 0;//分隔线高度,dp
+    private OnCourseClickListener onCourseClickListener;
 
     public CourseLayout(Context context) {
         this(context, null);
@@ -49,25 +49,6 @@ public class CourseLayout extends ViewGroup {
         sectionHeight = (int) getResources().getDimension(R.dimen.gridHeight);//计算每节课高度
         sectionWidth = (int) ((getScreenWidth() - getResources().getDimension(R.dimen.leftGridWidth)) / 7);//计算每节课宽度
 
-    }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        float x = event.getX();
-        float y = event.getY();
-
-        final int weekday = (int) ((x - pideWidth) / sectionWidth + 1);
-        final int startSectin = (int) ((y - pideHeight) / sectionHeight + 1);
-        CourseView courseView = new CourseView(getContext());
-        courseView.setCourse(new CustomCourse(0, startSectin, startSectin, weekday));
-        courseView.setBackground(getResources().getDrawable(R.drawable.plus));
-        courseView.setOnClickListener(v -> {
-            courseView.setBackground(null);
-            Toast.makeText(getContext(), "weekday:" + weekday + "  startSection:" + startSectin, Toast.LENGTH_LONG).show();
-        });
-        clearOtherCourseBackground();
-        addView(courseView);
-        return super.onTouchEvent(event);
     }
 
     @Override
@@ -98,16 +79,6 @@ public class CourseLayout extends ViewGroup {
 
     }
 
-    private void clearOtherCourseBackground() {
-        for (CourseView cours : courseViewList) {
-            if (cours.getCourseId() == 0) {
-                //清楚没有课程的背景
-                cours.setBackground(null);
-                removeView(cours);
-            }
-        }
-    }
-
     public int dip2px(float dip) {
         float scale = getContext().getResources().getDisplayMetrics().density;
         return (int) (dip * scale + 0.5f);
@@ -122,7 +93,7 @@ public class CourseLayout extends ViewGroup {
     }
 
     public boolean isFree(CourseView courseView) {
-        for (CustomCourse cours : courseList) {
+        for (ICourse cours : courseList) {
             if (cours.getStartSection() <= courseView.getStartSection() && cours.getEndSection() >= courseView.getEndSection()) {
                 return false;
             }
@@ -130,10 +101,10 @@ public class CourseLayout extends ViewGroup {
         return true;
     }
 
-    public void addCourse(CustomCourse customCourse, OnClickListener onClickListener) {
+    public void addCourse(ICourse customCourse) {
         courseList.add(customCourse);
         CourseView courseView = new CourseView(getContext());
-        courseView.setText(customCourse.getName() + "\n\n" + customCourse.getAddress());
+        courseView.setText(customCourse.getCourseName() + "\n\n" + customCourse.getAddress());
         courseView.setCourse(customCourse);
         courseView.setBackground(getResources().getDrawable(R.drawable.shape_course_view));
         GradientDrawable shapeDrawable = (GradientDrawable) courseView.getBackground();
@@ -142,12 +113,24 @@ public class CourseLayout extends ViewGroup {
         courseView.setPadding(0, 0, 0, 0);
         courseView.setTextSize(13);
         courseView.setTextColor(Color.WHITE);
-        courseView.setOnClickListener(v -> {
-            onClickListener.onClick(v);
-        });
+        courseView.setOnClickListener(this);
 
         addView(courseView);//添加到课程表
 
+    }
+
+    @Override
+    public void onClick(View v) {
+        if(onCourseClickListener!=null) onCourseClickListener.onClick(((CourseView)v).course);
+    }
+
+
+    public interface OnCourseClickListener{
+        void onClick(ICourse customCourse);
+    }
+
+    public void setOnCourseClickListener(OnCourseClickListener onCourseClickListener){
+        this.onCourseClickListener = onCourseClickListener;
     }
 
     @Override
@@ -160,7 +143,7 @@ public class CourseLayout extends ViewGroup {
 
         private static final String TAG = "CourseView";
 
-        private CustomCourse course;
+        private ICourse course;
 
         public CourseView(Context context) {
             this(context, null);
@@ -172,10 +155,6 @@ public class CourseLayout extends ViewGroup {
 //        ButterKnife.bind(view);
         }
 
-
-        public int getCourseId() {
-            return course.getId();
-        }
 
         public int getStartSection() {
             return course.getStartSection();
@@ -190,9 +169,11 @@ public class CourseLayout extends ViewGroup {
             return course.getWeekday();
         }
 
-        public void setCourse(CustomCourse course) {
+        public void setCourse(ICourse course) {
             this.course = course;
         }
+
     }
+
 
 }

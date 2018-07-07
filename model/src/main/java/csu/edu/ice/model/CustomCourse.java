@@ -6,7 +6,7 @@ import java.io.Serializable;
  * Created by ice on 2018/1/7.
  */
 
-public class CustomCourse implements Serializable{
+public class CustomCourse implements Serializable,ICourse{
 
     protected int id;
     protected String name;
@@ -54,7 +54,7 @@ public class CustomCourse implements Serializable{
         this.id = id;
     }
 
-    public String getName() {
+    public String getCourseName() {
         return name;
     }
 
