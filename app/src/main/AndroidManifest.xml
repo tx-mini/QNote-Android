@@ -2,9 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.ace.qnote">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
     <application
         android:allowBackup="true"
@@ -16,7 +16,7 @@
         <activity android:name=".activity.MainActivity">
         </activity>
 
-        <activity android:name=".activity.NoteContentActivity">
+        <activity android:name=".activity.NoteContentActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -28,7 +28,6 @@
 
         </activity>
         <activity android:name=".activity.CourseActivity"></activity>
-
         <activity
             android:name="com.tencent.open.yyb.AppbarActivity"
             android:configChanges="orientation|keyboardHidden"
@@ -43,11 +42,13 @@
         <activity
             android:name="com.tencent.tauth.AuthActivity"
             android:launchMode="singleTask"
-            android:noHistory="true" >
+            android:noHistory="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+
                 <data android:scheme="tencent222222" />
                 <!-- 100380359 100381104 222222 -->
             </intent-filter>

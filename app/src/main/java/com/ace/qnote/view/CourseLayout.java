@@ -2,178 +2,131 @@ package com.ace.qnote.view;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.AppCompatButton;
 import android.util.AttributeSet;
-import android.util.DisplayMetrics;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.WindowManager;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.ace.qnote.R;
 
-import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import csu.edu.ice.model.ICourse;
 
-public class CourseLayout extends ViewGroup implements View.OnClickListener {
-    private static final String TAG = "CourseLayout";
-    private List<CourseView> courseViewList = new ArrayList<>();
-    private List<ICourse> courseList = new ArrayList<>();
-    private int width;//布局宽度
-    private int height;//布局高度
-    private int sectionHeight;//每节课高度
-    private int sectionWidth;//每节课宽度
-    private int sectionNumber = 10;//一天的节数
-    private int dayNumber = 7;//一周的天数
-    private int pideWidth = 0;//分隔线宽度,dp
-    private int pideHeight = 0;//分隔线高度,dp
-    private OnCourseClickListener onCourseClickListener;
+/**
+ * Created by ice on 2018/7/7.
+ */
+
+public class CourseLayout extends RelativeLayout {
+
+    private LinearLayout topWeek;
+    private LinearLayout leftTime;
+    private WeekdayViewHolder[] viewdayHolders = new WeekdayViewHolder[7];
+    private CourseTable courseTable;
 
     public CourseLayout(Context context) {
-        this(context, null);
+        this(context,null);
     }
 
     public CourseLayout(Context context, AttributeSet attrs) {
-        this(context, attrs, 0);
+        this(context, attrs,0);
     }
 
-    public CourseLayout(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-        width = (int) (getScreenWidth() - getResources().getDimension(R.dimen.leftGridWidth));//默认宽度全屏
-        height = (int) (getResources().getDimension(R.dimen.gridHeight) * sectionNumber);//默认高度600dp
-        pideWidth = dip2px(2);//默认分隔线宽度2dp
-        pideHeight = dip2px(2);//默认分隔线高度2dp
-        sectionHeight = (int) getResources().getDimension(R.dimen.gridHeight);//计算每节课高度
-        sectionWidth = (int) ((getScreenWidth() - getResources().getDimension(R.dimen.leftGridWidth)) / 7);//计算每节课宽度
+    public CourseLayout(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
 
+        LayoutInflater.from(context).inflate(R.layout.layout_course, this);//加载布局文件
+        topWeek = findViewById(R.id.top_week);
+        leftTime = findViewById(R.id.left_time);
+        courseTable = findViewById(R.id.courseTable);
+
+        initLeftTime();
+        initWeekday();
     }
 
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        setMeasuredDimension(width, height);
-    }
-
-    @Override
-    protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        courseViewList.clear();
-        for (int i = 0; i < getChildCount(); i++) {
-            CourseView child = (CourseView) getChildAt(i);
-            courseViewList.add(child);//增加到list中
+    private void initLeftTime() {
+        for (int i = 0; i < 10; i++) {
+            TextView textView = new TextView(getContext());
+            textView.setHeight((int) getResources().getDimension(R.dimen.gridHeight));
+            textView.setText((i + 1) + "");
+            textView.setGravity(Gravity.CENTER);
+            leftTime.addView(textView);
         }
+    }
 
-        for (CourseView child : courseViewList) {
-            int week = child.getWeek();//获得周几
-            int startSection = child.getStartSection();//开始节数
-            int endSection = child.getEndSection();//结束节数
-
-            int left = sectionWidth * (week - 1) + pideWidth;//计算左边的坐标
-            int right = left + sectionWidth - pideWidth;//计算右边坐标
-            int top = sectionHeight * (startSection - 1) + pideHeight;//计算顶部坐标
-            int bottom = top + (endSection - startSection + 1) * sectionHeight - pideHeight;//计算底部坐标
-
-            child.layout(left, top, right, bottom);
+    private void initWeekday() {
+        viewdayHolders[0] = getWeekView(1, "周一");
+        viewdayHolders[1] = getWeekView(2, "周二");
+        viewdayHolders[2] = getWeekView(3, "周三");
+        viewdayHolders[3] = getWeekView(4, "周四");
+        viewdayHolders[4] = getWeekView(5, "周五");
+        viewdayHolders[5] = getWeekView(6, "周六");
+        viewdayHolders[6] = getWeekView(7, "周日");
+        for (int i = 0; i < viewdayHolders.length; i++) {
+            topWeek.addView(viewdayHolders[i].root);
         }
-
     }
 
-    public int dip2px(float dip) {
-        float scale = getContext().getResources().getDisplayMetrics().density;
-        return (int) (dip * scale + 0.5f);
+    private WeekdayViewHolder getWeekView(int day, String week) {
+        View view = LayoutInflater.from(getContext()).inflate(R.layout.week_layout, topWeek, false);
+        TextView tvTop = view.findViewById(R.id.top);
+        tvTop.setText(week);
+        TextView tvBootom = view.findViewById(R.id.bottom);
+        tvBootom.setText(day + "");
+        WeekdayViewHolder weekdayViewHolder = new WeekdayViewHolder();
+        weekdayViewHolder.root = view;
+        weekdayViewHolder.tvDate = tvBootom;
+        return weekdayViewHolder;
     }
 
-    public int getScreenWidth() {
-        WindowManager manager = (WindowManager) getContext().getSystemService(
-                Context.WINDOW_SERVICE);
-        DisplayMetrics displayMetrics = new DisplayMetrics();
-        manager.getDefaultDisplay().getMetrics(displayMetrics);
-        return displayMetrics.widthPixels;
+
+    class WeekdayViewHolder{
+        public View root;
+        public TextView tvDate;
+        public TextView tvWeekday;
     }
 
-    public boolean isFree(CourseView courseView) {
-        for (ICourse cours : courseList) {
-            if (cours.getStartSection() <= courseView.getStartSection() && cours.getEndSection() >= courseView.getEndSection()) {
-                return false;
-            }
+    public void setWeekday(int weekday){
+        viewdayHolders[weekday].root.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+        viewdayHolders[weekday].tvDate.setTextColor(Color.WHITE);
+        viewdayHolders[weekday].tvWeekday.setTextColor(Color.WHITE);
+    }
+
+    public void setMondayDate(Date date){
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        for (WeekdayViewHolder viewdayHolder : viewdayHolders) {
+            int day = calendar.get(Calendar.DAY_OF_MONTH);
+            viewdayHolder.tvDate.setText(day+"");
+            calendar.add(Calendar.DAY_OF_MONTH,1);
         }
-        return true;
     }
 
-    public void addCourse(ICourse customCourse) {
-        courseList.add(customCourse);
-        CourseView courseView = new CourseView(getContext());
-        courseView.setText(customCourse.getCourseName() + "\n\n" + customCourse.getAddress());
-        courseView.setCourse(customCourse);
-        courseView.setBackground(getResources().getDrawable(R.drawable.shape_course_view));
-        GradientDrawable shapeDrawable = (GradientDrawable) courseView.getBackground();
-
-        shapeDrawable.setColor(customCourse.getBackgroundColor());//根据课程动态更改背景颜色
-        courseView.setPadding(0, 0, 0, 0);
-        courseView.setTextSize(13);
-        courseView.setTextColor(Color.WHITE);
-        courseView.setOnClickListener(this);
-
-        addView(courseView);//添加到课程表
-
+    public void addCourse(ICourse course){
+        courseTable.addCourse(course);
     }
 
-    @Override
-    public void onClick(View v) {
-        if(onCourseClickListener!=null) onCourseClickListener.onClick(((CourseView)v).course);
-    }
+    public void addCourses(List<ICourse> courses){
+        courseTable.removeAllViews();
+        if (courses == null) return;
 
-
-    public interface OnCourseClickListener{
-        void onClick(ICourse customCourse);
-    }
-
-    public void setOnCourseClickListener(OnCourseClickListener onCourseClickListener){
-        this.onCourseClickListener = onCourseClickListener;
-    }
-
-    @Override
-    public void removeAllViews() {
-        super.removeAllViews();
-        courseList.clear();
-    }
-
-    class CourseView extends AppCompatButton {
-
-        private static final String TAG = "CourseView";
-
-        private ICourse course;
-
-        public CourseView(Context context) {
-            this(context, null);
+        for (ICourse customCourse : courses) {
+            courseTable.addCourse(customCourse);
         }
-
-        public CourseView(Context context, @Nullable AttributeSet attrs) {
-            super(context, attrs);
-//        View view = LayoutInflater.from(context).inflate(R.layout.layout_course,this);
-//        ButterKnife.bind(view);
-        }
-
-
-        public int getStartSection() {
-            return course.getStartSection();
-        }
-
-
-        public int getEndSection() {
-            return course.getEndSection();
-        }
-
-        public int getWeek() {
-            return course.getWeekday();
-        }
-
-        public void setCourse(ICourse course) {
-            this.course = course;
-        }
-
+        courseTable.requestLayout();
     }
 
+    public void clearCourse(){
+        courseTable.removeAllViews();
+    }
+
+    public void setOnCourseClickListener(CourseTable.OnCourseClickListener onCourseClickListener){
+        courseTable.setOnCourseClickListener(onCourseClickListener);
+    }
 
 }

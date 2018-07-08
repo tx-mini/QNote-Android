@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView app:cardCornerRadius="10dp"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="260dp"
+    android:layout_height="180dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <EditText
+            android:id="@+id/tv_message"
+            android:paddingLeft="10dp"
+            android:layout_marginTop="43dp"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/shape_modify_title"
+            android:layout_width="220dp"
+            android:layout_height="35dp" />
+
+        <Button
+            android:background="@drawable/shape_button_cancel"
+            style="@style/dialog_modify_title_button_style"
+            android:layout_alignLeft="@id/tv_message"
+            android:text="取消"/>
+
+        <Button
+            android:background="@drawable/shape_button_ok"
+            android:layout_alignRight="@id/tv_message"
+            style="@style/dialog_modify_title_button_style"
+            android:text="确定"/>
+
+
+
+
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>
