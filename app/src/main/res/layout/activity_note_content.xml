@@ -23,19 +23,21 @@
 
         </LinearLayout>
         <TextView
+            android:id="@+id/tv_title"
             style="@style/white_title_bar_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="笔记"
             />
 
     </RelativeLayout>
     <View
         style="@style/title_bar_divider"/>
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_note_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    </LinearLayout>
-
+    </android.support.v7.widget.RecyclerView>
 
 </LinearLayout>

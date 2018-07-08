@@ -38,4 +38,5 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.7.1'
     compile project(path: ':model')
     implementation files('src/main/lib/open_sdk_r6008_lite.jar')
+    implementation 'com.android.support:recyclerview-v7:26.1.0'
 }
