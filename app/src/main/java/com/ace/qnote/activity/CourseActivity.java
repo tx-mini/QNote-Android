@@ -3,18 +3,17 @@ package com.ace.qnote.activity;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.ace.qnote.R;
 import com.ace.qnote.view.CourseLayout;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import csu.edu.ice.model.CustomCourse;
@@ -27,13 +26,10 @@ public class CourseActivity extends AppCompatActivity {
     private LinearLayout layoutWeekWrapper;
     private HorizontalScrollView scrollWeek;
     private ImageView imageArrow;
-    private LinearLayout topWeek;
-    private LinearLayout leftTime;
-    private CourseLayout courseLayout;
     private TextView textWeek;
     private LinearLayout layoutWeek;
-    private List<CustomCourse> customCourseList;
-
+    private List<ICourse> customCourseList;
+    private CourseLayout courseLayout;
 
 
     @Override
@@ -41,12 +37,11 @@ public class CourseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_course);
 
+        courseLayout = findViewById(R.id.courseLayout);
         layoutWeekWrapper = findViewById(R.id.layoutWeekWrapper);
         scrollWeek = findViewById(R.id.scrollWeek);
         imageArrow = findViewById(R.id.imageArrow);
-        topWeek = findViewById(R.id.top_week);
-        leftTime = findViewById(R.id.left_time);
-        courseLayout = findViewById(R.id.courseLayout);
+
         textWeek = findViewById(R.id.textWeek);
         layoutWeek = findViewById(R.id.layoutWeek);
 
@@ -54,7 +49,8 @@ public class CourseActivity extends AppCompatActivity {
             if (scrollWeek.getVisibility() == View.VISIBLE) {
                 scrollWeek.setVisibility(View.GONE);
                 imageArrow.setRotation(0);
-                initCourseView(customCourseList,nowWeek);
+                courseLayout.clearCourse();
+                courseLayout.addCourses(customCourseList);
             } else {
                 scrollWeek.setVisibility(View.VISIBLE);
                 imageArrow.setRotation(180);
@@ -63,9 +59,10 @@ public class CourseActivity extends AppCompatActivity {
 
         textWeek.setText("第"+nowWeek+"周");
         initCourseData();
-        initCourseView(customCourseList,15);
+        courseLayout.addCourses(customCourseList);
         initWeek();
 
+        courseLayout.setMondayDate(new Date(System.currentTimeMillis()));
     }
 
     private void initCourseData() {
@@ -89,23 +86,6 @@ public class CourseActivity extends AppCompatActivity {
 
     private void initWeek() {
 
-        for (int i = 0; i < 10; i++) {
-            TextView textView = new TextView(this);
-            textView.setHeight((int) getResources().getDimension(R.dimen.gridHeight));
-            textView.setText((i + 1) + "");
-            textView.setGravity(Gravity.CENTER);
-            leftTime.addView(textView);
-        }
-
-        topWeek.addView(getWeekView(1, "周一"));
-        topWeek.addView(getWeekView(2, "周二"));
-        topWeek.addView(getWeekView(3, "周三"));
-        topWeek.addView(getWeekView(4, "周四"));
-        topWeek.addView(getWeekView(5, "周五"));
-        topWeek.addView(getWeekView(6, "周六"));
-        topWeek.addView(getWeekView(7, "周日"));
-
-
         for (int i = 1; i < 20; i++) {
             View view = getLayoutInflater().inflate(R.layout.item_week, null);
             TextView textWeek = view.findViewById(R.id.layoutWeek);
@@ -116,46 +96,19 @@ public class CourseActivity extends AppCompatActivity {
                 view.findViewById(R.id.textThisWeek).setVisibility(View.VISIBLE);
             }
             //选择了别的周
-            int finalI = i;
+            int week = i;
             view.setOnClickListener(v -> {
                 lastClickedView.setBackgroundColor(getResources().getColor(R.color.cyan));
                 v.setBackgroundColor(Color.WHITE);
                 lastClickedView = v;
 
-                initCourseView(customCourseList, finalI);
+                courseLayout.addCourses(customCourseList);
             });
             layoutWeekWrapper.addView(view);
         }
     }
 
-    View getWeekView(int day, String week) {
-        View view = getLayoutInflater().inflate(R.layout.week_layout, topWeek, false);
-        TextView tvTop = view.findViewById(R.id.top);
-        tvTop.setText(week);
-        TextView tvBootom = view.findViewById(R.id.bottom);
-        tvBootom.setText(day + "");
-        if (day == 2) {
-            view.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-            tvBootom.setTextColor(Color.WHITE);
-            tvTop.setTextColor(Color.WHITE);
-        }
-        return view;
-    }
 
-    private void initCourseView(List<CustomCourse> customCourseList, int week) {
-        courseLayout.removeAllViews();
-        if (customCourseList == null) return;
 
-        for (CustomCourse customCourse : customCourseList) {
-            courseLayout.addCourse(customCourse);
-        }
-        courseLayout.setOnCourseClickListener(new CourseLayout.OnCourseClickListener() {
-            @Override
-            public void onClick(ICourse customCourse) {
-                Toast.makeText(CourseActivity.this, "点击了课程" + customCourse.getCourseName(), Toast.LENGTH_SHORT).show();
-            }
-        });
-        courseLayout.requestLayout();
-    }
 
 }

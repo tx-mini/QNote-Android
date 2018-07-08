@@ -2,19 +2,19 @@ package com.ace.qnote.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
+import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
+import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.ace.qnote.R;
+import com.ace.qnote.adapter.BannerAdapter;
 import com.ace.qnote.base.BaseActivity;
-import com.bumptech.glide.Glide;
 import com.tencent.connect.UserInfo;
 import com.tencent.connect.common.Constants;
 import com.tencent.tauth.IUiListener;
@@ -57,12 +57,8 @@ public class LoginActivity extends BaseActivity {
         }
     };
     private UserInfo mInfo;
-    private Handler mHandler = new Handler(){
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-        }
-    };
+
+    private ViewPager vpBanner;
 
     @Override
     public void initParams(Bundle params) {
@@ -71,6 +67,10 @@ public class LoginActivity extends BaseActivity {
 
     @Override
     public int bindLayout() {
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        }
         return R.layout.activity_login;
     }
 
@@ -81,7 +81,7 @@ public class LoginActivity extends BaseActivity {
 
     @Override
     public void initView(View view) {
-
+        vpBanner = findViewById(R.id.vp_banner);
     }
 
     @Override
@@ -100,7 +100,7 @@ public class LoginActivity extends BaseActivity {
 
     @Override
     public void doBusiness(Context mContext) {
-
+        vpBanner.setAdapter(new BannerAdapter());
     }
 
 
@@ -155,24 +155,15 @@ public class LoginActivity extends BaseActivity {
                     JSONObject json = (JSONObject)response;
 
                     if(json.has("figureurl")){
-                        Bitmap bitmap = null;
                         try {
-
-                            String openId = json.getString("openid");
-                            String access_token = json.getString("access_token");
-
                             String figureUrl = json.getString("figureurl_qq_2");
-                            Glide.with(LoginActivity.this).load(figureUrl).into((ImageView) findViewById(R.id.iv_pic));
+//                            Glide.with(LoginActivity.this).load(figureUrl).into((ImageView) findViewById(R.id.iv_pic));
                             String nickname =json.getString("nickname");
                             Log.d(TAG, "onComplete: "+response.toString());
                             Toast.makeText(LoginActivity.this, "欢迎"+nickname, Toast.LENGTH_LONG).show();
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                        Message msg = new Message();
-                        msg.obj = bitmap;
-                        msg.what = 1;
-                        mHandler.sendMessage(msg);
                     }
                 }
 

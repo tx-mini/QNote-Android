@@ -8,6 +8,8 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+
+    
     <style name="white_title_bar_text">
         <item name="android:gravity">center</item>
         <item name="android:maxEms">10</item>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:gravity="center"
+            android:id="@+id/top_left"
+            android:text="时间"
+            android:layout_gravity="center"
+            android:layout_width="@dimen/leftGridWidth"
+            android:layout_height="@dimen/weekHeight" />
+
+        <LinearLayout
+            android:layout_toRightOf="@id/top_left"
+            android:id="@+id/top_week"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/weekHeight"
+            android:orientation="horizontal"
+            />
+
+        <ScrollView
+            android:id="@+id/scrollView"
+            android:layout_below="@id/top_week"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <LinearLayout
+                    android:id="@+id/left_time"
+                    android:layout_width="@dimen/leftGridWidth"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                </LinearLayout>
+
+
+                <com.ace.qnote.view.CourseTable
+                    android:id="@+id/courseTable"
+                    android:layout_weight="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"></com.ace.qnote.view.CourseTable>
+
+            </LinearLayout>
+
+        </ScrollView>
+
+    </RelativeLayout>
