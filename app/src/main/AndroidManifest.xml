@@ -13,20 +13,17 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activity.MainActivity">
-        </activity>
-
-        <activity android:name=".activity.NoteContentActivity" >
-        </activity>
-        <activity android:name=".activity.ChooseSchoolActivity"/>
-        <activity android:name=".activity.LoginActivity" >
+        <activity android:name=".activity.MainActivity" />
+        <activity android:name=".activity.NoteContentActivity" />
+        <activity android:name=".activity.ImportCourseActivity" />
+        <activity android:name=".activity.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.CourseActivity"></activity>
+        <activity android:name=".activity.CourseActivity" />
         <activity
             android:name="com.tencent.open.yyb.AppbarActivity"
             android:configChanges="orientation|keyboardHidden"
@@ -52,6 +49,8 @@
                 <!-- 100380359 100381104 222222 -->
             </intent-filter>
         </activity>
+        <activity android:name=".activity.ChooseUniversityActivity" />
+        <activity android:name=".activity.InformationActivity"></activity>
     </application>
 
 </manifest>

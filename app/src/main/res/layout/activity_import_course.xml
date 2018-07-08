@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@mipmap/choose_school_bg"
     android:orientation="vertical"
-    tools:context="com.ace.qnote.activity.ChooseSchoolActivity">
+    tools:context="com.ace.qnote.activity.ImportCourseActivity">
 
 
     <LinearLayout
