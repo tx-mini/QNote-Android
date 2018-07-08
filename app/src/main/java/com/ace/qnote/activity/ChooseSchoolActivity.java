@@ -1,19 +1,16 @@
 package com.ace.qnote.activity;
 
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 
 import com.ace.qnote.R;
 import com.ace.qnote.base.BaseActivity;
 
 public class ChooseSchoolActivity extends BaseActivity {
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_choose_school);
-    }
 
     @Override
     public void initParams(Bundle params) {
@@ -22,7 +19,11 @@ public class ChooseSchoolActivity extends BaseActivity {
 
     @Override
     public int bindLayout() {
-        return 0;
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        }
+        return R.layout.activity_choose_school;
     }
 
     @Override

@@ -13,18 +13,16 @@
         android:layout_marginTop="133dp"
         android:layout_width="match_parent"
         android:layout_height="325dp"></android.support.v4.view.ViewPager>
-    
-
 
     <Button
-        android:translationZ="0dp"
+        style="?android:attr/borderlessButtonStyle"
         android:layout_centerHorizontal="true"
         android:textColor="#FF676767"
         android:text="使用QQ登录"
         android:layout_marginTop="499dp"
         android:background="@drawable/login_edittext_shape"
         android:id="@+id/btn_login"
-        android:layout_width="141dp"
+        android:layout_width="177dp"
         android:layout_height="35dp" />
 
 </RelativeLayout>
