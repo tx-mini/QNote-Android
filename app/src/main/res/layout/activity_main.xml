@@ -1,67 +1,230 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#fff"
-    tools:context="com.ace.qnote.activity.MainActivity">
+    android:fitsSystemWindows="true"
+    tools:openDrawer="start">
+
 
     <RelativeLayout
-        android:id="@+id/course_wrapper"
-        android:paddingRight="24dp"
-        android:paddingLeft="16dp"
-        android:paddingBottom="15dp"
-        android:background="#f8f8f8"
         android:layout_width="match_parent"
-        android:layout_height="80dp">
-        <TextView
-            android:textColor="#FF676767"
-            android:layout_marginTop="21dp"
-            android:text="2018-2019学年上"
-            android:id="@+id/year"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-        <TextView
-            android:textColor="#FF676767"
-            android:layout_marginTop="4dp"
-            android:layout_below="@id/year"
-            android:text="软件度量"
-            android:textSize="18sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+        android:layout_height="match_parent"
+        android:background="#fff">
+
+        <RelativeLayout
+            android:id="@+id/course_wrapper"
+            android:paddingRight="24dp"
+            android:paddingLeft="16dp"
+            android:paddingBottom="15dp"
+            android:background="#f8f8f8"
+            android:layout_width="match_parent"
+            android:layout_height="80dp">
+            <TextView
+                android:textColor="#FF676767"
+                android:layout_marginTop="21dp"
+                android:text="2018-2019学年上"
+                android:id="@+id/year"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:textColor="#FF676767"
+                android:layout_marginTop="4dp"
+                android:layout_below="@id/year"
+                android:text="软件度量"
+                android:textSize="18sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <ImageView
+
+                android:layout_width="20dp"
+                android:layout_height="20dp" />
+
+        </RelativeLayout>
+
+
+        <android.support.v7.widget.RecyclerView
+            android:layout_below="@id/course_wrapper"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"></android.support.v7.widget.RecyclerView>
 
         <ImageView
+            android:translationZ="10dp"
+            android:layout_marginLeft="42dp"
+            android:layout_marginBottom="83dp"
+            android:layout_alignParentBottom="true"
+            android:src="@mipmap/write"
+            android:layout_width="68dp"
+            android:layout_height="68dp" />
 
-            android:layout_width="20dp"
-            android:layout_height="20dp" />
+        <ImageView
+            android:translationZ="10dp"
+            android:layout_marginRight="42dp"
+            android:layout_marginBottom="83dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:src="@mipmap/take_photo"
+            android:layout_width="68dp"
+            android:layout_height="68dp" />
 
     </RelativeLayout>
+    <android.support.design.widget.NavigationView
+        android:id="@+id/nav_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:fitsSystemWindows="true">
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <LinearLayout
+                android:orientation="horizontal"
+                android:background="#FF93CBFE"
+                android:layout_width="match_parent"
+                android:gravity="center_vertical"
+                android:layout_height="97dp">
+                <ImageView
+                    android:src="@mipmap/ic_launcher"
+                    android:layout_marginLeft="16dp"
+                    android:layout_width="55dp"
+                    android:layout_height="55dp" />
+                <TextView
+                    android:text="昵称"
+                    android:layout_marginLeft="15dp"
+                    android:textColor="#fff"
+                    android:textSize="18sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="40dp">
+                <TextView
+                    android:layout_marginLeft="14dp"
+                    android:text="2018-2019年下学期"
+                    android:textSize="16sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <ImageView
+                    android:layout_marginLeft="9dp"
+                    android:rotation="180"
+                    android:src="@drawable/icon_arrow_left_grey"
+                    android:layout_width="10dp"
+                    android:layout_height="15dp" />
+            </LinearLayout>
+            <View
+                android:background="#FFF4F4F4"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/line_height"/>
+
+            <android.support.v7.widget.RecyclerView
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"></android.support.v7.widget.RecyclerView>
+
+            <LinearLayout
+                android:gravity="center_vertical"
+                android:paddingLeft="27dp"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="40dp">
+                <ImageView
+                    android:layout_width="@dimen/drawer_icon_size"
+                    android:layout_height="@dimen/drawer_icon_size" />
+                <TextView
+                    android:textColor="@color/drawer_text_color"
+                    android:layout_marginLeft="2dp"
+                    android:text="归档笔记"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+            <LinearLayout
+                android:gravity="center_vertical"
+                android:paddingLeft="27dp"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="40dp">
+                <ImageView
+                    android:src="@mipmap/add_note"
+                    android:layout_width="@dimen/drawer_icon_size"
+                    android:layout_height="@dimen/drawer_icon_size" />
+                <TextView
+                    android:textColor="@color/drawer_text_color"
+                    android:layout_marginLeft="2dp"
+                    android:text="新建课程笔记本"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+            <View
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"></View>
+            <View
+                android:background="#FFF4F4F4"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/line_height"/>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <LinearLayout
+                    style="@style/drawer_bottom_layout">
+                    <ImageView
+                        android:layout_width="@dimen/drawer_icon_size"
+                        android:layout_height="@dimen/drawer_icon_size" />
+                    <TextView
+                        android:textColor="@color/drawer_text_color"
+                        android:layout_marginLeft="2dp"
+                        android:text="设置课表"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+                <View
+                    android:background="#FFE7E7E7"
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"/>
+                <LinearLayout
+                    style="@style/drawer_bottom_layout">
+                    <ImageView
+                        android:src="@mipmap/dustbin"
+                        android:layout_width="@dimen/drawer_icon_size"
+                        android:layout_height="@dimen/drawer_icon_size" />
+                    <TextView
+                        android:textColor="@color/drawer_text_color"
+                        android:layout_marginLeft="2dp"
+                        android:text="垃圾桶"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+                <View
+                    android:background="#FFE7E7E7"
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"/>
+                <LinearLayout
+                    style="@style/drawer_bottom_layout">
+                    <ImageView
+                        android:layout_width="@dimen/drawer_icon_size"
+                        android:layout_height="@dimen/drawer_icon_size" />
+                    <TextView
+                        android:textColor="@color/drawer_text_color"
+                        android:layout_marginLeft="2dp"
+                        android:text="学习园地"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+            </LinearLayout>
+
+        </LinearLayout>
 
 
-    <android.support.v7.widget.RecyclerView
-        android:layout_below="@id/course_wrapper"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"></android.support.v7.widget.RecyclerView>
+    </android.support.design.widget.NavigationView>
+</android.support.v4.widget.DrawerLayout>
 
-    <ImageView
-        android:translationZ="10dp"
-        android:layout_marginLeft="42dp"
-        android:layout_marginBottom="83dp"
-        android:layout_alignParentBottom="true"
-        android:src="@mipmap/write"
-        android:layout_width="68dp"
-        android:layout_height="68dp" />
-
-    <ImageView
-        android:translationZ="10dp"
-        android:layout_marginRight="42dp"
-        android:layout_marginBottom="83dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:src="@mipmap/take_photo"
-        android:layout_width="68dp"
-        android:layout_height="68dp" />
-
-</RelativeLayout>
