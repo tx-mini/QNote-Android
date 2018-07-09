@@ -10,7 +10,7 @@ import android.view.WindowManager;
 import com.ace.qnote.R;
 import com.ace.qnote.base.BaseActivity;
 
-public class ChooseSchoolActivity extends BaseActivity {
+public class ImportCourseActivity extends BaseActivity {
 
     @Override
     public void initParams(Bundle params) {
@@ -23,7 +23,7 @@ public class ChooseSchoolActivity extends BaseActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         }
-        return R.layout.activity_choose_school;
+        return R.layout.activity_import_course;
     }
 
     @Override
