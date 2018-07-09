@@ -93,8 +93,7 @@ public class LoginActivity extends BaseActivity {
     public void widgetClick(View v) throws Exception {
         switch (v.getId()){
             case R.id.btn_login:
-//                doLogin();
-                startActivity(NoteContentActivity.class);
+                doLogin();
                 break;
         }
     }
