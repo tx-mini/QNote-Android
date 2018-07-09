@@ -38,6 +38,7 @@
         android:layout_height="40dp" />
 
     <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_university"
         android:background="#fff"
         android:layout_marginTop="10dp"
         android:layout_width="match_parent"
