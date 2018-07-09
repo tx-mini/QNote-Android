@@ -44,6 +44,8 @@ public class LoginActivity extends BaseActivity {
             Log.d(TAG, "onComplete: "+response.toString());
             initOpenidAndToken((JSONObject) response);
             updateUserInfo();
+
+            startActivity(new Intent(LoginActivity.this,ImportCourseActivity.class));
         }
 
         @Override
