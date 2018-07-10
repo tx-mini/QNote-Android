@@ -1,19 +1,24 @@
 package com.ace.qnote.activity;
 
+import android.Manifest;
 import android.content.Context;
-import android.graphics.Canvas;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.ace.qnote.R;
 import com.ace.qnote.adapter.NoteContentAdapter;
 import com.ace.qnote.base.BaseActivity;
+import com.ace.qnote.util.permission.ActionCallBackListener;
+//import com.ace.qnote.util.permission.RxPermissionUtil;
+import com.ace.qnote.util.permission.RxPermissionUtil;
 import com.chad.library.adapter.base.callback.ItemDragAndSwipeCallback;
 import com.chad.library.adapter.base.listener.OnItemDragListener;
-import com.chad.library.adapter.base.listener.OnItemSwipeListener;
 
 import java.util.ArrayList;
 
@@ -22,6 +27,9 @@ public class NoteContentActivity extends BaseActivity{
     private RecyclerView rv_note_content;
     private NoteContentAdapter noteContentAdapter;
     private OnItemDragListener onItemDragListener;
+    private ImageView iv_add_text;
+    private ImageView iv_add_pic;
+    private String[] m_upLoadImgPermission =  {Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
 
     @Override
     public void initParams(Bundle params) {
@@ -40,10 +48,12 @@ public class NoteContentActivity extends BaseActivity{
     @Override
     public void initView(View view) {
         rv_note_content = findViewById(R.id.rv_note_content);
+        iv_add_pic = findViewById(R.id.iv_add_pic);
     }
 
     @Override
     public void setListener() {
+        iv_add_pic.setOnClickListener(this);
         onItemDragListener = new OnItemDragListener() {
             @Override
             public void onItemDragStart(RecyclerView.ViewHolder viewHolder, int pos) {
@@ -64,6 +74,28 @@ public class NoteContentActivity extends BaseActivity{
 
     @Override
     public void widgetClick(View v) throws Exception {
+        switch (v.getId()){
+            case R.id.iv_add_pic:
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    RxPermissionUtil.getInstance().requestPermission(this, new ActionCallBackListener() {
+                        @Override
+                        public void onSuccess(Object data) {
+                            addPic();
+                        }
+
+                        @Override
+                        public void onFailure(String errorEvent, String message) {
+                            showToast("QNote似乎缺少了一些权限，无法上传照片，请到设置中授予权限再尝试");
+                        }
+                    }, m_upLoadImgPermission);
+                }else {
+                    addPic();
+                }
+                break;
+        }
+    }
+
+    private void addPic() {
 
     }
 
