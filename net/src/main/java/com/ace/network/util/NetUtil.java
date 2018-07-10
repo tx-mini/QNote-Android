@@ -35,7 +35,7 @@ public class NetUtil {
         return retrofit;
     }
 
-    //登陆成功时，调用一次本方法刷新retrofit的单例，使得能够成功添加请求头
+    //登陆成功获取到token时，调用一次本方法刷新retrofit的单例，使得能够成功添加请求头
     public static Retrofit newInstance() {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         builder.connectTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS);

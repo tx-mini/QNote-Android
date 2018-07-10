@@ -1,8 +1,5 @@
 package com.ace.qnote.util.permission;
 
-/**
- * Created by Soul on 2017/12/29.
- */
 
 public class PermissionConstant {
     public static final int REQUEST_PERMISSION_IN_MAP = 1001;

@@ -65,7 +65,7 @@ public class RxPermissionUtil {
                 .request(PERMISSION)
                 .subscribe(new Consumer<Boolean>() {
                     @Override
-                    public void accept(Boolean aBoolean) throws Exception {
+                    public void accept(Boolean aBoolean) {
                         if (aBoolean){
                             if (actionCallBackListener!=null)
                                 actionCallBackListener.onSuccess("success");

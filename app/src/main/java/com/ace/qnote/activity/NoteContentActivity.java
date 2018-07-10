@@ -15,6 +15,7 @@ import com.ace.qnote.R;
 import com.ace.qnote.adapter.NoteContentAdapter;
 import com.ace.qnote.base.BaseActivity;
 import com.ace.qnote.util.permission.ActionCallBackListener;
+//import com.ace.qnote.util.permission.RxPermissionUtil;
 import com.ace.qnote.util.permission.RxPermissionUtil;
 import com.chad.library.adapter.base.callback.ItemDragAndSwipeCallback;
 import com.chad.library.adapter.base.listener.OnItemDragListener;
