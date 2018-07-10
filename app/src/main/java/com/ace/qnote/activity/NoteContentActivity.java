@@ -2,6 +2,9 @@ package com.ace.qnote.activity;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -19,10 +22,16 @@ import com.ace.qnote.util.permission.ActionCallBackListener;
 import com.ace.qnote.util.permission.RxPermissionUtil;
 import com.chad.library.adapter.base.callback.ItemDragAndSwipeCallback;
 import com.chad.library.adapter.base.listener.OnItemDragListener;
+import com.zhihu.matisse.Matisse;
+import com.zhihu.matisse.MimeType;
+import com.zhihu.matisse.engine.impl.GlideEngine;
+import com.zhihu.matisse.filter.Filter;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class NoteContentActivity extends BaseActivity{
+    private final int REQUEST_CODE_CHOOSE = 1000;
 
     private RecyclerView rv_note_content;
     private NoteContentAdapter noteContentAdapter;
@@ -30,6 +39,7 @@ public class NoteContentActivity extends BaseActivity{
     private ImageView iv_add_text;
     private ImageView iv_add_pic;
     private String[] m_upLoadImgPermission =  {Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
+    private List<Uri> mSelected;
 
     @Override
     public void initParams(Bundle params) {
@@ -96,7 +106,15 @@ public class NoteContentActivity extends BaseActivity{
     }
 
     private void addPic() {
-
+        Matisse.from(this)
+                .choose(MimeType.ofAll())
+                .countable(true)
+                .maxSelectable(9)
+                .gridExpectedSize(getResources().getDimensionPixelSize(R.dimen.grid_expected_size))
+                .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED)
+                .thumbnailScale(0.85f)
+                .imageEngine(new GlideEngine())
+                .forResult(REQUEST_CODE_CHOOSE);
     }
 
     @Override
@@ -117,5 +135,13 @@ public class NoteContentActivity extends BaseActivity{
         noteContentAdapter.setOnItemDragListener(onItemDragListener);
 
         rv_note_content.setAdapter(noteContentAdapter);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE_CHOOSE && resultCode == RESULT_OK) {
+            mSelected = Matisse.obtainResult(data);
+        }
     }
 }
