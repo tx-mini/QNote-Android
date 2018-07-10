@@ -1,7 +1,12 @@
 package com.ace.qnote.activity;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,18 +19,25 @@ import com.ace.qnote.R;
 import com.ace.qnote.adapter.DrawerNoteAdapter;
 import com.ace.qnote.adapter.NoteAdpter;
 import com.ace.qnote.base.BaseActivity;
+import com.ace.qnote.util.permission.ActionCallBackListener;
+import com.ace.qnote.util.permission.RxPermissionUtil;
+import com.zhihu.matisse.Matisse;
+import com.zhihu.matisse.MimeType;
+import com.zhihu.matisse.engine.impl.GlideEngine;
 
 import java.util.Arrays;
 import java.util.List;
 
 public class MainActivity extends BaseActivity {
-
+    private final int REQUEST_CODE_CHOOSE = 1000;
     private ImageView ivPic,ivEdit,ivTakePhoto;
-    TextView tvNickname;
-    TextView tvTerm;
-    LinearLayout layoutTerm;
-    LinearLayout layoutArchive,layoutNewNote, layoutCourseTable,layoutDustbin,layoutStudy;
-    RecyclerView rvNotebook,rvNote;
+    private TextView tvNickname;
+    private TextView tvTerm;
+    private LinearLayout layoutTerm;
+    private LinearLayout layoutArchive,layoutNewNote, layoutCourseTable,layoutDustbin,layoutStudy;
+    private RecyclerView rvNotebook,rvNote;
+    private String[] m_upLoadImgPermission =  {Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
+    private List<Uri> mSelected;
 
     @Override
     public void initParams(Bundle params) {
@@ -72,6 +84,21 @@ public class MainActivity extends BaseActivity {
         layoutCourseTable.setOnClickListener(this);
         ivEdit.setOnClickListener(this);
         ivTakePhoto.setOnClickListener(this);
+        ivTakePhoto.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Matisse.from((Activity) getBaseContext())
+                        .choose(MimeType.ofAll())
+                        .countable(true)
+                        .maxSelectable(9)
+                        .gridExpectedSize(getResources().getDimensionPixelSize(R.dimen.grid_expected_size))
+                        .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED)
+                        .thumbnailScale(0.85f)
+                        .imageEngine(new GlideEngine())
+                        .forResult(REQUEST_CODE_CHOOSE);
+                return false;
+            }
+        });
     }
 
     @Override
@@ -97,11 +124,29 @@ public class MainActivity extends BaseActivity {
 
                 break;
             case R.id.iv_take_photo:
-                Intent intent = new Intent(MainActivity.this, TakePhotoActivity.class);
-                intent.putExtra("course_name","软件工程");
-                startActivity(intent);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    RxPermissionUtil.getInstance().requestPermission(this, new ActionCallBackListener() {
+                        @Override
+                        public void onSuccess(Object data) {
+                            addPic();
+                        }
+
+                        @Override
+                        public void onFailure(String errorEvent, String message) {
+                            showToast("QNote似乎缺少了一些权限，无法上传照片，请到设置中授予权限再尝试");
+                        }
+                    }, m_upLoadImgPermission);
+                }else {
+                    addPic();
+                }
                 break;
         }
+    }
+
+    private void addPic() {
+        Intent intent = new Intent(MainActivity.this, TakePhotoActivity.class);
+        intent.putExtra("course_name","软件工程");
+        startActivity(intent);
     }
 
     @Override
@@ -116,5 +161,13 @@ public class MainActivity extends BaseActivity {
         rvNote.setAdapter(noteAdpter);
         rvNote.setLayoutManager(new LinearLayoutManager(this));
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE_CHOOSE && resultCode == RESULT_OK) {
+            mSelected = Matisse.obtainResult(data);
+        }
     }
 }

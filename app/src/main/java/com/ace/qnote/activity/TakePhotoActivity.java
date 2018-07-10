@@ -1,5 +1,6 @@
 package com.ace.qnote.activity;
 
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -31,6 +32,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import csu.edu.ice.model.util.SpNameConstant;
 
 public class TakePhotoActivity extends AppCompatActivity implements View.OnClickListener, SurfaceHolder.Callback {
 
@@ -74,6 +77,12 @@ public class TakePhotoActivity extends AppCompatActivity implements View.OnClick
         setContentView(R.layout.activity_take_photo);
 
         initViews();
+
+        SharedPreferences sharedPreferences = getSharedPreferences(SpNameConstant.CONFIG,MODE_PRIVATE);
+        if (sharedPreferences.getBoolean("isFirstTimeOpenCamera",true)) {
+            Toast.makeText(getBaseContext(),"长按相机可以直接从相册中选区图片",Toast.LENGTH_LONG).show();
+            sharedPreferences.edit().putBoolean("isFirstTimeOpenCamera",false).apply();
+        }
     }
 
     @Override
