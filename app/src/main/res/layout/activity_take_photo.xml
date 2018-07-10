@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+    <SurfaceView
+        android:id="@+id/camera_sf"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        />
+
+    <ImageView
+        android:id="@+id/present_photo"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:scaleType="fitXY"
+        />
+
+    <ImageButton
+        android:id="@+id/take_photo_btn"
+        android:layout_width="65dp"
+        android:layout_height="65dp"
+        android:layout_centerInParent="true"
+        android:background="@drawable/shape_white_ring"
+        android:src="@drawable/select_circle"
+        android:visibility="visible"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="15dp"/>
+
+    <Button
+        android:id="@+id/restart_take_photo"
+        android:layout_marginLeft="50dp"
+        android:layout_alignParentLeft="true"
+        android:layout_width="65dp"
+        android:layout_height="65dp"
+        android:background="@drawable/shape_white_circle"
+        android:text="重拍"
+        android:textSize="18sp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="30dp"
+        android:visibility="gone"
+        />
+
+    <Button
+        android:id="@+id/continue_take_photo"
+        android:layout_marginRight="50dp"
+        android:layout_alignParentRight="true"
+        android:layout_width="65dp"
+        android:layout_height="65dp"
+        android:background="@drawable/shape_white_circle"
+        android:text="继续"
+        android:textSize="18sp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="30dp"
+        android:visibility="gone"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_alignParentTop="true"
+        android:orientation="horizontal">
+
+
+        <LinearLayout
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/back"
+                android:layout_marginLeft="10dp"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_gravity="center"
+                android:background="#00000000"
+                android:src="@drawable/back"
+                android:scaleType="fitXY"/>
+
+        </LinearLayout>
+
+
+        <TextView
+            android:id="@+id/course_name_text"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="课程名称"
+            android:maxLines="1"
+            android:ellipsize="end"/>
+
+    <LinearLayout
+        android:layout_width="50dp"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/finish_text"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textSize="14sp"
+            android:text="完成"
+            android:gravity="center"
+            android:textColor="#00BFFF"/>
+
+        <TextView
+            android:id="@+id/photo_num_text"
+            android:layout_marginRight="10dp"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_gravity="center"
+            android:textSize="10sp"
+            android:text="9"
+            android:gravity="center"
+            android:background="@drawable/shade_red_circle"
+            android:textColor="#FFFFFF"/>
+
+    </LinearLayout>
+
+    </LinearLayout>
+
+
+</RelativeLayout>

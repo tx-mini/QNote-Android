@@ -10,6 +10,7 @@
         android:layout_width="@dimen/drawer_icon_size"
         android:layout_height="@dimen/drawer_icon_size" />
     <TextView
+        android:id="@+id/tv_notebook"
         android:textColor="@color/drawer_text_color"
         android:layout_marginLeft="2dp"
         android:text="归档笔记"
