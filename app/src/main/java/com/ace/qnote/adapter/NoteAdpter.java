@@ -4,7 +4,6 @@ import android.support.annotation.Nullable;
 import android.view.Gravity;
 
 import com.ace.qnote.R;
-import com.ace.qnote.util.CommonUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.example.zhouwei.library.CustomPopWindow;
