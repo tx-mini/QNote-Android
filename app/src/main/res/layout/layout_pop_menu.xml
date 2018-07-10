@@ -43,6 +43,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/line_height"/>
             <TextView
+                android:id="@+id/tv_delete"
                 android:text="删除"
                 style="@style/pop_menu_text_style"/>
             <View
