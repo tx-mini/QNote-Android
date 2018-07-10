@@ -184,12 +184,14 @@ public class LoginActivity extends BaseActivity {
     }
 
     private void doLogin() {
-        if(mTencent == null || !mTencent.isSessionValid()) {
+        startActivity(new Intent(LoginActivity.this,ImportCourseActivity.class));
+        finish();
+/*        if(mTencent == null || !mTencent.isSessionValid()) {
             mTencent = Tencent.createInstance("101488552", this);
             mTencent.login(this, "all", loginListener, true);
         }else{
             updateUserInfo();
-        }
+        }*/
     }
 
     @Override

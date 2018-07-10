@@ -5,8 +5,7 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    tools:openDrawer="start">
+    tools:openDrawer="close">
 
 
     <RelativeLayout
@@ -47,11 +46,13 @@
 
 
         <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_note"
             android:layout_below="@id/course_wrapper"
             android:layout_width="match_parent"
             android:layout_height="match_parent"></android.support.v7.widget.RecyclerView>
 
         <ImageView
+            android:id="@+id/iv_edit"
             android:translationZ="10dp"
             android:layout_marginLeft="42dp"
             android:layout_marginBottom="83dp"
@@ -61,6 +62,7 @@
             android:layout_height="68dp" />
 
         <ImageView
+            android:id="@+id/iv_take_photo"
             android:translationZ="10dp"
             android:layout_marginRight="42dp"
             android:layout_marginBottom="83dp"
@@ -88,11 +90,13 @@
                 android:gravity="center_vertical"
                 android:layout_height="97dp">
                 <ImageView
+                    android:id="@+id/iv_pic"
                     android:src="@mipmap/ic_launcher"
                     android:layout_marginLeft="16dp"
                     android:layout_width="55dp"
                     android:layout_height="55dp" />
                 <TextView
+                    android:id="@+id/tv_nickname"
                     android:text="昵称"
                     android:layout_marginLeft="15dp"
                     android:textColor="#fff"
@@ -102,11 +106,13 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/layout_term"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="40dp">
                 <TextView
+                    android:id="@+id/tv_term"
                     android:layout_marginLeft="14dp"
                     android:text="2018-2019年下学期"
                     android:textSize="16sp"
@@ -125,11 +131,12 @@
                 android:layout_height="@dimen/line_height"/>
 
             <android.support.v7.widget.RecyclerView
-
+                android:id="@+id/rv_notebook"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"></android.support.v7.widget.RecyclerView>
 
             <LinearLayout
+                android:id="@+id/layout_archive"
                 android:gravity="center_vertical"
                 android:paddingLeft="27dp"
                 android:orientation="horizontal"
@@ -147,6 +154,7 @@
                     android:layout_height="wrap_content" />
             </LinearLayout>
             <LinearLayout
+                android:id="@+id/layout_new_notebook"
                 android:gravity="center_vertical"
                 android:paddingLeft="27dp"
                 android:orientation="horizontal"
@@ -177,6 +185,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <LinearLayout
+                    android:id="@+id/layout_course_table"
                     style="@style/drawer_bottom_layout">
                     <ImageView
                         android:src="@mipmap/setting"
@@ -194,6 +203,7 @@
                     android:layout_width="1dp"
                     android:layout_height="match_parent"/>
                 <LinearLayout
+                    android:id="@+id/layout_dustbin"
                     style="@style/drawer_bottom_layout">
                     <ImageView
                         android:src="@mipmap/dustbin"
@@ -211,6 +221,7 @@
                     android:layout_width="1dp"
                     android:layout_height="match_parent"/>
                 <LinearLayout
+                    android:id="@+id/layout_study"
                     style="@style/drawer_bottom_layout">
                     <ImageView
                         android:src="@mipmap/study"
