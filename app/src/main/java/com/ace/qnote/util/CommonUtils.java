@@ -16,4 +16,7 @@ public class CommonUtils {
         return (int) (pxValue / scale + 0.5f);
     }
 
+    public static boolean isEmpty(String s){
+        return s == null || s.equals("");
+    }
 }

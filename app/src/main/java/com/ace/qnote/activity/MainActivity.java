@@ -1,10 +1,8 @@
 package com.ace.qnote.activity;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -17,13 +15,17 @@ import android.widget.TextView;
 
 import com.ace.qnote.R;
 import com.ace.qnote.adapter.DrawerNoteAdapter;
-import com.ace.qnote.adapter.NoteAdpter;
+import com.ace.qnote.adapter.NoteAdapter;
 import com.ace.qnote.base.BaseActivity;
 import com.ace.qnote.util.permission.ActionCallBackListener;
 import com.ace.qnote.util.permission.RxPermissionUtil;
+import com.chad.library.adapter.base.BaseQuickAdapter;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import me.iwf.photopicker.PhotoPicker;
 
 public class MainActivity extends BaseActivity {
     private final int REQUEST_CODE_CHOOSE = 1000;
@@ -91,6 +93,12 @@ public class MainActivity extends BaseActivity {
     }
 
     private void addPicFromFile() {
+        PhotoPicker.builder()
+                .setPhotoCount(9)
+                .setShowCamera(false)
+                .setShowGif(true)
+                .setPreviewEnabled(false)
+                .start(this, PhotoPicker.REQUEST_CODE);
     }
 
     @Override
@@ -149,17 +157,27 @@ public class MainActivity extends BaseActivity {
         rvNotebook.setLayoutManager(new LinearLayoutManager(this));
 
         List<String> noteList = Arrays.asList("2018-7-6笔记","2018-7-8笔记","2018-7-10笔记","2018-7-16笔记");
-        NoteAdpter noteAdpter = new NoteAdpter(R.layout.item_note,noteList);
-        rvNote.setAdapter(noteAdpter);
+        NoteAdapter noteAdapter = new NoteAdapter(R.layout.item_note,noteList);
+        noteAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                Bundle bundle = new Bundle();
+                bundle.putString("title", (String) adapter.getData().get(position));
+                startActivity(NoteContentActivity.class,bundle);
+            }
+        });
+        rvNote.setAdapter(noteAdapter);
         rvNote.setLayoutManager(new LinearLayoutManager(this));
-
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_CODE_CHOOSE && resultCode == RESULT_OK) {
-
+        if (resultCode == RESULT_OK && requestCode == PhotoPicker.REQUEST_CODE) {
+            if (data != null) {
+                ArrayList<String> photos =
+                        data.getStringArrayListExtra(PhotoPicker.KEY_SELECTED_PHOTOS);
+            }
         }
     }
 }

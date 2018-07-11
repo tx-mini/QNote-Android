@@ -15,8 +15,8 @@ import java.util.List;
  * Created by ice on 2018/7/10.
  */
 
-public class NoteAdpter extends BaseQuickAdapter<String,BaseViewHolder> {
-    public NoteAdpter(int layoutResId, @Nullable List<String> data) {
+public class NoteAdapter extends BaseQuickAdapter<String,BaseViewHolder> {
+    public NoteAdapter(int layoutResId, @Nullable List<String> data) {
         super(layoutResId, data);
     }
 
