@@ -68,6 +68,7 @@
         android:layout_height="@dimen/welcome_button_height" />
 
     <TextView
+        android:id="@+id/tv_skip"
         android:textColor="#FF676767"
         android:textSize="14sp"
         android:layout_marginTop="13dp"

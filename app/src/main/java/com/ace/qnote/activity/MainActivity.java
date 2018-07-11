@@ -15,7 +15,7 @@ import android.widget.TextView;
 import com.ace.qnote.R;
 import com.ace.qnote.adapter.DrawerNoteAdapter;
 import com.ace.qnote.adapter.NoteAdpter;
-import com.ace.qnote.adapter.UniversityAdapter;
+import com.ace.qnote.adapter.TermAdapter;
 import com.ace.qnote.base.BaseActivity;
 import com.ace.qnote.util.CommonUtils;
 import com.example.zhouwei.library.CustomPopWindow;
@@ -84,10 +84,10 @@ public class MainActivity extends BaseActivity {
         switch (v.getId()){
             case R.id.tv_term:
                 List<String> termList = Arrays.asList("2017-2018上学期","2017-2018上学期","2017-2018上学期","2017-2018上学期");
-                UniversityAdapter universityAdapter = new UniversityAdapter(R.layout.item_text_line,termList);
+                TermAdapter termAdapter = new TermAdapter(R.layout.item_text_line, termList);
                 View view = LayoutInflater.from(this).inflate(R.layout.layout_pop_term,null);
                 RecyclerView recyclerView = view.findViewById(R.id.rv_term);
-                recyclerView.setAdapter(universityAdapter);
+                recyclerView.setAdapter(termAdapter);
                 recyclerView.setLayoutManager(new LinearLayoutManager(this));
                 int margin = CommonUtils.dip2px(this,10)*2;
                 int width = CommonUtils.dip2px(this,260)+margin;
