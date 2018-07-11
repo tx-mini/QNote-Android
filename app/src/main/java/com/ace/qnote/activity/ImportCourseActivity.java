@@ -12,9 +12,12 @@ import android.widget.TextView;
 import com.ace.qnote.R;
 import com.ace.qnote.base.BaseActivity;
 
+import static com.ace.qnote.util.Const.CHOOSE_UNIVERISTY;
+
 public class ImportCourseActivity extends BaseActivity {
 
     TextView tvUniversity;
+    TextView tvSkip;
 
     @Override
     public void initParams(Bundle params) {
@@ -38,12 +41,14 @@ public class ImportCourseActivity extends BaseActivity {
     @Override
     public void initView(View view) {
         tvUniversity = findViewById(R.id.tv_chooseUniversity);
+        tvSkip = findViewById(R.id.tv_skip);
     }
 
     @Override
     public void setListener() {
         findViewById(R.id.btn_import).setOnClickListener(this);
         tvUniversity.setOnClickListener(this);
+        tvSkip.setOnClickListener(this);
     }
 
     @Override
@@ -53,8 +58,21 @@ public class ImportCourseActivity extends BaseActivity {
                 startActivity(new Intent(this,MainActivity.class));
                 break;
             case R.id.tv_chooseUniversity:
-                startActivity(new Intent(this,ChooseUniversityActivity.class));
+                startActivityForResult(new Intent(this,ChooseUniversityActivity.class),CHOOSE_UNIVERISTY);
                 break;
+            case R.id.tv_skip:
+                startActivity(new Intent(this,MainActivity.class));
+                break;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == CHOOSE_UNIVERISTY && resultCode==200){
+            String universityName = data.getStringExtra("universityName");
+            if(universityName!=null){
+                tvUniversity.setText(universityName);
+            }
         }
     }
 
