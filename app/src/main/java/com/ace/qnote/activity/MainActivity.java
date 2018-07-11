@@ -8,6 +8,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -20,6 +22,9 @@ import com.ace.qnote.base.BaseActivity;
 import com.ace.qnote.util.permission.ActionCallBackListener;
 import com.ace.qnote.util.permission.RxPermissionUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.ace.qnote.adapter.UniversityAdapter;
+import com.ace.qnote.util.CommonUtils;
+import com.example.zhouwei.library.CustomPopWindow;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -104,6 +109,23 @@ public class MainActivity extends BaseActivity {
     @Override
     public void widgetClick(View v) throws Exception {
         switch (v.getId()){
+            case R.id.tv_term:
+                List<String> termList = Arrays.asList("2017-2018上学期","2017-2018上学期","2017-2018上学期","2017-2018上学期");
+                UniversityAdapter universityAdapter = new UniversityAdapter(R.layout.item_text_line,termList);
+                View view = LayoutInflater.from(this).inflate(R.layout.layout_pop_term,null);
+                RecyclerView recyclerView = view.findViewById(R.id.rv_term);
+                recyclerView.setAdapter(universityAdapter);
+                recyclerView.setLayoutManager(new LinearLayoutManager(this));
+                int margin = CommonUtils.dip2px(this,10)*2;
+                int width = CommonUtils.dip2px(this,260)+margin;
+                CustomPopWindow popWindow = new CustomPopWindow.PopupWindowBuilder(this)
+                        .setView(view)//显示的布局
+                        .size(width, (int) (getResources().getDimension(R.dimen.item_term_height)*termList.size()+margin))
+                        .enableBackgroundDark(true) //弹出popWindow时，背景是否变暗
+                        .setBgDarkAlpha(0.7f) // 控制亮度
+                        .create()//创建PopupWindow
+                        .showAtLocation(getmContextView(), Gravity.CENTER,0, 0);//显示PopupWindow
+                break;
             case R.id.tv_nickname:
                 break;
             case R.id.layout_archive:

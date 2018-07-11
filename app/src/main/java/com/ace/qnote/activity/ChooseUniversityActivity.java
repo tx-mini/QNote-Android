@@ -50,7 +50,7 @@ public class ChooseUniversityActivity extends BaseActivity {
     @Override
     public void doBusiness(Context mContext) {
         String[] universityList = {"中南大学","北京大学","清华大学"};
-        universityAdapter = new UniversityAdapter(R.layout.item_university, Arrays.asList(universityList));
+        universityAdapter = new UniversityAdapter(R.layout.item_text_line, Arrays.asList(universityList));
         rvUniversity.setLayoutManager(new LinearLayoutManager(this));
         rvUniversity.setAdapter(universityAdapter);
     }
