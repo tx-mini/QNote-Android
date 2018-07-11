@@ -1,11 +1,7 @@
 package com.ace.network.util;
 
-import android.text.TextUtils;
-import android.util.Log;
-
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
-import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
@@ -13,10 +9,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
-import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -62,9 +55,9 @@ public class NetUtil {
                     @Override
                     public void accept(@NonNull RxReturnData<T> t) throws Exception {
                         if (t.isSuccess()) {
-                            callBack.onSuccess(t.getData());
+                            callBack.onSuccess(t.getResult());
                         } else {
-                            callBack.onFailure(t.getMessage());
+                            callBack.onFailure(t.getCode().toString());
                         }
                     }
                 }, new Consumer<Throwable>() {
