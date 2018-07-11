@@ -47,4 +47,5 @@ dependencies {
     compile ('com.zhihu.android:matisse:0.5.1'){
         exclude group: 'com.android.support'
     }
+    implementation project(':PhotoPicker')
 }

@@ -96,7 +96,6 @@ public class LoginActivity extends BaseActivity {
         switch (v.getId()){
             case R.id.btn_login:
                 doLogin();
-//                startActivity(NoteContentActivity.class);
                 break;
         }
     }

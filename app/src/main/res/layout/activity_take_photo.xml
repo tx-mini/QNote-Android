@@ -59,72 +59,58 @@
         android:visibility="gone"
         />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_alignParentTop="true"
-        android:orientation="horizontal">
+    <RelativeLayout
+        android:id="@+id/rl_title_bar"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/title_bar_height"
+        android:background="@color/title_bar_transparent">
+        <LinearLayout
+            android:id="@+id/ll_back"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:gravity="center">
 
+            <ImageView
+                android:layout_width="@dimen/back_arrow_width"
+                android:layout_height="@dimen/back_arrow_height"
+                android:background="@mipmap/icon_arrow_left_white" />
 
+        </LinearLayout>
+        <TextView
+            android:id="@+id/course_name_text"
+            style="@style/white_title_bar_text"
+            android:textColor="@color/white"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
         <LinearLayout
             android:layout_width="50dp"
             android:layout_height="match_parent"
-            android:orientation="horizontal">
+            android:layout_alignParentEnd="true">
 
-            <ImageButton
-                android:id="@+id/back"
-                android:layout_marginLeft="10dp"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
+            <TextView
+                android:id="@+id/finish_text"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textSize="@dimen/app_text_size_middle"
+                android:text="完成"
+                android:gravity="center"
+                android:textColor="@color/white"/>
+
+            <TextView
+                android:id="@+id/photo_num_text"
+                android:layout_marginRight="10dp"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
                 android:layout_gravity="center"
-                android:background="#00000000"
-                android:src="@drawable/back"
-                android:scaleType="fitXY"/>
+                android:textSize="10sp"
+                android:text="9"
+                android:gravity="center"
+                android:background="@drawable/shade_red_circle"
+                android:textColor="#FFFFFF"/>
 
         </LinearLayout>
-
-
-        <TextView
-            android:id="@+id/course_name_text"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="课程名称"
-            android:maxLines="1"
-            android:ellipsize="end"/>
-
-    <LinearLayout
-        android:layout_width="50dp"
-        android:layout_height="match_parent"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/finish_text"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:textSize="14sp"
-            android:text="完成"
-            android:gravity="center"
-            android:textColor="#00BFFF"/>
-
-        <TextView
-            android:id="@+id/photo_num_text"
-            android:layout_marginRight="10dp"
-            android:layout_width="15dp"
-            android:layout_height="15dp"
-            android:layout_gravity="center"
-            android:textSize="10sp"
-            android:text="9"
-            android:gravity="center"
-            android:background="@drawable/shade_red_circle"
-            android:textColor="#FFFFFF"/>
-
-    </LinearLayout>
-
-    </LinearLayout>
+    </RelativeLayout>
 
 
 </RelativeLayout>

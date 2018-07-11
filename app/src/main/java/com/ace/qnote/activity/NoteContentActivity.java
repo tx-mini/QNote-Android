@@ -12,23 +12,23 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ace.qnote.R;
 import com.ace.qnote.adapter.NoteContentAdapter;
 import com.ace.qnote.base.BaseActivity;
+import com.ace.qnote.util.CommonUtils;
 import com.ace.qnote.util.permission.ActionCallBackListener;
 //import com.ace.qnote.util.permission.RxPermissionUtil;
 import com.ace.qnote.util.permission.RxPermissionUtil;
 import com.chad.library.adapter.base.callback.ItemDragAndSwipeCallback;
 import com.chad.library.adapter.base.listener.OnItemDragListener;
-import com.zhihu.matisse.Matisse;
-import com.zhihu.matisse.MimeType;
-import com.zhihu.matisse.engine.impl.GlideEngine;
-import com.zhihu.matisse.filter.Filter;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import me.iwf.photopicker.PhotoPicker;
 
 public class NoteContentActivity extends BaseActivity{
     private final int REQUEST_CODE_CHOOSE = 1000;
@@ -38,11 +38,16 @@ public class NoteContentActivity extends BaseActivity{
     private OnItemDragListener onItemDragListener;
     private ImageView iv_add_text;
     private ImageView iv_add_pic;
+    private TextView tv_title;
     private String[] m_upLoadImgPermission =  {Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
     private List<Uri> mSelected;
+    private String title="";
 
     @Override
     public void initParams(Bundle params) {
+        if (params!=null){
+            title = params.getString("title");
+        }
     }
 
     @Override
@@ -59,6 +64,7 @@ public class NoteContentActivity extends BaseActivity{
     public void initView(View view) {
         rv_note_content = findViewById(R.id.rv_note_content);
         iv_add_pic = findViewById(R.id.iv_add_pic);
+        tv_title = findViewById(R.id.tv_title);
     }
 
     @Override
@@ -80,6 +86,22 @@ public class NoteContentActivity extends BaseActivity{
 
             }
         };
+        iv_add_pic.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                addPicFromFile();
+                return false;
+            }
+        });
+    }
+
+    private void addPicFromFile() {
+        PhotoPicker.builder()
+                .setPhotoCount(9)
+                .setShowCamera(false)
+                .setShowGif(true)
+                .setPreviewEnabled(false)
+                .start(this, PhotoPicker.REQUEST_CODE);
     }
 
     @Override
@@ -106,19 +128,16 @@ public class NoteContentActivity extends BaseActivity{
     }
 
     private void addPic() {
-        Matisse.from(this)
-                .choose(MimeType.ofAll())
-                .countable(true)
-                .maxSelectable(9)
-                .gridExpectedSize(getResources().getDimensionPixelSize(R.dimen.grid_expected_size))
-                .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED)
-                .thumbnailScale(0.85f)
-                .imageEngine(new GlideEngine())
-                .forResult(REQUEST_CODE_CHOOSE);
+        Intent intent = new Intent(this, TakePhotoActivity.class);
+        intent.putExtra("course_name","软件工程");
+        startActivity(intent);
     }
 
     @Override
     public void doBusiness(Context mContext) {
+        if (!CommonUtils.isEmpty(title)){
+            tv_title.setText(title);
+        }
         ArrayList<String> arrayList = new ArrayList<>();
         arrayList.add("http://img3.imgtn.bdimg.com/it/u=80472546,670250703&fm=27&gp=0.jpg");
         arrayList.add("这节课都讲的什么东西");
@@ -140,8 +159,11 @@ public class NoteContentActivity extends BaseActivity{
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_CODE_CHOOSE && resultCode == RESULT_OK) {
-            mSelected = Matisse.obtainResult(data);
+        if (resultCode == RESULT_OK && requestCode == PhotoPicker.REQUEST_CODE) {
+            if (data != null) {
+                ArrayList<String> photos =
+                        data.getStringArrayListExtra(PhotoPicker.KEY_SELECTED_PHOTOS);
+            }
         }
     }
 }

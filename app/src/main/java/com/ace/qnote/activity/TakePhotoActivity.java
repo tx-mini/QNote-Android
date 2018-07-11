@@ -1,5 +1,6 @@
 package com.ace.qnote.activity;
 
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -21,6 +22,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,6 +34,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import csu.edu.ice.model.util.SpNameConstant;
+
 public class TakePhotoActivity extends AppCompatActivity implements View.OnClickListener, SurfaceHolder.Callback {
 
     private SurfaceView mCameraSf;
@@ -39,7 +43,7 @@ public class TakePhotoActivity extends AppCompatActivity implements View.OnClick
     private Button mContinueTakePic;
     private Button mReTakePhoto;
 
-    private ImageButton mBackBtn;
+    private LinearLayout llBack;
     private TextView mCourseText;
     private TextView mFinishBtn;
     private TextView mPicNumText;
@@ -74,6 +78,12 @@ public class TakePhotoActivity extends AppCompatActivity implements View.OnClick
         setContentView(R.layout.activity_take_photo);
 
         initViews();
+
+        SharedPreferences sharedPreferences = getSharedPreferences(SpNameConstant.CONFIG,MODE_PRIVATE);
+        if (sharedPreferences.getBoolean("isFirstTimeOpenCamera",true)) {
+            Toast.makeText(getBaseContext(),"长按相机可以直接从相册中选区图片",Toast.LENGTH_SHORT).show();
+            sharedPreferences.edit().putBoolean("isFirstTimeOpenCamera",false).apply();
+        }
     }
 
     @Override
@@ -104,21 +114,21 @@ public class TakePhotoActivity extends AppCompatActivity implements View.OnClick
     }
 
     private void initViews() {
-        mCameraSf = (SurfaceView) findViewById(R.id.camera_sf);
-        mTakePicBtn = (ImageButton) findViewById(R.id.take_photo_btn);
-        mReTakePhoto = (Button)findViewById(R.id.restart_take_photo);
-        mContinueTakePic = (Button)findViewById(R.id.continue_take_photo);
-        mPresentImage = (ImageView)findViewById(R.id.present_photo);
+        mCameraSf = findViewById(R.id.camera_sf);
+        mTakePicBtn = findViewById(R.id.take_photo_btn);
+        mReTakePhoto = findViewById(R.id.restart_take_photo);
+        mContinueTakePic = findViewById(R.id.continue_take_photo);
+        mPresentImage = findViewById(R.id.present_photo);
 
         mPresentImage.setVisibility(View.GONE);
         mTakePicBtn.setVisibility(View.VISIBLE);
         mReTakePhoto.setVisibility(View.GONE);
         mContinueTakePic.setVisibility(View.GONE);
 
-        mBackBtn = (ImageButton) findViewById(R.id.back);
-        mCourseText = (TextView)findViewById(R.id.course_name_text);
-        mFinishBtn = (TextView)findViewById(R.id.finish_text);
-        mPicNumText = (TextView)findViewById(R.id.photo_num_text);
+        llBack = findViewById(R.id.ll_back);
+        mCourseText = findViewById(R.id.course_name_text);
+        mFinishBtn = findViewById(R.id.finish_text);
+        mPicNumText = findViewById(R.id.photo_num_text);
 
         mPicNumText.setText("0");
 
@@ -132,7 +142,7 @@ public class TakePhotoActivity extends AppCompatActivity implements View.OnClick
         mReTakePhoto.setOnClickListener(this);
         mContinueTakePic.setOnClickListener(this);
 
-        mBackBtn.setOnClickListener(this);
+        llBack.setOnClickListener(this);
         mFinishBtn.setOnClickListener(this);
 
         mHolder = mCameraSf.getHolder();
@@ -183,7 +193,7 @@ public class TakePhotoActivity extends AppCompatActivity implements View.OnClick
                 previceCamera(mCamera, mHolder);
                 break;
             }
-            case R.id.back: {
+            case R.id.ll_back: {
                 finish();
                 break;
             }

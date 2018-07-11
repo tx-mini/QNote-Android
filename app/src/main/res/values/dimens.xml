@@ -20,4 +20,9 @@
     <dimen name="drawer_icon_size">18dp</dimen>
     <dimen name="item_term_height">45dp</dimen>
     <dimen name="grid_expected_size">120dp</dimen>
+
+    <dimen name="app_text_size_big">16dp</dimen>
+    <dimen name="app_text_size_middle">14dp</dimen>
+    <dimen name="app_text_size_small">12dp</dimen>
+    <dimen name="app_text_size_tiny">10dp</dimen>
 </resources>

@@ -1,1 +1,1 @@
-include ':app', ':model', ':net'
+include ':app', ':model', ':net', ':PhotoPicker'
