@@ -80,7 +80,7 @@ public class TakePhotoActivity extends AppCompatActivity implements View.OnClick
 
         SharedPreferences sharedPreferences = getSharedPreferences(SpNameConstant.CONFIG,MODE_PRIVATE);
         if (sharedPreferences.getBoolean("isFirstTimeOpenCamera",true)) {
-            Toast.makeText(getBaseContext(),"长按相机可以直接从相册中选区图片",Toast.LENGTH_LONG).show();
+            Toast.makeText(getBaseContext(),"长按相机可以直接从相册中选区图片",Toast.LENGTH_SHORT).show();
             sharedPreferences.edit().putBoolean("isFirstTimeOpenCamera",false).apply();
         }
     }

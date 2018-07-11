@@ -22,10 +22,6 @@ import com.ace.qnote.util.permission.ActionCallBackListener;
 import com.ace.qnote.util.permission.RxPermissionUtil;
 import com.chad.library.adapter.base.callback.ItemDragAndSwipeCallback;
 import com.chad.library.adapter.base.listener.OnItemDragListener;
-import com.zhihu.matisse.Matisse;
-import com.zhihu.matisse.MimeType;
-import com.zhihu.matisse.engine.impl.GlideEngine;
-import com.zhihu.matisse.filter.Filter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -106,15 +102,6 @@ public class NoteContentActivity extends BaseActivity{
     }
 
     private void addPic() {
-        Matisse.from(this)
-                .choose(MimeType.ofAll())
-                .countable(true)
-                .maxSelectable(9)
-                .gridExpectedSize(getResources().getDimensionPixelSize(R.dimen.grid_expected_size))
-                .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED)
-                .thumbnailScale(0.85f)
-                .imageEngine(new GlideEngine())
-                .forResult(REQUEST_CODE_CHOOSE);
     }
 
     @Override
@@ -141,7 +128,6 @@ public class NoteContentActivity extends BaseActivity{
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE_CHOOSE && resultCode == RESULT_OK) {
-            mSelected = Matisse.obtainResult(data);
         }
     }
 }

@@ -21,9 +21,6 @@ import com.ace.qnote.adapter.NoteAdpter;
 import com.ace.qnote.base.BaseActivity;
 import com.ace.qnote.util.permission.ActionCallBackListener;
 import com.ace.qnote.util.permission.RxPermissionUtil;
-import com.zhihu.matisse.Matisse;
-import com.zhihu.matisse.MimeType;
-import com.zhihu.matisse.engine.impl.GlideEngine;
 
 import java.util.Arrays;
 import java.util.List;
@@ -87,18 +84,13 @@ public class MainActivity extends BaseActivity {
         ivTakePhoto.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                Matisse.from((Activity) getBaseContext())
-                        .choose(MimeType.ofAll())
-                        .countable(true)
-                        .maxSelectable(9)
-                        .gridExpectedSize(getResources().getDimensionPixelSize(R.dimen.grid_expected_size))
-                        .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED)
-                        .thumbnailScale(0.85f)
-                        .imageEngine(new GlideEngine())
-                        .forResult(REQUEST_CODE_CHOOSE);
+                addPicFromFile();
                 return false;
             }
         });
+    }
+
+    private void addPicFromFile() {
     }
 
     @Override
@@ -167,7 +159,7 @@ public class MainActivity extends BaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE_CHOOSE && resultCode == RESULT_OK) {
-            mSelected = Matisse.obtainResult(data);
+
         }
     }
 }
