@@ -6,10 +6,11 @@
     <color name="colorAccent">#FF4081</color>
     <color name="title_bar_white">#faffffff</color>
     <color name="title_bar_text">#353535</color>
-    <color name="title_bar_transparent">#5affffff</color>
+    <color name="title_bar_transparent">#53000000</color>
     <color name="global_grey_background">#D8D8D8</color>
 
     <color name="grey">#d8d8d8</color>
+    <color name="white">#ffffff</color>
     <color name="green">#65df65</color>
     <color name="cyan">#e2f7f6</color>
     <color name="mainTextGreyColor">#FF676767</color>

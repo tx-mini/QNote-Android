@@ -179,7 +179,7 @@ public class MainActivity extends BaseActivity {
         rvNotebook.setLayoutManager(new LinearLayoutManager(this));
 
         List<String> noteList = Arrays.asList("2018-7-6笔记","2018-7-8笔记","2018-7-10笔记","2018-7-16笔记");
-        NoteAdapter noteAdapter = new NoteAdapter(R.layout.item_note,noteList);
+        NoteAdapter noteAdapter = new NoteAdapter(R.layout.item_note,noteList,this);
         noteAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {

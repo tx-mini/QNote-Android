@@ -73,12 +73,13 @@
             <ImageView
                 android:layout_width="@dimen/back_arrow_width"
                 android:layout_height="@dimen/back_arrow_height"
-                android:background="@drawable/icon_arrow_left_grey" />
+                android:background="@mipmap/icon_arrow_left_white" />
 
         </LinearLayout>
         <TextView
             android:id="@+id/course_name_text"
             style="@style/white_title_bar_text"
+            android:textColor="@color/white"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             />
@@ -94,7 +95,7 @@
                 android:textSize="@dimen/app_text_size_middle"
                 android:text="完成"
                 android:gravity="center"
-                android:textColor="@color/title_bar_text"/>
+                android:textColor="@color/white"/>
 
             <TextView
                 android:id="@+id/photo_num_text"

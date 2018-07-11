@@ -22,7 +22,7 @@ import java.util.List;
 public class NoteAdapter extends BaseQuickAdapter<String,BaseViewHolder> {
     Activity activity;
 
-    public NoteAdapter(int layoutResId, @Nullable List<String> data) {
+    public NoteAdapter(int layoutResId, @Nullable List<String> data,Activity activity) {
         super(layoutResId, data);
         this.activity = activity;
     }
