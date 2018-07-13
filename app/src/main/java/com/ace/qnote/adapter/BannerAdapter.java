@@ -14,7 +14,7 @@ import com.ace.qnote.R;
 
 public class BannerAdapter extends PagerAdapter{
 
-    int[] images = {R.mipmap.navigator_1,R.mipmap.navigator_1};
+    int[] images = {R.mipmap.navigator_1,R.mipmap.navigator_2};
 
     @Override
     public int getCount() {

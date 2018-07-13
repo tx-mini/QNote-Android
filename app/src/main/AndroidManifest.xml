@@ -5,11 +5,11 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-
     <uses-permission android:name="android.permission.CAMERA" /> <!-- 允许相机拍摄 -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> <!-- 用于写入缓存数据到扩展存储卡 -->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /> <!-- 读取设备外部存储空间 -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
+    <!-- 读取设备外部存储空间 -->
     <application
         android:name=".MyApplication"
         android:allowBackup="true"
@@ -55,15 +55,16 @@
             </intent-filter>
         </activity>
         <activity android:name=".activity.ChooseUniversityActivity" />
-        <activity android:name=".activity.InformationActivity"></activity>
-        <activity android:name=".activity.TakePhotoActivity"></activity>
-        <activity android:name="me.iwf.photopicker.PhotoPickerActivity"
-            android:theme="@style/Theme.AppCompat.NoActionBar"
-            />
-
-        <activity android:name="me.iwf.photopicker.PhotoPagerActivity"
-            android:theme="@style/Theme.AppCompat.NoActionBar"/>
-
+        <activity android:name=".activity.InformationActivity" />
+        <activity android:name=".activity.TakePhotoActivity" />
+        <activity
+            android:name="me.iwf.photopicker.PhotoPickerActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
+        <activity
+            android:name="me.iwf.photopicker.PhotoPagerActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
+        <activity android:name=".activity.AddEventActivity" />
+        <activity android:name=".activity.ModifyCourseActivity"></activity>
     </application>
 
 </manifest>

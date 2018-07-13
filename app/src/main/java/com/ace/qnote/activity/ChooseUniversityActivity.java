@@ -17,6 +17,7 @@ import com.ace.qnote.base.BaseActivity;
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
 import org.litepal.LitePal;
+import org.litepal.crud.callback.FindMultiCallback;
 
 import java.util.List;
 
@@ -55,6 +56,7 @@ public class ChooseUniversityActivity extends BaseActivity {
 
     @Override
     public void setListener() {
+        findViewById(R.id.iv_back).setOnClickListener(v->finish());
         etUniversity.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -90,11 +92,18 @@ public class ChooseUniversityActivity extends BaseActivity {
     @Override
     public void doBusiness(Context mContext) {
 
-
-        universityList = LitePal.findAll(University.class);
         universityAdapter = new UniversityAdapter(R.layout.item_text_line, universityList);
-        rvUniversity.setLayoutManager(new LinearLayoutManager(this));
         rvUniversity.setAdapter(universityAdapter);
+        rvUniversity.setLayoutManager(new LinearLayoutManager(this));
+        LitePal.findAllAsync(University.class).listen(new FindMultiCallback() {
+            @Override
+            public <T> void onFinish(List<T> t) {
+                notifyDataChanged((List<University>) t);
+                if(t==null) {
+                    loadFromServer();
+                }
+            }
+        });
 
         universityAdapter.setOnItemClickListener((adapter, view, position) -> {
             University university = (University) adapter.getData().get(position);
@@ -104,7 +113,11 @@ public class ChooseUniversityActivity extends BaseActivity {
             finish();
         });
 
-        if(universityList.size()==0){
+
+
+    }
+
+    private void loadFromServer() {
             Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl("http://119.29.166.254:9090/api/university/")
                     .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
@@ -125,7 +138,7 @@ public class ChooseUniversityActivity extends BaseActivity {
                         throwable.printStackTrace();
                         showToast("未获取到大学信息，请检查网络");
                     });
-        }
 
     }
+
 }

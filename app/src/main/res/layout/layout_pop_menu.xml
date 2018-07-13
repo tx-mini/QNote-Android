@@ -36,6 +36,7 @@
                 android:layout_height="@dimen/line_height"/>
 
             <TextView
+                android:id="@+id/tv_move"
                 android:text="移动到"
                 style="@style/pop_menu_text_style"/>
             <View

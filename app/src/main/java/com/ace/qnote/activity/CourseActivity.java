@@ -1,5 +1,6 @@
 package com.ace.qnote.activity;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -44,6 +45,7 @@ public class CourseActivity extends AppCompatActivity {
 
         textWeek = findViewById(R.id.textWeek);
         layoutWeek = findViewById(R.id.layoutWeek);
+        findViewById(R.id.iv_add_course).setOnClickListener(v-> addCourse());
 
         layoutWeek.setOnClickListener(v -> {
             if (scrollWeek.getVisibility() == View.VISIBLE) {
@@ -62,7 +64,12 @@ public class CourseActivity extends AppCompatActivity {
         courseLayout.addCourses(customCourseList);
         initWeek();
 
+
         courseLayout.setMondayDate(new Date(System.currentTimeMillis()));
+    }
+
+    private void addCourse() {
+        startActivity(new Intent(this,AddEventActivity.class));
     }
 
     private void initCourseData() {

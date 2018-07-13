@@ -42,6 +42,15 @@
             android:layout_height="wrap_content" />
 
 
+        <ImageView
+            android:id="@+id/iv_add_course"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:layout_alignParentRight="true"
+            android:src="@mipmap/add"
+            android:layout_width="30dp"
+            android:layout_height="30dp" />
+
     </RelativeLayout>
 
     <HorizontalScrollView

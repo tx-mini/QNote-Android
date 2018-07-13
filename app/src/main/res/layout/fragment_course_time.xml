@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="300dp"
+    android:padding="10dp"
+    android:layout_height="100dp">
+
+    <LinearLayout
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.ace.qnote.view.WheelView
+            android:id="@+id/wheelWeekday"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/number_picker_height"></com.ace.qnote.view.WheelView>
+
+        <com.ace.qnote.view.WheelView
+            android:id="@+id/wheelStartTime"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/number_picker_height"></com.ace.qnote.view.WheelView>
+
+
+        <TextView
+            android:layout_marginLeft="10dp"
+            android:text="到"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <com.ace.qnote.view.WheelView
+            android:id="@+id/wheelEndTime"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/number_picker_height"></com.ace.qnote.view.WheelView>
+
+
+    </LinearLayout>
+    <Button
+        android:id="@+id/btnOk"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"
+        android:textColor="#fff"
+        android:background="@drawable/shape_btn_white"
+        android:text="确定"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content" />
+</LinearLayout>

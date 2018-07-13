@@ -17,14 +17,13 @@ import android.widget.TextView;
 
 import com.ace.qnote.R;
 import com.ace.qnote.adapter.DrawerNoteAdapter;
-import com.ace.qnote.adapter.TermAdapter;
 import com.ace.qnote.adapter.NoteAdapter;
+import com.ace.qnote.adapter.TermAdapter;
 import com.ace.qnote.base.BaseActivity;
+import com.ace.qnote.util.CommonUtils;
 import com.ace.qnote.util.permission.ActionCallBackListener;
 import com.ace.qnote.util.permission.RxPermissionUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.ace.qnote.adapter.UniversityAdapter;
-import com.ace.qnote.util.CommonUtils;
 import com.example.zhouwei.library.CustomPopWindow;
 
 import java.util.ArrayList;
@@ -43,6 +42,7 @@ public class MainActivity extends BaseActivity {
     private RecyclerView rvNotebook,rvNote;
     private String[] m_upLoadImgPermission =  {Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
     private List<Uri> mSelected;
+    private View rootView;
 
     @Override
     public void initParams(Bundle params) {
@@ -61,6 +61,7 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public void initView(View view) {
+        rootView = view;
         ivPic = findViewById(R.id.iv_pic);
         tvNickname = findViewById(R.id.tv_nickname);
         tvTerm = findViewById(R.id.tv_term);
@@ -89,12 +90,9 @@ public class MainActivity extends BaseActivity {
         layoutCourseTable.setOnClickListener(this);
         ivEdit.setOnClickListener(this);
         ivTakePhoto.setOnClickListener(this);
-        ivTakePhoto.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                addPicFromFile();
-                return false;
-            }
+        ivTakePhoto.setOnLongClickListener(v -> {
+            addPicFromFile();
+            return false;
         });
     }
 
@@ -111,23 +109,7 @@ public class MainActivity extends BaseActivity {
     public void widgetClick(View v) throws Exception {
         switch (v.getId()){
             case R.id.tv_term:
-                List<String> termList = Arrays.asList("2017-2018上学期","2017-2018上学期","2017-2018上学期","2017-2018上学期");
-                TermAdapter termAdapter = new TermAdapter(R.layout.item_text_line, termList);
-                View view = LayoutInflater.from(this).inflate(R.layout.layout_pop_term,null);
-                RecyclerView recyclerView = view.findViewById(R.id.rv_term);
-                recyclerView.setAdapter(termAdapter);
-                recyclerView.setLayoutManager(new LinearLayoutManager(this));
-                int margin = CommonUtils.dip2px(this,10)*2;
-                int width = CommonUtils.dip2px(this,260)+margin;
-                CustomPopWindow popWindow = new CustomPopWindow.PopupWindowBuilder(this)
-                        .setView(view)//显示的布局
-                        .size(width, (int) (getResources().getDimension(R.dimen.item_term_height)*termList.size()+margin))
-                        .enableBackgroundDark(true) //弹出popWindow时，背景是否变暗
-                        .setBgDarkAlpha(0.7f) // 控制亮度
-                        .create()//创建PopupWindow
-                        .showAtLocation(getmContextView(), Gravity.CENTER,0, 0);//显示PopupWindow
-                break;
-            case R.id.tv_nickname:
+                showChooseTermPopwindow();
                 break;
             case R.id.layout_archive:
                 break;
@@ -140,6 +122,8 @@ public class MainActivity extends BaseActivity {
                 break;
             case R.id.layout_study:
                 break;
+
+            case R.id.tv_nickname:
             case R.id.iv_pic:
                 startActivity(new Intent(this,InformationActivity.class));
                 break;
@@ -166,6 +150,29 @@ public class MainActivity extends BaseActivity {
         }
     }
 
+    private void showChooseTermPopwindow() {
+        List<String> termList = Arrays.asList("2017-2018上学期","2017-2018上学期","2017-2018上学期","2017-2018上学期");
+        TermAdapter termAdapter = new TermAdapter(R.layout.item_text_line, termList);
+        View view = LayoutInflater.from(this).inflate(R.layout.layout_pop_term,null);
+        RecyclerView recyclerView = view.findViewById(R.id.rv_term);
+        recyclerView.setAdapter(termAdapter);
+        termAdapter.setOnItemChildClickListener((adapter, view1, position) -> {
+
+        });
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        int margin = CommonUtils.dip2px(this,10)*2;
+        int width = CommonUtils.dip2px(this,260)+margin;
+        CustomPopWindow popWindow = new CustomPopWindow.PopupWindowBuilder(this)
+                .setView(view)//显示的布局
+                .size(width, (int) (getResources().getDimension(R.dimen.item_term_height)*termList.size()+margin))
+                .enableBackgroundDark(true) //弹出popWindow时，背景是否变暗
+                .setBgDarkAlpha(0.7f) // 控制亮度
+                .create()//创建PopupWindow
+                .showAtLocation(getmContextView(), Gravity.CENTER,0, 0);//显示PopupWindow
+    }
+
+
+
     private void addPic() {
         Intent intent = new Intent(MainActivity.this, TakePhotoActivity.class);
         intent.putExtra("course_name","软件工程");
@@ -180,7 +187,7 @@ public class MainActivity extends BaseActivity {
         rvNotebook.setLayoutManager(new LinearLayoutManager(this));
 
         List<String> noteList = Arrays.asList("2018-7-6笔记","2018-7-8笔记","2018-7-10笔记","2018-7-16笔记");
-        NoteAdapter noteAdapter = new NoteAdapter(R.layout.item_note,noteList,this);
+        NoteAdapter noteAdapter = new NoteAdapter(R.layout.item_note,noteList,this,rootView);
         noteAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
