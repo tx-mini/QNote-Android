@@ -1,12 +1,10 @@
 package com.ace.network.service;
 
-import com.ace.network.util.ConstUrl;
-import com.ace.network.util.RxReturnData;
-
+import csu.edu.ice.model.model.University;
 import io.reactivex.Observable;
-import retrofit2.http.GET;
+import retrofit2.http.Field;
+import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.POST;
-import retrofit2.http.Query;
 
 public interface UserService {
 
@@ -29,4 +27,10 @@ public interface UserService {
 //                                                     @Query("username") String username);
 //    @GET(ConstUrl.USER_GET_INFO)
 //    Observable< RxReturnData<UserData> > getUserInfo(@Query("userId") Integer userId);
+
+
+    @FormUrlEncoded
+    @POST("")
+    Observable<University> updateUniversity(@Field("id") String id);
+
 }
