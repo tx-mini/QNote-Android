@@ -64,12 +64,14 @@ public class NoteContentActivity extends BaseActivity{
     public void initView(View view) {
         rv_note_content = findViewById(R.id.rv_note_content);
         iv_add_pic = findViewById(R.id.iv_add_pic);
+        iv_add_text = findViewById(R.id.iv_add_text);
         tv_title = findViewById(R.id.tv_title);
     }
 
     @Override
     public void setListener() {
         iv_add_pic.setOnClickListener(this);
+        iv_add_text.setOnClickListener(this);
         onItemDragListener = new OnItemDragListener() {
             @Override
             public void onItemDragStart(RecyclerView.ViewHolder viewHolder, int pos) {
@@ -123,6 +125,8 @@ public class NoteContentActivity extends BaseActivity{
                 }else {
                     addPic();
                 }
+                break;
+            case R.id.iv_add_text:
                 break;
         }
     }

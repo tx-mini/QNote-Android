@@ -57,7 +57,7 @@
             android:layout_marginLeft="42dp"
             android:layout_marginBottom="83dp"
             android:layout_alignParentBottom="true"
-            android:src="@mipmap/write"
+            android:src="@mipmap/ic_add_text"
             android:layout_width="68dp"
             android:layout_height="68dp" />
 
@@ -68,7 +68,7 @@
             android:layout_marginBottom="83dp"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
-            android:src="@mipmap/take_photo"
+            android:src="@mipmap/ic_add_photo"
             android:layout_width="68dp"
             android:layout_height="68dp" />
 
