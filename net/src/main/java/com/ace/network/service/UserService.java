@@ -1,13 +1,5 @@
 package com.ace.network.service;
 
-import com.ace.network.util.ConstUrl;
-import com.ace.network.util.RxReturnData;
-
-import io.reactivex.Observable;
-import retrofit2.http.GET;
-import retrofit2.http.POST;
-import retrofit2.http.Query;
-
 public interface UserService {
 
 //    @POST(ConstUrl.USER_REGISTER)
@@ -29,4 +21,5 @@ public interface UserService {
 //                                                     @Query("username") String username);
 //    @GET(ConstUrl.USER_GET_INFO)
 //    Observable< RxReturnData<UserData> > getUserInfo(@Query("userId") Integer userId);
+
 }
