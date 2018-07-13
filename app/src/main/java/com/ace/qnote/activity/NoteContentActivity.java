@@ -1,7 +1,6 @@
 package com.ace.qnote.activity;
 
 import android.Manifest;
-import android.app.AlertDialog;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -43,8 +42,8 @@ import com.tencent.tauth.UiError;
 import java.util.ArrayList;
 import java.util.List;
 
-import csu.edu.ice.model.ContentBean;
-import csu.edu.ice.model.SimpleContentBean;
+import csu.edu.ice.model.model.ContentBean;
+import csu.edu.ice.model.model.SimpleContentBean;
 import me.iwf.photopicker.PhotoPicker;
 
 public class NoteContentActivity extends BaseActivity {

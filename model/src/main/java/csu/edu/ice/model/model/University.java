@@ -1,4 +1,4 @@
-package csu.edu.ice.model;
+package csu.edu.ice.model.model;
 
 import org.litepal.crud.LitePalSupport;
 

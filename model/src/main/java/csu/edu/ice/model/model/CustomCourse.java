@@ -1,43 +1,45 @@
-package csu.edu.ice.model;
+package csu.edu.ice.model.model;
+
+import com.google.gson.annotations.SerializedName;
+
+import org.litepal.annotation.Column;
+import org.litepal.crud.LitePalSupport;
 
 import java.io.Serializable;
+
+import csu.edu.ice.model.interfaze.ICourse;
 
 /**
  * Created by ice on 2018/1/7.
  */
 
-public class CustomCourse implements Serializable,ICourse{
+public class CustomCourse extends LitePalSupport implements Serializable,ICourse {
 
-    protected int id;
-    protected String name;
-    protected String address;
-    protected int startWeek;
-    protected int endWeek;
-    protected int startSection;
-    protected int endSection;
-    protected int weekday;
-    protected int userId;//自定义课程userId不为0
+    @Column(unique = true)
+    private int _id;
+
+    private String id;
+    @SerializedName("clsname")
+    private String name;
+    @SerializedName("location")
+    private String address;
+    private int startWeek;
+    private int endWeek;
+    private int startSection;
+    private int time;
+    private String teacher;
+    private String duration;
+    private int endSection;
+    @SerializedName("day")
+    private int weekday;
+    private int userId;//自定义课程userId不为0
     private int backgroundColor;
 
     public CustomCourse() {
     }
 
-    public CustomCourse(int id, int startSection, int endSection, int weekday) {
-        this.id = id;
-        this.startSection = startSection;
-        this.endSection = endSection;
-        this.weekday = weekday;
-    }
 
-    public CustomCourse(int id, String name, int startSection, int endSection, int weekday) {
-        this.id = id;
-        this.name = name;
-        this.startSection = startSection;
-        this.endSection = endSection;
-        this.weekday = weekday;
-    }
-
-    public CustomCourse(int id, String name, int startSection, int endSection, int weekday, int backgroundColor) {
+    public CustomCourse(String id, String name, int startSection, int endSection, int weekday, int backgroundColor) {
         this.id = id;
         this.name = name;
         this.startSection = startSection;
@@ -46,11 +48,11 @@ public class CustomCourse implements Serializable,ICourse{
         this.backgroundColor = backgroundColor;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -72,7 +74,7 @@ public class CustomCourse implements Serializable,ICourse{
     }
 
     public int getStartWeek() {
-        return startWeek;
+        return Integer.parseInt(duration.split("-")[0]);
     }
 
     public void setStartWeek(int startWeek) {
@@ -80,7 +82,7 @@ public class CustomCourse implements Serializable,ICourse{
     }
 
     public int getEndWeek() {
-        return endWeek;
+        return Integer.parseInt(duration.split("-")[1]);
     }
 
     public void setEndWeek(int endWeek) {
@@ -88,7 +90,7 @@ public class CustomCourse implements Serializable,ICourse{
     }
 
     public int getStartSection() {
-        return startSection;
+        return time*2-1;
     }
 
     public void setStartSection(int startSection) {
@@ -96,7 +98,7 @@ public class CustomCourse implements Serializable,ICourse{
     }
 
     public int getEndSection() {
-        return endSection;
+        return time*2;
     }
 
     public void setEndSection(int endSection) {
@@ -132,10 +134,37 @@ public class CustomCourse implements Serializable,ICourse{
         if(obj==null || !(obj instanceof CustomCourse)){
             return false;
         }
-        if(((CustomCourse) obj).getId() == this.getId()){
+        if(((CustomCourse) obj).getId().equals(this.getId())){
             return true;
         }
         return false;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public int getTime() {
+        return time;
+    }
+
+    public void setTime(int time) {
+        this.time = time;
+    }
+
+    public String getTeacher() {
+        return teacher;
+    }
+
+    public void setTeacher(String teacher) {
+        this.teacher = teacher;
+    }
+
+    public String getDuration() {
+        return duration;
+    }
+
+    public void setDuration(String duration) {
+        this.duration = duration;
+    }
 }

@@ -1,4 +1,4 @@
-package csu.edu.ice.model;
+package csu.edu.ice.model.model;
 
 import java.util.List;
 import java.util.Map;

@@ -3,7 +3,7 @@
 
     <dbname value="qnote" />
 
-    <version value="1" />
+    <version value="2" />
 
     <!--
     	Define your models in the list with mapping tag, LitePal will
@@ -16,6 +16,8 @@
     	</list>
     -->
     <list>
-        <mapping class="csu.edu.ice.model.University"/>
+        <mapping class="csu.edu.ice.model.model.University"/>
+        <mapping class="csu.edu.ice.model.model.CustomCourse"/>
+
     </list>
 </litepal>

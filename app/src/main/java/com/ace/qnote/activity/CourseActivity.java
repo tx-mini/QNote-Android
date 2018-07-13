@@ -13,12 +13,15 @@ import android.widget.TextView;
 import com.ace.qnote.R;
 import com.ace.qnote.view.CourseLayout;
 
+import org.litepal.LitePal;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
-import csu.edu.ice.model.CustomCourse;
-import csu.edu.ice.model.ICourse;
+import csu.edu.ice.model.model.CustomCourse;
+import csu.edu.ice.model.interfaze.ICourse;
 
 public class CourseActivity extends AppCompatActivity {
 
@@ -76,17 +79,15 @@ public class CourseActivity extends AppCompatActivity {
         int colorPink = getResources().getColor(R.color.colorAccent);
         int colorBlue = getResources().getColor(R.color.colorPrimary);
 
+        int[] colors ={colorBlue, colorPink};
+
         customCourseList = new ArrayList<>();
-        customCourseList.add(new CustomCourse(1,"中国近代史",1,2,1,colorBlue));
-        customCourseList.add(new CustomCourse(2,"中国近代史",3,4,3,colorBlue));
-        customCourseList.add(new CustomCourse(3,"编译原理",5,6,1,colorPink));
-        customCourseList.add(new CustomCourse(4,"编译原理",7,8,3,colorPink));
-        customCourseList.add(new CustomCourse(5,"操作系统",1,2,2,colorBlue));
-        customCourseList.add(new CustomCourse(6,"操作系统",3,4,4,colorBlue));
-        customCourseList.add(new CustomCourse(7,"计算机图形学",5,6,5,colorPink));
-        customCourseList.add(new CustomCourse(8,"计算机图形学",3,4,2,colorPink));
-        customCourseList.add(new CustomCourse(9,"计算机网络",3,4,5,colorBlue));
-        customCourseList.add(new CustomCourse(10,"计算机网络",7,8,1,colorBlue));
+        List<CustomCourse> courseList = LitePal.findAll(CustomCourse.class);
+        Random random = new Random(2);
+        for (CustomCourse customCourse : courseList) {
+            customCourse.setBackgroundColor(colors[random.nextInt(10)%colors.length]);
+        }
+        customCourseList.addAll(courseList);
 
     }
 
@@ -110,6 +111,7 @@ public class CourseActivity extends AppCompatActivity {
                 lastClickedView = v;
 
                 courseLayout.addCourses(customCourseList);
+
             });
             layoutWeekWrapper.addView(view);
         }

@@ -1,4 +1,4 @@
-package csu.edu.ice.model;
+package csu.edu.ice.model.interfaze;
 
 /**
  * Created by ice on 2018/7/7.

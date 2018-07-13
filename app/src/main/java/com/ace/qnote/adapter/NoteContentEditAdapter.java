@@ -10,7 +10,7 @@ import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.util.List;
 
-import csu.edu.ice.model.SimpleContentBean;
+import csu.edu.ice.model.model.SimpleContentBean;
 
 public class NoteContentEditAdapter extends BaseItemDraggableAdapter<SimpleContentBean,BaseViewHolder> {
     public NoteContentEditAdapter(List<SimpleContentBean> data) {

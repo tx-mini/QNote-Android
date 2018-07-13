@@ -13,7 +13,7 @@ import com.ace.qnote.base.BaseActivity;
 import com.ace.qnote.fragment.ChooseCourseWeekFragment;
 import com.ace.qnote.fragment.ChooseTimeFragment;
 
-import csu.edu.ice.model.ICourse;
+import csu.edu.ice.model.interfaze.ICourse;
 
 import static com.ace.qnote.util.Const.weekdays;
 
