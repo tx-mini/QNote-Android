@@ -49,9 +49,12 @@
         android:hint="选择学校"
         android:layout_marginTop="65dp" />
     <EditText
+        android:id="@+id/tv_id"
         style="@style/welcome_edittext"
         android:hint="学号" />
     <EditText
+        android:inputType="textPassword"
+        android:id="@+id/tv_password"
         style="@style/welcome_edittext"
         android:hint="教务管理系统密码" />
 

@@ -6,4 +6,6 @@ public class Const {
 
     public static final int CONTENT_TYPE_IMG = 2000;
     public static final int CONTENT_TYPE_TEXT = 2001;
+
+    public static final boolean debug = false;
 }

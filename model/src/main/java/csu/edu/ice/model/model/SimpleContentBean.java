@@ -1,4 +1,4 @@
-package csu.edu.ice.model;
+package csu.edu.ice.model.model;
 
 public class SimpleContentBean {
     private String content;

@@ -47,22 +47,19 @@ public class NetUtil {
         return retrofit;
     }
 
-    public static <T> void doRetrofitRequest(Observable<RxReturnData<T>> observable, final CallBack<T> callBack) {
+    public static <T> void doRetrofitRequest(Observable<T> observable, final CallBack<T> callBack) {
         observable
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<RxReturnData<T>>() {
+                .subscribe(new Consumer<T>() {
                     @Override
-                    public void accept(@NonNull RxReturnData<T> t) throws Exception {
-                        if (t.isSuccess()) {
-                            callBack.onSuccess(t.getResult());
-                        } else {
-                            callBack.onFailure(t.getCode().toString());
-                        }
+                    public void accept(@NonNull T t) throws Exception {
+                            callBack.onSuccess(t);
                     }
                 }, new Consumer<Throwable>() {
                     @Override
                     public void accept(@NonNull Throwable throwable) throws Exception {
+                        throwable.printStackTrace();
                         callBack.onError(throwable);
                     }
                 });
