@@ -48,4 +48,5 @@ dependencies {
         exclude group: 'com.android.support'
     }
     implementation project(':PhotoPicker')
+    compile 'com.github.clans:fab:1.6.4'
 }
