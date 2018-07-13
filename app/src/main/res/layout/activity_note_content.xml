@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<LinearLayout
-    android:orientation="vertical"
+<LinearLayout android:orientation="vertical"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <RelativeLayout
         android:id="@+id/rl_title_bar"
         android:layout_width="fill_parent"
@@ -29,7 +28,19 @@
             android:layout_height="wrap_content"
             android:text="笔记"
             />
+        <LinearLayout
+            android:layout_alignParentEnd="true"
+            android:id="@+id/ll_share"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:gravity="center">
 
+            <ImageView
+                android:layout_width="@dimen/back_arrow_width"
+                android:layout_height="@dimen/back_arrow_height"
+                android:background="@mipmap/ic_share" />
+
+        </LinearLayout>
     </RelativeLayout>
     <View
         style="@style/title_bar_divider"/>
@@ -43,6 +54,7 @@
 
         </android.support.v7.widget.RecyclerView>
         <LinearLayout
+            android:id="@+id/ll_add"
             android:layout_marginBottom="90dp"
             android:gravity="center"
             android:layout_gravity="bottom"
@@ -62,6 +74,21 @@
                 android:layout_width="68dp"
                 android:layout_height="68dp" />
         </LinearLayout>
+        <com.github.clans.fab.FloatingActionMenu
+            android:visibility="gone"
+            android:id="@+id/fam_tools"
+            android:layout_gravity="end|bottom"
+            android:layout_marginRight="50dp"
+            android:layout_marginBottom="100dp"
+            app:menu_colorNormal="@color/colorPrimary"
+            app:menu_colorPressed="@color/colorPrimaryDark"
+            app:menu_icon="@mipmap/ic_tools"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <com.github.clans.fab.FloatingActionButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </com.github.clans.fab.FloatingActionMenu>
     </FrameLayout>
 
 </LinearLayout>
