@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+    <android.support.v7.widget.CardView app:cardCornerRadius="10dp"
+        android:layout_margin="10dp"
+        android:layout_width="260dp"
+        android:layout_height="180dp"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+        <RelativeLayout
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <EditText
+                android:textSize="16sp"
+                android:gravity="center"
+                android:background="@drawable/shape_bg_rename"
+                android:id="@+id/et_name"
+                android:layout_marginTop="39dp"
+                android:layout_centerHorizontal="true"
+                android:layout_width="match_parent"
+                android:layout_height="50dp" />
+
+            <Button
+                android:id="@+id/btn_cancel"
+                android:layout_marginTop="26dp"
+                android:background="@drawable/shape_button_cancel"
+                style="@style/dialog_modify_title_button_style"
+                android:layout_alignLeft="@id/et_name"
+                android:layout_below="@id/et_name"
+                android:text="取消"/>
+
+            <Button
+                android:id="@+id/btn_ok"
+                android:layout_marginTop="26dp"
+                android:background="@drawable/shape_button_ok"
+                android:layout_alignRight="@id/et_name"
+                style="@style/dialog_modify_title_button_style"
+                android:layout_below="@id/et_name"
+                android:text="确定"/>
+
+        </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
+</RelativeLayout>
+

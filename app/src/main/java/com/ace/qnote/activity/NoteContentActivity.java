@@ -130,8 +130,6 @@ public class NoteContentActivity extends BaseActivity {
             public void clearView(RecyclerView.ViewHolder viewHolder, int pos) {}
             @Override
             public void onItemSwiped(RecyclerView.ViewHolder viewHolder, int pos) {
-//                noteContentEditAdapter.getData().remove(pos);
-                noteContentAdapter.getData().remove(pos);
             }
             @Override
             public void onItemSwipeMoving(Canvas canvas, RecyclerView.ViewHolder viewHolder, float dX, float dY, boolean isCurrentlyActive) {
@@ -279,8 +277,6 @@ public class NoteContentActivity extends BaseActivity {
         noteContentAdapter.setOnItemLongClickListener(new BaseQuickAdapter.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(BaseQuickAdapter adapter, View view, int position) {
-                Log.d(TAG, "onItemLongClick: ");
-
                 rv_note_content.post(() -> {
                     Vibrator vibrator = (Vibrator) getBaseContext().getSystemService(Service.VIBRATOR_SERVICE);
                     if (vibrator != null) {
@@ -289,6 +285,8 @@ public class NoteContentActivity extends BaseActivity {
                     rv_note_content.setAdapter(noteContentEditAdapter);
                     doFadeOut(ll_add);
                     doFadeIn(fam_tools);
+                    noteContentEditAdapter.enableSwipeItem();
+                    noteContentEditAdapter.setOnItemSwipeListener(onItemSwipeListener);
                     isEditing = true;
                 });
                 return false;
@@ -300,10 +298,6 @@ public class NoteContentActivity extends BaseActivity {
         itemTouchHelper.attachToRecyclerView(rv_note_content);
         noteContentEditAdapter.enableDragItem(itemTouchHelper, R.id.cv_content, true);
         noteContentEditAdapter.setOnItemDragListener(onItemDragListener);
-
-        noteContentEditAdapter.enableSwipeItem();
-        noteContentEditAdapter.setOnItemSwipeListener(onItemSwipeListener);
-
         rv_note_content.setAdapter(noteContentAdapter);
     }
 
@@ -343,6 +337,9 @@ public class NoteContentActivity extends BaseActivity {
         if (isEditing){
             rv_note_content.setAdapter(noteContentAdapter);
             isEditing = false;
+            doFadeOut(fam_tools);
+            doFadeIn(ll_add);
+            noteContentEditAdapter.disableSwipeItem();
         }else {
             super.onBackPressed();
         }

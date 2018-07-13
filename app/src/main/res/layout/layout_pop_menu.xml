@@ -28,6 +28,7 @@
                 android:layout_height="@dimen/line_height"/>
 
             <TextView
+                android:id="@+id/tv_rename"
                 android:text="重命名"
                 style="@style/pop_menu_text_style"/>
             <View
