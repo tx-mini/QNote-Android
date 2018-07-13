@@ -342,6 +342,7 @@ public class NoteContentActivity extends BaseActivity {
     public void onBackPressed() {
         if (isEditing){
             rv_note_content.setAdapter(noteContentAdapter);
+            isEditing = false;
         }else {
             super.onBackPressed();
         }
