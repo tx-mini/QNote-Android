@@ -79,8 +79,12 @@ public class NoteAdapter extends BaseQuickAdapter<String,BaseViewHolder> {
         recyclerView.setAdapter(termAdapter);
         termAdapter.setOnItemClickListener((adapter, view1, position) -> {
             view1.setBackgroundColor(mContext.getResources().getColor(R.color.colorPrimary));
+            view1.findViewById(R.id.line).setVisibility(View.INVISIBLE);
             moveToIndex = position;
-            if(lastView!=null)lastView.setBackgroundColor(Color.WHITE);
+            if(lastView!=null){
+                lastView.setBackgroundColor(Color.WHITE);
+                lastView.findViewById(R.id.line).setVisibility(View.VISIBLE);
+            }
             lastView = view1;
         });
         recyclerView.setLayoutManager(new LinearLayoutManager(mContext));

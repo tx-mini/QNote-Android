@@ -15,7 +15,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
     <View
-        android:background="#FFE9E9E9"
+        android:id="@+id/line"
+        android:background="@color/lineColor"
         android:layout_width="match_parent"
         android:layout_height="@dimen/line_height"/>
 </LinearLayout>

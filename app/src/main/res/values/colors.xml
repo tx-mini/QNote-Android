@@ -15,4 +15,5 @@
     <color name="cyan">#e2f7f6</color>
     <color name="mainTextGreyColor">#FF676767</color>
     <color name="drawer_text_color">#FF808080</color>
+    <color name="lineColor">#FFE9E9E9</color>
 </resources>
