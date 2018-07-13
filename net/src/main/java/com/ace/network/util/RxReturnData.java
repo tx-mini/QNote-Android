@@ -3,8 +3,8 @@ package com.ace.network.util;
 
 public class RxReturnData<T> {
     private boolean success;
-    private String message;
-    private T data;
+    private Integer code;
+    private T result;
 
     public boolean isSuccess() {
         return success;
@@ -14,19 +14,19 @@ public class RxReturnData<T> {
         this.success = success;
     }
 
-    public T getData() {
-        return data;
+    public T getResult() {
+        return result;
     }
 
-    public void setData(T data) {
-        this.data = data;
+    public void setResult(T result) {
+        this.result = result;
     }
 
-    public String getMessage() {
-        return message;
+    public Integer getCode() {
+        return code;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setCode(Integer code) {
+        this.code = code;
     }
 }

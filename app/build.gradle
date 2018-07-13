@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.mob.sdk'
 
 android {
     compileSdkVersion 26
@@ -9,6 +10,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
     }
     buildTypes {
         release {
@@ -48,4 +50,7 @@ dependencies {
         exclude group: 'com.android.support'
     }
     implementation project(':PhotoPicker')
+    compile files('src/main/lib/cos-android-sdk-5.4.6.jar')
+    compile files('src/main/lib/qcloud-foundation.1.3.2.jar')
+    compile 'com.github.clans:fab:1.6.4'
 }
