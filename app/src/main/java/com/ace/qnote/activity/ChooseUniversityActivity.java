@@ -21,7 +21,7 @@ import org.litepal.crud.callback.FindMultiCallback;
 
 import java.util.List;
 
-import csu.edu.ice.model.University;
+import csu.edu.ice.model.model.University;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.Retrofit;

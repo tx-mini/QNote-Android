@@ -16,7 +16,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import csu.edu.ice.model.ICourse;
+import csu.edu.ice.model.interfaze.ICourse;
 
 /**
  * Created by ice on 2018/7/7.

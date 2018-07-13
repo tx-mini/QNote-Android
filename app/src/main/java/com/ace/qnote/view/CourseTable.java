@@ -16,7 +16,7 @@ import com.ace.qnote.R;
 import java.util.ArrayList;
 import java.util.List;
 
-import csu.edu.ice.model.ICourse;
+import csu.edu.ice.model.interfaze.ICourse;
 
 public class CourseTable extends ViewGroup implements View.OnClickListener {
     private static final String TAG = "CourseLayout";
