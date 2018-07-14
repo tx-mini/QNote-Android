@@ -5,7 +5,7 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:openDrawer="start">
+    tools:openDrawer="off">
 
 
     <RelativeLayout
@@ -59,6 +59,17 @@
             android:src="@mipmap/ic_add_photo"
             android:layout_width="68dp"
             android:layout_height="68dp" />
+
+        <TextView
+            android:visibility="invisible"
+            android:id="@+id/tv_null_tip"
+            android:layout_marginTop="200dp"
+            android:layout_centerHorizontal="true"
+            android:textSize="20sp"
+            android:gravity="center"
+            android:text="暂无笔记\n点击下方的按钮创建笔记吧"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
     </RelativeLayout>
     <android.support.design.widget.NavigationView

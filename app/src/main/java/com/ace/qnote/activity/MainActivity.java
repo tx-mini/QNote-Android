@@ -32,13 +32,12 @@ import com.ace.qnote.util.CommonUtils;
 import com.ace.qnote.util.Const;
 import com.ace.qnote.util.permission.ActionCallBackListener;
 import com.ace.qnote.util.permission.RxPermissionUtil;
+import com.ace.qnote.view.CourseTable;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.zhouwei.library.CustomPopWindow;
-import com.google.gson.Gson;
 
 import org.litepal.LitePal;
-import org.litepal.crud.callback.SaveCallback;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -51,7 +50,6 @@ import csu.edu.ice.model.dao.BookBean;
 import csu.edu.ice.model.dao.NoteBean;
 import csu.edu.ice.model.dao.TermBean;
 import csu.edu.ice.model.model.CustomCourse;
-import csu.edu.ice.model.model.ContentBean;
 import csu.edu.ice.model.model.TermResult;
 import me.iwf.photopicker.PhotoPicker;
 
@@ -75,7 +73,7 @@ public class MainActivity extends BaseActivity {
     private TextView tvName;
     private DrawerLayout drawerLayout;
     private int term;
-
+    private TextView tvNullTip;
     @Override
     public void initParams(Bundle params) {
         notebookList = new ArrayList<>();
@@ -110,6 +108,7 @@ public class MainActivity extends BaseActivity {
         rvNote = findViewById(R.id.rv_note);
         tvName = findViewById(R.id.tv_name);
         drawerLayout = findViewById(R.id.drawer_layout);
+        tvNullTip = findViewById(R.id.tv_null_tip);
     }
 
     @Override
@@ -148,7 +147,27 @@ public class MainActivity extends BaseActivity {
             case R.id.layout_archive:
                 break;
             case R.id.layout_course_table:
-                startActivity(new Intent(this,CourseActivity.class));
+                if(LitePal.count(CourseTable.class)>0){
+                    startActivity(new Intent(this,CourseActivity.class));
+                }else{
+                    NetUtil.doRetrofitRequest(NetUtil.courseService.getCourseList(Const.OPEN_ID), new CallBack<List<CustomCourse>>() {
+                        @Override
+                        public void onSuccess(List<CustomCourse> data) {
+                            LitePal.saveAll(data);
+                            startActivity(new Intent(MainActivity.this,CourseActivity.class));
+                        }
+
+                        @Override
+                        public void onError(Throwable throwable) {
+
+                        }
+
+                        @Override
+                        public void onFailure(String message) {
+
+                        }
+                    });
+                }
                 break;
             case R.id.layout_dustbin:
                 openDustbin();
@@ -191,9 +210,9 @@ public class MainActivity extends BaseActivity {
         NetUtil.doRetrofitRequest(NetUtil.noteService.getNoteList(Const.OPEN_ID,"",1,0), new CallBack<List<NoteBean>>() {
             @Override
             public void onSuccess(List<NoteBean> data) {
-                noteList.clear();
-                noteList.addAll(data);
-                noteAdapter.notifyDataSetChanged();
+                showNoteList(data);
+                drawerLayout.closeDrawer(Gravity.LEFT);
+                tvName.setText("垃圾桶");
             }
 
             @Override
@@ -206,6 +225,22 @@ public class MainActivity extends BaseActivity {
 
             }
         });
+    }
+
+    private void showNoteList(List<NoteBean> data) {
+        if(tvName.getText().equals("垃圾桶")){
+            tvNullTip.setText("垃圾桶暂无笔记");
+        }else{
+            tvNullTip.setText("暂无笔记\n点击下方的按钮创建笔记吧");
+        }
+        if(data ==null || data.size() == 0){
+            tvNullTip.setVisibility(View.VISIBLE);
+        }else{
+            tvNullTip.setVisibility(View.INVISIBLE);
+        }
+        noteList.clear();
+        noteList.addAll(data);
+        noteAdapter.notifyDataSetChanged();
     }
 
     private void showDeleteNoteBookPopwindow() {
@@ -294,7 +329,7 @@ public class MainActivity extends BaseActivity {
         NetUtil.doRetrofitRequest(NetUtil.noteService.getNoteList(Const.OPEN_ID,bookId,0,0), new CallBack<List<NoteBean>>() {
             @Override
             public void onSuccess(List<NoteBean> data) {
-                noteAdapter.setNewData(data);
+                showNoteList(data);
                 drawerLayout.closeDrawer(Gravity.LEFT);
             }
 
@@ -335,6 +370,7 @@ public class MainActivity extends BaseActivity {
         initDrawerRecyclerView();
     }
     private void initNoteRecyclerView() {
+
         noteAdapter = new NoteAdapter(R.layout.item_note,noteList,this,notebook,rootView);
         noteAdapter.setOnItemClickListener((adapter, view, position) -> {
             Bundle bundle = new Bundle();
@@ -345,7 +381,9 @@ public class MainActivity extends BaseActivity {
         });
         rvNote.setAdapter(noteAdapter);
         rvNote.setLayoutManager(new LinearLayoutManager(this));
-
+        if(noteList == null || noteList.size()==0){
+            tvNullTip.setVisibility(View.VISIBLE);
+        }
     }
     private void initDrawerRecyclerView() {
         drawerNoteAdapter = new DrawerNoteAdapter(R.layout.item_drawer_note,notebookList);
