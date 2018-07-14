@@ -120,6 +120,9 @@ public class ContentBean {
         private List<?> inlineStyleRanges;
         private List<EntityRangesBean> entityRanges;
 
+        public BlocksBean() {
+        }
+
         public String getKey() {
             return key;
         }

@@ -28,14 +28,17 @@ import com.ace.qnote.adapter.DrawerNoteAdapter;
 import com.ace.qnote.adapter.NoteAdapter;
 import com.ace.qnote.adapter.TermAdapter;
 import com.ace.qnote.base.BaseActivity;
+import com.ace.qnote.util.CommonUtils;
 import com.ace.qnote.util.Const;
 import com.ace.qnote.util.permission.ActionCallBackListener;
 import com.ace.qnote.util.permission.RxPermissionUtil;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.zhouwei.library.CustomPopWindow;
+import com.google.gson.Gson;
 
 import org.litepal.LitePal;
+import org.litepal.crud.callback.SaveCallback;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -48,6 +51,7 @@ import csu.edu.ice.model.dao.BookBean;
 import csu.edu.ice.model.dao.NoteBean;
 import csu.edu.ice.model.dao.TermBean;
 import csu.edu.ice.model.model.CustomCourse;
+import csu.edu.ice.model.model.ContentBean;
 import csu.edu.ice.model.model.TermResult;
 import me.iwf.photopicker.PhotoPicker;
 
@@ -184,7 +188,7 @@ public class MainActivity extends BaseActivity {
     }
 
     private void openDustbin() {
-        NetUtil.doRetrofitRequest(NetUtil.getRetrofitInstance().create(NoteService.class).getNoteList(Const.OPEN_ID,"",1,0), new CallBack<List<NoteBean>>() {
+        NetUtil.doRetrofitRequest(NetUtil.noteService.getNoteList(Const.OPEN_ID,"",1,0), new CallBack<List<NoteBean>>() {
             @Override
             public void onSuccess(List<NoteBean> data) {
                 noteList.clear();
@@ -336,6 +340,7 @@ public class MainActivity extends BaseActivity {
             Bundle bundle = new Bundle();
             NoteBean noteBean = (NoteBean) adapter.getData().get(position);
             bundle.putString("title", noteBean.getName());
+            bundle.putString("noteId", noteBean.getId());
             startActivity(NoteContentActivity.class,bundle);
         });
         rvNote.setAdapter(noteAdapter);
@@ -351,6 +356,28 @@ public class MainActivity extends BaseActivity {
             tvName.setText(bookbean.getName());
             showLatestNoteList(bookbean.getId());
         });
+    }
+
+    private void showModifyTextPopWindow(String text) {
+        if (!CommonUtils.isEmpty(text)){
+            View view = LayoutInflater.from(this).inflate(R.layout.layout_pop_add_text,null);
+            CustomPopWindow popWindow = new CustomPopWindow.PopupWindowBuilder(this)
+                    .setView(view)//显示的布局
+                    .enableBackgroundDark(true) //弹出popWindow时，背景是否变暗
+                    .setBgDarkAlpha(0.7f) // 控制亮度
+                    .create()//创建PopupWindow
+                    .showAtLocation(getmContextView(), Gravity.CENTER,0, 0);//显示PopupWindow
+
+            View btnOk = view.findViewById(R.id.btn_ok);
+            View btnCancel = view.findViewById(R.id.btn_cancel);
+            EditText editText = view.findViewById(R.id.et_text);
+            editText.setText(text);
+            btnOk.setOnClickListener(v -> {
+                popWindow.dissmiss();
+            });
+
+            btnCancel.setOnClickListener(v -> popWindow.dissmiss());
+        }
     }
 
     private void showNoteList(String book_id){

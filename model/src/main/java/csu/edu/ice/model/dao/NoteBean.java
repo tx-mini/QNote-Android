@@ -33,6 +33,8 @@ public class NoteBean extends LitePalSupport implements Serializable {
     @SerializedName("openid")
     private String openId;
 
+    private String syncTime;
+
     public NoteBean(){}
 
     public NoteBean(String title) {
@@ -109,5 +111,13 @@ public class NoteBean extends LitePalSupport implements Serializable {
 
     public void setOpenId(String openId) {
         this.openId = openId;
+    }
+
+    public String getSyncTime() {
+        return syncTime;
+    }
+
+    public void setSyncTime(String syncTime) {
+        this.syncTime = syncTime;
     }
 }
