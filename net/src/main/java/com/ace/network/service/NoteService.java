@@ -45,9 +45,5 @@ public interface NoteService {
 
     Observable<String> deleteNote(String openId, String noteId);
 
-    @FormUrlEncoded
-    @POST("/listNote")
-    Observable<List<NoteBean>> getNoteList(@Field("openid") String openId,@Field("book_id") String bookId,@Field("is_rubbish") int isRubbish,@Field("is_imp") int is_imp);
-
 
 }
