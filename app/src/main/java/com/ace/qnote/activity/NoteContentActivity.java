@@ -45,6 +45,9 @@ import com.tencent.tauth.IUiListener;
 import com.tencent.tauth.Tencent;
 import com.tencent.tauth.UiError;
 
+import org.litepal.LitePal;
+import org.litepal.crud.callback.FindMultiCallback;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -72,14 +75,24 @@ public class NoteContentActivity extends BaseActivity {
     private FloatingActionMenu fam_tools;
     private boolean isEditing = false;
     private String title = "";
+    private String noteId = "";
     private ArrayList<SimpleContentBean> contentList;
+    private int curItem;
+    private NoteBean noteBean;
 
     @Override
     public void initParams(Bundle params) {
         if (params != null) {
             title = params.getString("title");
+            noteId = params.getString("noteId");
         }
         contentList = new ArrayList<>();
+        LitePal.where("note_id = ?", noteId + "").findAsync(NoteBean.class).listen(new FindMultiCallback() {
+            @Override
+            public <T> void onFinish(List<T> t) {
+                noteBean = (NoteBean) t.get(0);
+            }
+        });
     }
 
     @Override
@@ -298,7 +311,8 @@ public class NoteContentActivity extends BaseActivity {
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
                 switch (view.getId()){
                     case R.id.tv_text_edit:
-                        showModifyTextPopWindow(((TextView)view).getText().toString());
+                        showModifyTextPopWindow(((TextView)view).getText().toString(),false);
+                        break;
                 }
             }
         });
@@ -311,7 +325,7 @@ public class NoteContentActivity extends BaseActivity {
         rv_note_content.setAdapter(noteContentAdapter);
     }
 
-    private void showModifyTextPopWindow(String text) {
+    private void showModifyTextPopWindow(String text,Boolean isAdd) {
         if (!CommonUtils.isEmpty(text)){
             View view = LayoutInflater.from(this).inflate(R.layout.layout_pop_add_text,null);
             CustomPopWindow popWindow = new CustomPopWindow.PopupWindowBuilder(this)
@@ -327,7 +341,14 @@ public class NoteContentActivity extends BaseActivity {
             editText.setText(text);
             btnOk.setOnClickListener(v -> {
                 if (!CommonUtils.isEmpty(editText.getText().toString())){
+                    if (isAdd){
+                        if (noteBean!=null){
+//                            noteBean.setContent();
+//                            noteBean.saveAsync()
+                        }
+                    }else {
 
+                    }
                 }
                 popWindow.dissmiss();
             });
@@ -337,12 +358,12 @@ public class NoteContentActivity extends BaseActivity {
     }
 
     private void initPageData() {
-        NetUtil.doRetrofitRequest(NetUtil.getRetrofitInstance().create(NoteService.class).getNoteContent(Const.OPEN_ID), new CallBack<NoteBean>() {
+        NetUtil.doRetrofitRequest(NetUtil.getRetrofitInstance().create(NoteService.class).getNoteContent(Const.OPEN_ID,noteId), new CallBack<NoteBean>() {
             @Override
             public void onSuccess(NoteBean data) {
-//                String _tempJson = data.getContent();
-                String _tempJson =
-                        "{\"blocks\":[{\"key\":\"d5l3p\",\"text\":\"123asdasdasdas23d1as321d856qw4e65wq41651d53as1d8qw4r56qw4f5631asf56a4sf654as5f6a4s56f4as65465\",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}},{\"key\":\"9f3dc\",\"text\":\"\",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}},{\"key\":\"3vq85\",\"text\":\"xxxx\",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}},{\"key\":\"fgknl\",\"text\":\"\",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}},{\"key\":\"uhbi\",\"text\":\"\",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}},{\"key\":\"dk450\",\"text\":\"\",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}},{\"key\":\"13li4\",\"text\":\"\",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}},{\"key\":\"3cjrf\",\"text\":\" \",\"type\":\"atomic\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[{\"offset\":0,\"length\":1,\"key\":0}],\"data\":{}},{\"key\":\"e783e\",\"text\":\" \",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}},{\"key\":\"6dsjs\",\"text\":\"\",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}},{\"key\":\"6g1l5\",\"text\":\"dsadasd\",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}},{\"key\":\"a2oet\",\"text\":\" \",\"type\":\"atomic\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[{\"offset\":0,\"length\":1,\"key\":1}],\"data\":{}},{\"key\":\"dpbis\",\"text\":\"\",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}}],\"entityMap\":{\"0\":{\"type\":\"IMAGE\",\"mutability\":\"IMMUTABLE\",\"data\":{\"url\":\"https://cdn.flutterchina.club/images/flutter-mark-square-100.png\",\"name\":\"QQ20180526-104511@2x.png\",\"type\":\"IMAGE\",\"meta\":{}}},\"1\":{\"type\":\"IMAGE\",\"mutability\":\"IMMUTABLE\",\"data\":{\"url\":\"https://cdn.flutterchina.club/images/flutter-mark-square-100.png\",\"name\":\"QQ20180526-104511@2x.png\",\"type\":\"IMAGE\",\"meta\":{}}}}}";
+                String _tempJson = data.getContent();
+//                String _tempJson =
+//                        "{\"blocks\":[{\"key\":\"d5l3p\",\"text\":\"123asdasdasdas23d1as321d856qw4e65wq41651d53as1d8qw4r56qw4f5631asf56a4sf654as5f6a4s56f4as65465\",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}},{\"key\":\"9f3dc\",\"text\":\"\",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}},{\"key\":\"3vq85\",\"text\":\"xxxx\",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}},{\"key\":\"fgknl\",\"text\":\"\",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}},{\"key\":\"uhbi\",\"text\":\"\",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}},{\"key\":\"dk450\",\"text\":\"\",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}},{\"key\":\"13li4\",\"text\":\"\",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}},{\"key\":\"3cjrf\",\"text\":\" \",\"type\":\"atomic\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[{\"offset\":0,\"length\":1,\"key\":0}],\"data\":{}},{\"key\":\"e783e\",\"text\":\" \",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}},{\"key\":\"6dsjs\",\"text\":\"\",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}},{\"key\":\"6g1l5\",\"text\":\"dsadasd\",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}},{\"key\":\"a2oet\",\"text\":\" \",\"type\":\"atomic\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[{\"offset\":0,\"length\":1,\"key\":1}],\"data\":{}},{\"key\":\"dpbis\",\"text\":\"\",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}}],\"entityMap\":{\"0\":{\"type\":\"IMAGE\",\"mutability\":\"IMMUTABLE\",\"data\":{\"url\":\"https://cdn.flutterchina.club/images/flutter-mark-square-100.png\",\"name\":\"QQ20180526-104511@2x.png\",\"type\":\"IMAGE\",\"meta\":{}}},\"1\":{\"type\":\"IMAGE\",\"mutability\":\"IMMUTABLE\",\"data\":{\"url\":\"https://cdn.flutterchina.club/images/flutter-mark-square-100.png\",\"name\":\"QQ20180526-104511@2x.png\",\"type\":\"IMAGE\",\"meta\":{}}}}}";
                 Gson gson = new Gson();
                 ContentBean contentBean = gson.fromJson(_tempJson,ContentBean.class);
                 for (ContentBean.BlocksBean blocksBean : contentBean.getBlocks()) {

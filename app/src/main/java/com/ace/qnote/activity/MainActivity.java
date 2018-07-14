@@ -178,7 +178,7 @@ public class MainActivity extends BaseActivity {
     }
 
     private void openDustbin() {
-        NetUtil.doRetrofitRequest(NetUtil.getRetrofitInstance().create(NoteService.class).getNoteList(Const.OPEN_ID,"",1,0), new CallBack<List<NoteBean>>() {
+        NetUtil.doRetrofitRequest(NetUtil.noteService.getNoteList(Const.OPEN_ID,"",1,0), new CallBack<List<NoteBean>>() {
             @Override
             public void onSuccess(List<NoteBean> data) {
                 noteList.clear();
@@ -299,6 +299,7 @@ public class MainActivity extends BaseActivity {
             Bundle bundle = new Bundle();
             NoteBean noteBean = (NoteBean) adapter.getData().get(position);
             bundle.putString("title", noteBean.getName());
+            bundle.putString("noteId", noteBean.getId());
             startActivity(NoteContentActivity.class,bundle);
         });
         rvNote.setAdapter(noteAdapter);
@@ -337,7 +338,7 @@ public class MainActivity extends BaseActivity {
     private void showNoteList(String book_id){
 
         noteList = new ArrayList<>();
-        NetUtil.doRetrofitRequest(NetUtil.getRetrofitInstance().create(NoteService.class).getNoteList(Const.OPEN_ID,book_id,0,0), new CallBack<List<NoteBean>>() {
+        NetUtil.doRetrofitRequest(NetUtil.noteService.getNoteList(Const.OPEN_ID,book_id,0,0), new CallBack<List<NoteBean>>() {
             @Override
             public void onSuccess(List<NoteBean> data) {
                     noteList.clear();

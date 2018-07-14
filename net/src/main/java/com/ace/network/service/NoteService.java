@@ -16,32 +16,32 @@ import retrofit2.http.Query;
 
 public interface NoteService {
 
-//    @FormUrlEncoded
+    //    @FormUrlEncoded
 //    @POST("http://yapi.demo.qunar.com/mock/13512/getCategories/%7Bid%7D")
 //    Observable<RxReturnData<TermResult>> getTermAndRubbish(@Field("key") String value);
-    //TODO:因为测试数据需要，所以暂时用GET，换成真实数据要用上面注释掉的那个方法
-    @GET("http://yapi.demo.qunar.com/mock/13512/listBook/{openid}")
-    Observable<TermResult> getTermAndRubbish(@Path("openid") String value);
+    @FormUrlEncoded
+    @POST("listBook")
+    Observable<TermResult> getTermAndRubbish(@Field("openid") String value);
 
-
-
-    @GET("http://yapi.demo.qunar.com/mock/13512/note/index.php/mini/getNote/%7Bid%7D")
-    Observable<NoteBean> getNoteContent(@Query("key") String value);
 
     @FormUrlEncoded
-    @POST("http://yapi.demo.qunar.com/mock/13512/listNote")
-    Observable<List<NoteBean>> getNoteList(@Field("openid") String openId,@Field("book_id") String bookId,@Field("is_rubbish")int isRubbish,@Field("is_imp")int isImportant);
+    @POST("getNote")
+    Observable<NoteBean> getNoteContent(@Field("note_id") String noteId, @Field("openid") String openId);
 
-    Observable<String> move(String noteId,String bookId);
+    @FormUrlEncoded
+    @POST("listNote")
+    Observable<List<NoteBean>> getNoteList(@Field("openid") String openId, @Field("book_id") String bookId, @Field("is_rubbish") int isRubbish, @Field("is_imp") int isImportant);
 
-    
-    Observable<String> rename(String noteId,String newName);
+    Observable<String> move(String noteId, String bookId);
 
-    Observable<String> update(String openId, String noteId,String title,String bookId, boolean updateContent, String content, boolean isKeyNote);
+
+    Observable<String> rename(String noteId, String newName);
+
+    Observable<String> update(String openId, String noteId, String title, String bookId, boolean updateContent, String content, boolean isKeyNote);
 
     @FormUrlEncoded
     @POST("http://yapi.demo.qunar.com/mock/13512/createBook")
-    Observable<BookBean> addBook(@Field("openid") String openId,@Field("term") int term,@Field("name") String name);
+    Observable<BookBean> addBook(@Field("openid") String openId, @Field("term") int term, @Field("name") String name);
 
     Observable<String> deleteNote(String openId, String noteId);
 
