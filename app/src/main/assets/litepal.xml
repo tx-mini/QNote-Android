@@ -18,7 +18,6 @@
     <list>
         <mapping class="csu.edu.ice.model.model.University"/>
         <mapping class="csu.edu.ice.model.model.CustomCourse"/>
-        <mapping class="csu.edu.ice.model.dao.RubbishBean"/>
         <mapping class="csu.edu.ice.model.dao.TermBean"/>
         <mapping class="csu.edu.ice.model.dao.BookBean"/>
         <mapping class="csu.edu.ice.model.dao.NoteBean"/>

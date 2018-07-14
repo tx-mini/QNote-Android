@@ -14,7 +14,13 @@ public class NoteBean extends LitePalSupport implements Serializable {
     @SerializedName("note_id")
     private String id;
     private String name;
-    private Boolean isKeyNote;
+
+    @SerializedName("is_imp")
+    private int isKeyNote;
+
+    @SerializedName("is_rubbish")
+    private int isRubbish;
+
     private String content;
 
     @SerializedName("recent_time")
@@ -22,6 +28,9 @@ public class NoteBean extends LitePalSupport implements Serializable {
 
     @SerializedName("book_ref")
     private String bookRef;
+
+    @SerializedName("openid")
+    private String openId;
 
 
     public NoteBean(){}
@@ -54,13 +63,6 @@ public class NoteBean extends LitePalSupport implements Serializable {
         this.name = name;
     }
 
-    public Boolean getKeyNote() {
-        return isKeyNote;
-    }
-
-    public void setKeyNote(Boolean keyNote) {
-        isKeyNote = keyNote;
-    }
 
     public String getContent() {
         return content;
@@ -84,5 +86,30 @@ public class NoteBean extends LitePalSupport implements Serializable {
 
     public void setRecentTime(String recentTime) {
         this.recentTime = recentTime;
+    }
+
+
+    public String getOpenId() {
+        return openId;
+    }
+
+    public void setOpenId(String openId) {
+        this.openId = openId;
+    }
+
+    public int getIsKeyNote() {
+        return isKeyNote;
+    }
+
+    public void setIsKeyNote(int isKeyNote) {
+        this.isKeyNote = isKeyNote;
+    }
+
+    public int getIsRubbish() {
+        return isRubbish;
+    }
+
+    public void setIsRubbish(int isRubbish) {
+        this.isRubbish = isRubbish;
     }
 }

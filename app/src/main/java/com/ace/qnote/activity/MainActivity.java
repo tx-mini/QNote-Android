@@ -61,7 +61,7 @@ public class MainActivity extends BaseActivity {
     private View rootView;
     private DrawerNoteAdapter drawerNoteAdapter;
     private NoteAdapter noteAdapter;
-    private ArrayList noteList;
+    private ArrayList<NoteBean> noteList;
     private BookBean notebook;
     private TextView tvName;
 
@@ -73,6 +73,7 @@ public class MainActivity extends BaseActivity {
     public void initParams(Bundle params) {
         notebookList = new ArrayList<>();
         termList = new ArrayList<>();
+        noteList = new ArrayList<>();
     }
 
     @Override
@@ -146,6 +147,7 @@ public class MainActivity extends BaseActivity {
                 startActivity(new Intent(this,CourseActivity.class));
                 break;
             case R.id.layout_dustbin:
+                openDustbin();
                 break;
             case R.id.layout_new_notebook:
                 showAddNotePopwindow(term);
@@ -179,6 +181,27 @@ public class MainActivity extends BaseActivity {
                 break;
 
         }
+    }
+
+    private void openDustbin() {
+        NetUtil.doRetrofitRequest(NetUtil.getRetrofitInstance().create(NoteService.class).getNoteList(Const.OPEN_ID,"",1,0), new CallBack<List<NoteBean>>() {
+            @Override
+            public void onSuccess(List<NoteBean> data) {
+                noteList.clear();
+                noteList.addAll(data);
+                noteAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+
+            }
+
+            @Override
+            public void onFailure(String message) {
+
+            }
+        });
     }
 
     private void showDeleteNoteBookPopwindow() {
@@ -297,15 +320,12 @@ public class MainActivity extends BaseActivity {
 
     private void showNoteList(String book_id){
 
-        noteList = new ArrayList<>();
-        NetUtil.doRetrofitRequest(NetUtil.getRetrofitInstance().create(NoteService.class).getNoteList("1"), new CallBack<RxReturnData<List<NoteBean>>>() {
+        NetUtil.doRetrofitRequest(NetUtil.getRetrofitInstance().create(NoteService.class).getNoteList(Const.OPEN_ID,book_id,0,0), new CallBack<List<NoteBean>>() {
             @Override
-            public void onSuccess(RxReturnData<List<NoteBean>> data) {
-                if(data.getCode() == 200){
-                    noteList.clear();
-                    noteList.addAll(data.getResult());
-                    noteAdapter.notifyDataSetChanged();
-                }
+            public void onSuccess(List<NoteBean> data) {
+                noteList.clear();
+                noteList.addAll(data);
+                noteAdapter.notifyDataSetChanged();
             }
 
             @Override
