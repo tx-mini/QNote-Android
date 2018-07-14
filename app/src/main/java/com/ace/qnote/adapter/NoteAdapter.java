@@ -67,12 +67,7 @@ public class NoteAdapter extends BaseQuickAdapter<NoteBean,BaseViewHolder> {
                     //删除
                     tvDelete.setOnClickListener(v1 -> {
                         popMenuWindow.dissmiss();
-                        CustomPopWindow popDeleteWindow = new CustomPopWindow.PopupWindowBuilder(mContext)
-                                .setView(R.layout.layout_pop_delete_note)
-                                .enableBackgroundDark(true)
-                                .setBgDarkAlpha(0.7f)
-                                .create()
-                                .showAtLocation(v, Gravity.CENTER,0,0);
+                        showDeletePopwindow(rootView,item);
                     });
 
                     //移动
@@ -93,7 +88,20 @@ public class NoteAdapter extends BaseQuickAdapter<NoteBean,BaseViewHolder> {
 
         curPosition = helper.getAdapterPosition();
     }
+
+    private void showDeletePopwindow(View rootView, NoteBean item) {
+        View view = LayoutInflater.from(mContext).inflate(R.layout.layout_pop_rename,null);
+        CustomPopWindow popDeleteWindow = new CustomPopWindow.PopupWindowBuilder(mContext)
+                .setView(view)
+                .enableBackgroundDark(true)
+                .setBgDarkAlpha(0.7f)
+                .create()
+                .showAtLocation(rootView, Gravity.CENTER,0,0);
+    }
+
     View lastView;
+
+    //完工
     private void showMoveNotePopwindow(View rootView,NoteBean noteBean){
         //初始化为-1
         moveToIndex = -1;
