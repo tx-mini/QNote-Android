@@ -77,4 +77,12 @@ public class NoteBean extends LitePalSupport implements Serializable {
     public void setBookRef(String bookRef) {
         this.bookRef = bookRef;
     }
+
+    public String getRecentTime() {
+        return recentTime;
+    }
+
+    public void setRecentTime(String recentTime) {
+        this.recentTime = recentTime;
+    }
 }

@@ -46,8 +46,8 @@ public class NoteAdapter extends BaseQuickAdapter<NoteBean,BaseViewHolder> {
     @Override
     protected void convert(BaseViewHolder helper, NoteBean item) {
         helper.setText(R.id.tv_note_title,item.getName());
-        if(item.getCreateTime()!=null){
-            helper.setText(R.id.tv_date,item.getCreateTime().toString());
+        if(item.getRecentTime()!=null){
+            helper.setText(R.id.tv_date,item.getRecentTime().toString());
         }
 
         helper.getView(R.id.layout_root)
