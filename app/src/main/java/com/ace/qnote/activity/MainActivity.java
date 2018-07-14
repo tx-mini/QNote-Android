@@ -244,6 +244,7 @@ public class MainActivity extends BaseActivity {
         rvNote.setLayoutManager(new LinearLayoutManager(this));
 
         //侧滑栏recycleView初始化
+        getDataFromLocal();
         drawerNoteAdapter = new DrawerNoteAdapter(R.layout.item_drawer_note,notebookList);
         rvNotebook.setAdapter(drawerNoteAdapter);
         rvNotebook.setLayoutManager(new LinearLayoutManager(this));
@@ -272,6 +273,16 @@ public class MainActivity extends BaseActivity {
 
             }
         });
+    }
+
+    private void getDataFromLocal() {
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        });
+        thread.run();
     }
 
     private void syncDataFromNet() {

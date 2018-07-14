@@ -337,6 +337,7 @@ public class NoteContentActivity extends BaseActivity {
     }
 
     private void initPageData() {
+
         NetUtil.doRetrofitRequest(NetUtil.getRetrofitInstance().create(NoteService.class).getNoteContent(Const.OPEN_ID), new CallBack<NoteContentBean>() {
             @Override
             public void onSuccess(NoteContentBean data) {
