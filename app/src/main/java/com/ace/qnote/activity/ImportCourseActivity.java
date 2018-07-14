@@ -11,7 +11,6 @@ import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.ace.network.service.CourseService;
 import com.ace.network.util.CallBack;
 import com.ace.network.util.NetUtil;
 import com.ace.qnote.R;
@@ -99,7 +98,7 @@ public class ImportCourseActivity extends BaseActivity {
                     return;
                 }
 
-                NetUtil.doRetrofitRequest(NetUtil.getRetrofitInstance().create(CourseService.class).getCourseList(id), new CallBack<List<CustomCourse>>() {
+                NetUtil.doRetrofitRequest(NetUtil.courseService.getCourseList(id), new CallBack<List<CustomCourse>>() {
 
 
                     @Override

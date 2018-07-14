@@ -9,7 +9,10 @@ import csu.edu.ice.model.dao.NoteBean;
 import csu.edu.ice.model.dao.NoteContentBean;
 import csu.edu.ice.model.model.TermResult;
 import io.reactivex.Observable;
+import retrofit2.http.Field;
+import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -36,7 +39,9 @@ public interface NoteService {
 
     Observable<String> update(String openId, String noteId,String title,String bookId, boolean updateContent, String content, boolean isKeyNote);
 
-    Observable<BookBean> addBook(String openId, int term, String name);
+    @FormUrlEncoded
+    @POST("http://yapi.demo.qunar.com/mock/13512/createBook")
+    Observable<BookBean> addBook(@Field("openid") String openId,@Field("term") int term,@Field("name") String name);
 
     Observable<String> deleteNote(String openId, String noteId);
 
