@@ -145,7 +145,7 @@ public class MainActivity extends BaseActivity {
                 openDustbin();
                 break;
             case R.id.layout_new_notebook:
-                showAddNotePopwindow(term);
+                showAddNoteBookPopwindow(term);
                 break;
             case R.id.layout_study:
                 break;
@@ -219,10 +219,10 @@ public class MainActivity extends BaseActivity {
                 .showAtLocation(getmContextView(), Gravity.CENTER,0, 0);//显示PopupWindow
     }
 
-    private void showAddNotePopwindow(int term) {
+    private void showAddNoteBookPopwindow(int term) {
         View view = LayoutInflater.from(this).inflate(R.layout.layout_pop_rename,null);
         EditText etName = view.findViewById(R.id.et_name);
-        etName.setHint("请输入笔记名称");
+        etName.setHint("请输入笔记本名称");
         CustomPopWindow popWindow = showWindow(view);
         view.findViewById(R.id.btn_ok).setOnClickListener(v->{
 
@@ -236,6 +236,8 @@ public class MainActivity extends BaseActivity {
                     data.save();
                     notebookList.add(data);
                     drawerNoteAdapter.notifyDataSetChanged();
+                    popWindow.dissmiss();
+                    showToast("创建成功！");
                 }
 
                 @Override
@@ -269,7 +271,7 @@ public class MainActivity extends BaseActivity {
 
             popWindow.dissmiss();
             drawerLayout.closeDrawer(Gravity.LEFT);
-
+            term = termBean.getTerm();
             if(bookList.size()>0) {
                 showLatestNoteList(bookList.get(0).getId());
             }
@@ -366,7 +368,8 @@ public class MainActivity extends BaseActivity {
     }
 
     private void syncDataFromNet() {
-        NetUtil.doRetrofitRequest(NetUtil.getRetrofitInstance().create(NoteService.class).getTermAndRubbish(Const.OPEN_ID), new CallBack<TermResult>() {
+        NetUtil.doRetrofitRequest(NetUtil.getRetrofitInstance().create(NoteService.class).getTermAndRubbish(Const.OPEN_ID),
+                new CallBack<TermResult>() {
             @Override
             public void onSuccess(TermResult data) {
                 notebookList.clear();
@@ -380,8 +383,9 @@ public class MainActivity extends BaseActivity {
 
                 termList.clear();
                 termList.addAll(data.getTermList());
-
+                LitePal.deleteAll(BookBean.class);
                 LitePal.saveAll(notebookList);
+                LitePal.deleteAll(TermBean.class);
                 LitePal.saveAll(termList);
                 drawerNoteAdapter.notifyDataSetChanged();
                 if(notebookList!=null && notebookList.size()>0) {

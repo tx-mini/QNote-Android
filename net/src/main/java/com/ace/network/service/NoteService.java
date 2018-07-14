@@ -4,14 +4,12 @@ import java.util.List;
 
 import csu.edu.ice.model.dao.BookBean;
 import csu.edu.ice.model.dao.NoteBean;
-import csu.edu.ice.model.dao.RubbishBean;
 import csu.edu.ice.model.model.TermResult;
 import io.reactivex.Observable;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
-import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface NoteService {
@@ -20,8 +18,9 @@ public interface NoteService {
 //    @POST("http://yapi.demo.qunar.com/mock/13512/getCategories/%7Bid%7D")
 //    Observable<RxReturnData<TermResult>> getTermAndRubbish(@Field("key") String value);
     //TODO:因为测试数据需要，所以暂时用GET，换成真实数据要用上面注释掉的那个方法
-    @GET("http://yapi.demo.qunar.com/mock/13512/listBook/{openid}")
-    Observable<TermResult> getTermAndRubbish(@Path("openid") String value);
+    @FormUrlEncoded
+    @POST("http://192.168.191.2/note/index.php/mini/listBook")
+    Observable<TermResult> getTermAndRubbish(@Field("openid") String value);
 
 
 

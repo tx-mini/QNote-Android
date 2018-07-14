@@ -16,7 +16,7 @@ public interface CourseService {
 
         @FormUrlEncoded
         @POST("getSub")
-        Observable<List<CustomCourse>> getCourseList(@Field("stu_num") String stuId,@Field("password")String password,
-                                                     @Field("college") String schoolName,@Field("openid")String openId);
+        Observable<List<CustomCourse>> getCourseList(@Field("stu_num") String stuId,@Field("stu_pwd")String password,
+                                                     @Field("stu_college") String schoolName,@Field("openid")String openId);
 
 }
