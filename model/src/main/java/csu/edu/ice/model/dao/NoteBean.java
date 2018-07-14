@@ -13,8 +13,15 @@ public class NoteBean extends LitePalSupport implements Serializable {
 
     @SerializedName("note_id")
     private String id;
+
     private String name;
-    private Boolean isKeyNote;
+
+    @SerializedName("is_imp")
+    private int isKeyNote;
+
+    @SerializedName("is_rubbish")
+    private int isRubbish;
+
     private String content;
 
     @SerializedName("recent_time")
@@ -22,8 +29,9 @@ public class NoteBean extends LitePalSupport implements Serializable {
 
     @SerializedName("book_ref")
     private String bookRef;
-    @SerializedName("is_rubbish")
-    private int isRubbish;
+
+    @SerializedName("openid")
+    private String openId;
 
     public NoteBean(){}
 
@@ -55,12 +63,20 @@ public class NoteBean extends LitePalSupport implements Serializable {
         this.name = name;
     }
 
-    public Boolean getKeyNote() {
+    public int getIsKeyNote() {
         return isKeyNote;
     }
 
-    public void setKeyNote(Boolean keyNote) {
-        isKeyNote = keyNote;
+    public void setIsKeyNote(int isKeyNote) {
+        this.isKeyNote = isKeyNote;
+    }
+
+    public int getIsRubbish() {
+        return isRubbish;
+    }
+
+    public void setIsRubbish(int isRubbish) {
+        this.isRubbish = isRubbish;
     }
 
     public String getContent() {
@@ -71,14 +87,6 @@ public class NoteBean extends LitePalSupport implements Serializable {
         this.content = content;
     }
 
-    public String getBookRef() {
-        return bookRef;
-    }
-
-    public void setBookRef(String bookRef) {
-        this.bookRef = bookRef;
-    }
-
     public String getRecentTime() {
         return recentTime;
     }
@@ -87,11 +95,19 @@ public class NoteBean extends LitePalSupport implements Serializable {
         this.recentTime = recentTime;
     }
 
-    public int getIsRubbish() {
-        return isRubbish;
+    public String getBookRef() {
+        return bookRef;
     }
 
-    public void setIsRubbish(int isRubbish) {
-        this.isRubbish = isRubbish;
+    public void setBookRef(String bookRef) {
+        this.bookRef = bookRef;
+    }
+
+    public String getOpenId() {
+        return openId;
+    }
+
+    public void setOpenId(String openId) {
+        this.openId = openId;
     }
 }

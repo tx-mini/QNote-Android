@@ -60,7 +60,7 @@ public class MainActivity extends BaseActivity {
     private View rootView;
     private DrawerNoteAdapter drawerNoteAdapter;
     private NoteAdapter noteAdapter;
-    private ArrayList noteList;
+    private ArrayList<NoteBean> noteList;
     private BookBean notebook;
     private TextView tvName;
     private DrawerLayout drawerLayout;
@@ -70,6 +70,7 @@ public class MainActivity extends BaseActivity {
     public void initParams(Bundle params) {
         notebookList = new ArrayList<>();
         termList = new ArrayList<>();
+        noteList = new ArrayList<>();
     }
 
     @Override
@@ -140,6 +141,7 @@ public class MainActivity extends BaseActivity {
                 startActivity(new Intent(this,CourseActivity.class));
                 break;
             case R.id.layout_dustbin:
+                openDustbin();
                 break;
             case R.id.layout_new_notebook:
                 showAddNotePopwindow(term);
@@ -173,6 +175,27 @@ public class MainActivity extends BaseActivity {
                 break;
 
         }
+    }
+
+    private void openDustbin() {
+        NetUtil.doRetrofitRequest(NetUtil.getRetrofitInstance().create(NoteService.class).getNoteList(Const.OPEN_ID,"",1,0), new CallBack<List<NoteBean>>() {
+            @Override
+            public void onSuccess(List<NoteBean> data) {
+                noteList.clear();
+                noteList.addAll(data);
+                noteAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+
+            }
+
+            @Override
+            public void onFailure(String message) {
+
+            }
+        });
     }
 
     private void showDeleteNoteBookPopwindow() {

@@ -4,7 +4,7 @@ import java.util.List;
 
 import csu.edu.ice.model.dao.BookBean;
 import csu.edu.ice.model.dao.NoteBean;
-import csu.edu.ice.model.dao.NoteContentBean;
+import csu.edu.ice.model.dao.RubbishBean;
 import csu.edu.ice.model.model.TermResult;
 import io.reactivex.Observable;
 import retrofit2.http.Field;
@@ -26,7 +26,7 @@ public interface NoteService {
 
 
     @GET("http://yapi.demo.qunar.com/mock/13512/note/index.php/mini/getNote/%7Bid%7D")
-    Observable<NoteContentBean> getNoteContent(@Query("key") String value);
+    Observable<NoteBean> getNoteContent(@Query("key") String value);
 
     @FormUrlEncoded
     @POST("http://yapi.demo.qunar.com/mock/13512/listNote")
@@ -44,6 +44,10 @@ public interface NoteService {
     Observable<BookBean> addBook(@Field("openid") String openId,@Field("term") int term,@Field("name") String name);
 
     Observable<String> deleteNote(String openId, String noteId);
+
+    @FormUrlEncoded
+    @POST("/listNote")
+    Observable<List<NoteBean>> getNoteList(@Field("openid") String openId,@Field("book_id") String bookId,@Field("is_rubbish") int isRubbish,@Field("is_imp") int is_imp);
 
 
 }
