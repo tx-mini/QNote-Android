@@ -11,7 +11,7 @@ import java.util.List;
 public class TermBean extends LitePalSupport implements Serializable {
     @Column(unique = true)
     private int _id;
-    private String term;
+    private int term;
 
     @Column(ignore = true)
     private List<BookBean> children;
@@ -24,11 +24,11 @@ public class TermBean extends LitePalSupport implements Serializable {
         this._id = _id;
     }
 
-    public String getTerm() {
+    public int getTerm() {
         return term;
     }
 
-    public void setTerm(String term) {
+    public void setTerm(int term) {
         this.term = term;
     }
 

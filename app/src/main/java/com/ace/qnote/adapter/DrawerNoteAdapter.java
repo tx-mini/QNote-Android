@@ -22,6 +22,6 @@ public class DrawerNoteAdapter extends BaseQuickAdapter<BookBean,BaseViewHolder>
 
     @Override
     protected void convert(BaseViewHolder helper, BookBean item) {
-        helper.setText(R.id.tv_text,item.getValue());
+        helper.setText(R.id.tv_text,item.getName());
     }
 }

@@ -28,6 +28,8 @@ import com.ace.qnote.base.BaseActivity;
 import com.ace.qnote.util.Const;
 import com.ace.qnote.util.permission.ActionCallBackListener;
 import com.ace.qnote.util.permission.RxPermissionUtil;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.zhouwei.library.CustomPopWindow;
 
 import org.litepal.LitePal;
@@ -59,6 +61,7 @@ public class MainActivity extends BaseActivity {
     private NoteAdapter noteAdapter;
     private ArrayList noteList;
     private BookBean notebook;
+    private TextView tvName;
 
     @Override
     public void initParams(Bundle params) {
@@ -95,6 +98,7 @@ public class MainActivity extends BaseActivity {
         ivDeleteNoteBook = findViewById(R.id.iv_delete_book);
         ivAddNote = findViewById(R.id.iv_add_note);
         tvYear = findViewById(R.id.tv_year);
+        tvName = findViewById(R.id.tv_name);
     }
 
     @Override
@@ -233,7 +237,25 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public void doBusiness(Context mContext) {
-        syncDataFromNet();
+
+        Glide.with(this).load(getSharedPreferences(Const.SP_NAME,MODE_PRIVATE).getString("imageUrl",""))
+                .apply(new RequestOptions().circleCrop().placeholder(R.mipmap.ic_launcher).error(R.mipmap.ic_launcher))
+                .into((ImageView) findViewById(R.id.iv_img));
+
+        ((TextView)findViewById(R.id.tv_nickname)).setText(getSharedPreferences(Const.SP_NAME,MODE_PRIVATE).getString("nickname","加载失败"));
+
+
+        initNoteRecyclerView();
+        initDrawerRecyclerView();
+        if(NetUtil.isNetworkConnected(this)){
+            //有网络 从服务器请求
+            syncDataFromNet();
+        }else {
+            getDataFromLocal();
+        }
+
+    }
+    private void initNoteRecyclerView() {
         noteAdapter = new NoteAdapter(R.layout.item_note,noteList,this,notebook,rootView);
         noteAdapter.setOnItemClickListener((adapter, view, position) -> {
             Bundle bundle = new Bundle();
@@ -243,14 +265,16 @@ public class MainActivity extends BaseActivity {
         rvNote.setAdapter(noteAdapter);
         rvNote.setLayoutManager(new LinearLayoutManager(this));
 
-        //侧滑栏recycleView初始化
-        getDataFromLocal();
+    }
+    private void initDrawerRecyclerView() {
         drawerNoteAdapter = new DrawerNoteAdapter(R.layout.item_drawer_note,notebookList);
         rvNotebook.setAdapter(drawerNoteAdapter);
         rvNotebook.setLayoutManager(new LinearLayoutManager(this));
     }
 
-    private void showNoteList(){
+
+
+    private void showNoteList(String book_id){
 
         noteList = new ArrayList<>();
         NetUtil.doRetrofitRequest(NetUtil.getRetrofitInstance().create(NoteService.class).getNoteList("1"), new CallBack<RxReturnData<List<NoteBean>>>() {
@@ -307,11 +331,13 @@ public class MainActivity extends BaseActivity {
                 if(notebookList!=null && notebookList.size()>0) {
                     notebook = notebookList.get(0);
                 }
-//                notebookList.addAll()
 
                 //显示最新的学期
-                tvYear.setText(termList.get(termList.size()-1).getTerm());
-                showNoteList();
+                tvYear.setText(Const.termToChinese[termList.get(termList.size()-1).getTerm()]);
+                tvTerm.setText(Const.termToChinese[termList.get(termList.size()-1).getTerm()]);
+                //显示课程名称
+                tvName.setText(notebook.getName());
+                showNoteList(notebook.getId());
             }
 
             @Override

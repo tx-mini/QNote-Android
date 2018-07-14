@@ -97,7 +97,7 @@ public class NoteAdapter extends BaseQuickAdapter<NoteBean,BaseViewHolder> {
     private void showMoveNotePopwindow(View rootView,NoteBean noteBean){
         //初始化为-1
         moveToIndex = -1;
-        List<BookBean> bookList = LitePal.where("term = ?",noteBook.getTerm()).find(BookBean.class);
+        List<BookBean> bookList = LitePal.where("term = ?",noteBook.getTerm()+"").find(BookBean.class);
         DrawerNoteAdapter termAdapter = new DrawerNoteAdapter(R.layout.item_text_line, bookList);
         View view = LayoutInflater.from(mContext).inflate(R.layout.layout_move_note,null);
         TextView tvTitle = view.findViewById(R.id.tv_title);

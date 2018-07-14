@@ -1,5 +1,7 @@
 package csu.edu.ice.model.dao;
 
+import com.google.gson.annotations.SerializedName;
+
 import org.litepal.annotation.Column;
 import org.litepal.crud.LitePalSupport;
 
@@ -10,9 +12,10 @@ public class BookBean extends LitePalSupport implements Serializable {
     @Column(unique = true)
     private int _id;
 
+    @SerializedName("book_id")
     private String id;
-    private String value;
-    private String term;
+    private String name;
+    private int term;
 
 
     public int get_id() {
@@ -31,19 +34,19 @@ public class BookBean extends LitePalSupport implements Serializable {
         this.id = id;
     }
 
-    public String getValue() {
-        return value;
+    public String getName() {
+        return name;
     }
 
-    public void setValue(String value) {
-        this.value = value;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getTerm() {
+    public int getTerm() {
         return term;
     }
 
-    public void setTerm(String term) {
+    public void setTerm(int term) {
         this.term = term;
     }
 }
