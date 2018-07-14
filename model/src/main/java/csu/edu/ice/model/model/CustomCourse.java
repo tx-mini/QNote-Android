@@ -185,4 +185,6 @@ public class CustomCourse extends LitePalSupport implements Serializable,ICourse
     public void setTerm(int term) {
         this.term = term;
     }
+
+
 }
