@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.ace.network.util.CallBack;
 import com.ace.network.util.NetUtil;
+import com.ace.network.util.RxReturnData;
 import com.ace.qnote.R;
 import com.ace.qnote.util.CommonUtils;
 import com.ace.qnote.util.Const;
@@ -173,47 +174,51 @@ public class NoteAdapter extends BaseQuickAdapter<NoteBean, BaseViewHolder> {
                 });
             }else{
                 //移动到垃圾桶
-/*                NetUtil.doRetrofitRequest(NetUtil.noteService.update(), new CallBack<String>() {
+                NetUtil.doRetrofitRequest(NetUtil.noteService.update(Const.OPEN_ID, item.getId(),
+                        item.getName(), item.getBookRef(), item.getIsKeyNote(), 1, false, null), new CallBack<RxReturnData>() {
                     @Override
-                    public void onSuccess(String data) {
-
+                    public void onSuccess(RxReturnData data) {
+                        getData().remove(item);
+                        notifyDataSetChanged();
+                        Toast.makeText(activity, "笔记已被移动到垃圾桶!", Toast.LENGTH_SHORT).show();
+                        popDeleteWindow.dissmiss();
                     }
 
                     @Override
                     public void onError(Throwable throwable) {
-
+                        Toast.makeText(activity, "发生了错误呢，请重试！", Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
                     public void onFailure(String message) {
 
                     }
-                });*/
+                });
             }
         });
     }
 
     View lastView;
 
-    private void showMoveNotePopwindow(View rootView, NoteBean noteBean) {
+    private void showMoveNotePopwindow(View rootView, NoteBean item) {
         //初始化为-1
         moveToIndex = -1;
         List<BookBean> bookList = LitePal.where("term = ?", noteBook.getTerm() + "").find(BookBean.class);
-        DrawerNoteAdapter termAdapter = new DrawerNoteAdapter(R.layout.item_text_line, bookList);
+        DrawerNoteAdapter bookAdapter = new DrawerNoteAdapter(R.layout.item_text_line, bookList);
         View view = LayoutInflater.from(mContext).inflate(R.layout.layout_move_note, null);
         TextView tvTitle = view.findViewById(R.id.tv_title);
-        tvTitle.setText(noteBook.getTerm());
+        tvTitle.setText(Const.termToChinese[noteBook.getTerm()]);
         RecyclerView recyclerView = view.findViewById(R.id.rv_notebook);
-        recyclerView.setAdapter(termAdapter);
-        termAdapter.setOnItemClickListener((adapter, view1, position) -> {
-            view1.setBackgroundColor(mContext.getResources().getColor(R.color.colorPrimary));
-            view1.findViewById(R.id.line).setVisibility(View.INVISIBLE);
+        recyclerView.setAdapter(bookAdapter);
+        bookAdapter.setOnItemClickListener((adapter, selectedView, position) -> {
+            selectedView.setBackgroundColor(mContext.getResources().getColor(R.color.colorPrimary));
+            selectedView.findViewById(R.id.line).setVisibility(View.INVISIBLE);
             moveToIndex = position;
             if (lastView != null) {
                 lastView.setBackgroundColor(Color.WHITE);
                 lastView.findViewById(R.id.line).setVisibility(View.VISIBLE);
             }
-            lastView = view1;
+            lastView = selectedView;
         });
         recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
         CustomPopWindow popWindow = new CustomPopWindow.PopupWindowBuilder(mContext)
@@ -228,15 +233,18 @@ public class NoteAdapter extends BaseQuickAdapter<NoteBean, BaseViewHolder> {
         btnMove.setOnClickListener(v -> {
             popWindow.dissmiss();
             //Todo 移动
-            NetUtil.doRetrofitRequest(NetUtil.noteService.move(noteBean.getId(), noteBook.getId()), new CallBack<String>() {
+            NetUtil.doRetrofitRequest(NetUtil.noteService.update(Const.OPEN_ID, item.getId(),
+                    item.getName(),bookList.get(moveToIndex).getId(), item.getIsKeyNote(), item.getIsRubbish(), false, null), new CallBack<RxReturnData>() {
                 @Override
-                public void onSuccess(String data) {
-
+                public void onSuccess(RxReturnData data) {
+                    getData().remove(item);
+                    notifyDataSetChanged();
+                    popWindow.dissmiss();
                 }
 
                 @Override
                 public void onError(Throwable throwable) {
-
+                    Toast.makeText(activity, "发生了错误呢，请重试！", Toast.LENGTH_SHORT).show();
                 }
 
                 @Override
@@ -268,17 +276,19 @@ public class NoteAdapter extends BaseQuickAdapter<NoteBean, BaseViewHolder> {
             String newTitle = editText.getText().toString();
             if (!CommonUtils.isEmpty(newTitle)) {
 
-                NetUtil.doRetrofitRequest(NetUtil.noteService.rename(item.getId(), newTitle), new CallBack<String>() {
+                NetUtil.doRetrofitRequest(NetUtil.noteService.update(Const.OPEN_ID, item.getId(),
+                        newTitle, item.getBookRef(), item.getIsKeyNote(), item.getIsRubbish(), false, null), new CallBack<RxReturnData>() {
                     @Override
-                    public void onSuccess(String data) {
+                    public void onSuccess(RxReturnData data) {
                         //刷新界面
                         item.setName(newTitle);
                         notifyDataSetChanged();
+                        popWindow.dissmiss();
                     }
 
                     @Override
                     public void onError(Throwable throwable) {
-
+                        Toast.makeText(activity, "发生了错误呢，请重试！", Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
@@ -288,7 +298,6 @@ public class NoteAdapter extends BaseQuickAdapter<NoteBean, BaseViewHolder> {
                 });
 
             }
-            popWindow.dissmiss();
         });
 
         btnCancel.setOnClickListener(v -> popWindow.dissmiss());

@@ -37,12 +37,17 @@ import com.example.zhouwei.library.CustomPopWindow;
 
 import org.litepal.LitePal;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import csu.edu.ice.model.dao.BookBean;
 import csu.edu.ice.model.dao.NoteBean;
 import csu.edu.ice.model.dao.TermBean;
+import csu.edu.ice.model.model.CustomCourse;
 import csu.edu.ice.model.model.TermResult;
 import me.iwf.photopicker.PhotoPicker;
 
@@ -317,15 +322,13 @@ public class MainActivity extends BaseActivity {
         ((TextView)findViewById(R.id.tv_nickname)).setText(getSharedPreferences(Const.SP_NAME,MODE_PRIVATE).getString("nickname","加载失败"));
 
 
-        initNoteRecyclerView();
-        initDrawerRecyclerView();
         if(NetUtil.isNetworkConnected(this)){
             //有网络 从服务器请求
             syncDataFromNet();
         }else {
             getDataFromLocal();
         }
-
+        initDrawerRecyclerView();
     }
     private void initNoteRecyclerView() {
         noteAdapter = new NoteAdapter(R.layout.item_note,noteList,this,notebook,rootView);
@@ -388,6 +391,8 @@ public class MainActivity extends BaseActivity {
                 drawerNoteAdapter.notifyDataSetChanged();
                 if(notebookList!=null && notebookList.size()>0) {
                     notebook = notebookList.get(0);
+                }else{
+                    Toast.makeText(MainActivity.this, "笔记本数量为0", Toast.LENGTH_SHORT).show();
                 }
 
                 //显示最新的学期
@@ -396,6 +401,7 @@ public class MainActivity extends BaseActivity {
                 //显示课程名称
                 tvName.setText(notebook.getName());
                 showNoteList(notebook.getId());
+                initNoteRecyclerView();
             }
 
             @Override
@@ -436,4 +442,74 @@ public class MainActivity extends BaseActivity {
         }
         return super.onKeyDown(keyCode,event);
     }
+
+    public BookBean getNowBookBean(){
+
+        List<CustomCourse> courses = LitePal.findAll(CustomCourse.class);
+        int week = getWeek(Const.START_DAY);
+        Calendar calendar = Calendar.getInstance();
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        int minute = calendar.get(Calendar.MINUTE);
+        int nowTime = hour*100+minute;
+        for (CustomCourse course : courses) {
+            if(course.getStartWeek()<=week &&course.getEndWeek()>=week){
+                if(Const.startTimes[course.getStartSection()]<=nowTime && Const.startTimes[course.getStartSection()]+Const.courseDuration>=nowTime){
+                    List<BookBean> books = LitePal.where("term = ? and name = ?", course.getTerm() + "", course.getName()).find(BookBean.class);
+                    if(books.size()>0){
+                        return books.get(0);
+                    }
+                    return null;
+                }
+            }
+        }
+        return null;
+    }
+
+    public static int getWeek(String firstDay){
+
+        Date now = new Date(System.currentTimeMillis());
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        try {
+            Date past = format.parse(firstDay);
+            int days = differentDays(past,now);
+
+            int week = days/7 + 1;
+
+            return week;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return -1;
+    }
+
+    public static int differentDays(Date date1,Date date2) {
+        Calendar cal1 = Calendar.getInstance();
+        cal1.setTime(date1);
+
+        Calendar cal2 = Calendar.getInstance();
+        cal2.setTime(date2);
+        int day1= cal1.get(Calendar.DAY_OF_YEAR);
+        int day2 = cal2.get(Calendar.DAY_OF_YEAR);
+
+        int year1 = cal1.get(Calendar.YEAR);
+        int year2 = cal2.get(Calendar.YEAR);
+        if(year1 != year2) {
+            int timeDistance = 0 ;
+            for(int i = year1 ; i < year2 ; i ++) {
+                if(i%4==0 && i%100!=0 || i%400==0) {
+                    timeDistance += 366;
+                }
+                else {
+                    timeDistance += 365;
+                }
+            }
+
+            return timeDistance + (day2-day1) ;
+        }
+        else {
+            return day2-day1;
+        }
+    }
+
 }
