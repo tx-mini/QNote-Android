@@ -19,7 +19,7 @@ public interface NoteService {
 //    Observable<RxReturnData<TermResult>> getTermAndRubbish(@Field("key") String value);
     //TODO:因为测试数据需要，所以暂时用GET，换成真实数据要用上面注释掉的那个方法
     @FormUrlEncoded
-    @POST("http://192.168.191.2/note/index.php/mini/listBook")
+    @POST("listBook")
     Observable<TermResult> getTermAndRubbish(@Field("openid") String value);
 
 

@@ -350,8 +350,6 @@ public class MainActivity extends BaseActivity {
         });
     }
 
-
-
     private void showNoteList(String book_id){
         noteList = new ArrayList<>();
         showLatestNoteList(book_id);

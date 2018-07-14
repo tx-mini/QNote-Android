@@ -183,6 +183,7 @@ public class LoginActivity extends BaseActivity {
                             editor.putString("imageUrl",figureUrl);
                             editor.putString("nickname",nickname);
                             editor.putString("openId",openId);
+                            Const.OPEN_ID = openId;
                             editor.commit();
                             Log.d(TAG, "onComplete: "+response.toString());
                             Toast.makeText(LoginActivity.this, "欢迎"+nickname, Toast.LENGTH_LONG).show();
