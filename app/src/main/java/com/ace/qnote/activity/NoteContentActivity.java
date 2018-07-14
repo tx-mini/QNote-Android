@@ -41,6 +41,8 @@ import com.example.zhouwei.library.CustomPopWindow;
 import com.github.clans.fab.FloatingActionMenu;
 import com.google.gson.Gson;
 import com.tencent.connect.share.QQShare;
+import com.tencent.cos.xml.CosXmlService;
+import com.tencent.cos.xml.CosXmlServiceConfig;
 import com.tencent.tauth.IUiListener;
 import com.tencent.tauth.Tencent;
 import com.tencent.tauth.UiError;
@@ -337,7 +339,6 @@ public class NoteContentActivity extends BaseActivity {
     }
 
     private void initPageData() {
-
         NetUtil.doRetrofitRequest(NetUtil.getRetrofitInstance().create(NoteService.class).getNoteContent(Const.OPEN_ID), new CallBack<NoteContentBean>() {
             @Override
             public void onSuccess(NoteContentBean data) {
@@ -379,6 +380,7 @@ public class NoteContentActivity extends BaseActivity {
             if (data != null) {
                 ArrayList<String> photos =
                         data.getStringArrayListExtra(PhotoPicker.KEY_SELECTED_PHOTOS);
+
             }
         }
     }
