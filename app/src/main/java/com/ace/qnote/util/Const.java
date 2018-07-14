@@ -8,4 +8,6 @@ public class Const {
     public static final int CONTENT_TYPE_TEXT = 2001;
 
     public static final boolean debug = false;
+
+    public static final String OPEN_ID = "123";
 }

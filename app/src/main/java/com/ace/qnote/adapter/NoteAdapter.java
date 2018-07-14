@@ -17,8 +17,13 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.example.zhouwei.library.CustomPopWindow;
 
+import org.litepal.LitePal;
+
 import java.util.Arrays;
 import java.util.List;
+
+import csu.edu.ice.model.dao.TermBean;
+import csu.edu.ice.model.model.University;
 
 /**
  * Created by ice on 2018/7/10.
@@ -79,7 +84,7 @@ public class NoteAdapter extends BaseQuickAdapter<String,BaseViewHolder> {
     private void showMoveNotePopwindow(View rootView){
         //初始化为-1
         moveToIndex = -1;
-        List<String> termList = Arrays.asList("2017-2018上学期","2017-2018上学期","2017-2018上学期","2017-2018上学期");
+        List<TermBean> termList = LitePal.select("*").find(TermBean.class);
         TermAdapter termAdapter = new TermAdapter(R.layout.item_text_line, termList);
         View view = LayoutInflater.from(mContext).inflate(R.layout.layout_move_note,null);
         RecyclerView recyclerView = view.findViewById(R.id.rv_notebook);

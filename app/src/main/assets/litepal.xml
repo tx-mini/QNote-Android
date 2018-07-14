@@ -3,7 +3,7 @@
 
     <dbname value="qnote" />
 
-    <version value="3" />
+    <version value="4" />
 
     <!--
     	Define your models in the list with mapping tag, LitePal will
@@ -20,6 +20,8 @@
         <mapping class="csu.edu.ice.model.model.CustomCourse"/>
         <mapping class="csu.edu.ice.model.dao.RubbishBean"/>
         <mapping class="csu.edu.ice.model.dao.TermBean"/>
+        <mapping class="csu.edu.ice.model.dao.BookBean"/>
+        <mapping class="csu.edu.ice.model.dao.PageBean"/>
 
     </list>
 </litepal>

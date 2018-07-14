@@ -15,21 +15,31 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.ace.network.service.NoteService;
+import com.ace.network.util.CallBack;
+import com.ace.network.util.NetUtil;
+import com.ace.network.util.RxReturnData;
 import com.ace.qnote.R;
 import com.ace.qnote.adapter.DrawerNoteAdapter;
 import com.ace.qnote.adapter.NoteAdapter;
 import com.ace.qnote.adapter.TermAdapter;
 import com.ace.qnote.base.BaseActivity;
 import com.ace.qnote.util.CommonUtils;
+import com.ace.qnote.util.Const;
 import com.ace.qnote.util.permission.ActionCallBackListener;
 import com.ace.qnote.util.permission.RxPermissionUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.example.zhouwei.library.CustomPopWindow;
 
+import org.litepal.LitePal;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import csu.edu.ice.model.dao.BookBean;
+import csu.edu.ice.model.dao.TermBean;
+import csu.edu.ice.model.model.TermResult;
 import me.iwf.photopicker.PhotoPicker;
 
 public class MainActivity extends BaseActivity {
@@ -42,11 +52,16 @@ public class MainActivity extends BaseActivity {
     private RecyclerView rvNotebook,rvNote;
     private String[] m_upLoadImgPermission =  {Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
     private List<Uri> mSelected;
+    private List<BookBean> notebookList;
+    private List<TermBean> termList;
     private View rootView;
+    private DrawerNoteAdapter drawerNoteAdapter;
+    private NoteAdapter noteAdapter;
 
     @Override
     public void initParams(Bundle params) {
-
+        notebookList = new ArrayList<>();
+        termList = new ArrayList<>();
     }
 
     @Override
@@ -151,7 +166,6 @@ public class MainActivity extends BaseActivity {
     }
 
     private void showChooseTermPopwindow() {
-        List<String> termList = Arrays.asList("2017-2018上学期","2017-2018上学期","2017-2018上学期","2017-2018上学期");
         TermAdapter termAdapter = new TermAdapter(R.layout.item_text_line, termList);
         View view = LayoutInflater.from(this).inflate(R.layout.layout_pop_term,null);
         RecyclerView recyclerView = view.findViewById(R.id.rv_term);
@@ -171,8 +185,6 @@ public class MainActivity extends BaseActivity {
                 .showAtLocation(getmContextView(), Gravity.CENTER,0, 0);//显示PopupWindow
     }
 
-
-
     private void addPic() {
         Intent intent = new Intent(MainActivity.this, TakePhotoActivity.class);
         intent.putExtra("course_name","软件工程");
@@ -181,9 +193,9 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public void doBusiness(Context mContext) {
-        List<String> notebookList = Arrays.asList("大型数据库","云计算及应用","软件过程与改进");
-        DrawerNoteAdapter adapter = new DrawerNoteAdapter(R.layout.item_drawer_note,notebookList);
-        rvNotebook.setAdapter(adapter);
+        syncDataFromNet();
+        drawerNoteAdapter = new DrawerNoteAdapter(R.layout.item_drawer_note,notebookList);
+        rvNotebook.setAdapter(drawerNoteAdapter);
         rvNotebook.setLayoutManager(new LinearLayoutManager(this));
 
         List<String> noteList = Arrays.asList("2018-7-6笔记","2018-7-8笔记","2018-7-10笔记","2018-7-16笔记");
@@ -198,6 +210,35 @@ public class MainActivity extends BaseActivity {
         });
         rvNote.setAdapter(noteAdapter);
         rvNote.setLayoutManager(new LinearLayoutManager(this));
+    }
+
+    private void syncDataFromNet() {
+        NetUtil.doRetrofitRequest(NetUtil.getRetrofitInstance().create(NoteService.class).getTermAndRubbish(Const.OPEN_ID), new CallBack<RxReturnData<TermResult>>() {
+            @Override
+            public void onSuccess(RxReturnData<TermResult> data) {
+//                data.getResult().getBrushList();
+                notebookList.clear();
+                termList.clear();
+                termList.addAll(data.getResult().getClassDir());
+                notebookList.clear();
+                notebookList.addAll(data.getResult().getClassDir().get(0).getChildrens());
+                LitePal.saveAll(notebookList);
+                LitePal.saveAll(termList);
+                LitePal.saveAll(data.getResult().getBrushList());
+                drawerNoteAdapter.notifyDataSetChanged();
+//                notebookList.addAll()
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+
+            }
+
+            @Override
+            public void onFailure(String message) {
+
+            }
+        });
     }
 
     @Override
