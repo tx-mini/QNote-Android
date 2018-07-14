@@ -101,8 +101,6 @@ public class MainActivity extends BaseActivity {
         ivEdit = findViewById(R.id.iv_edit);
         ivTakePhoto = findViewById(R.id.iv_take_photo);
         rvNote = findViewById(R.id.rv_note);
-        ivDeleteNoteBook = findViewById(R.id.iv_delete_book);
-        ivAddNote = findViewById(R.id.iv_add_note);
         tvName = findViewById(R.id.tv_name);
     }
 
@@ -180,12 +178,6 @@ public class MainActivity extends BaseActivity {
                 }
                 break;
 
-            case R.id.iv_delete_book:
-                showDeleteNoteBookPopwindow();
-                break;
-            case R.id.iv_add_note:
-                showAddNotePopwindow(term);
-                break;
         }
     }
 
