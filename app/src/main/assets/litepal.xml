@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <litepal>
 
-    <dbname name="qnote" />
+    <dbname value="qnote" />
 
-    <version name="4" />
+    <version value="4" />
 
     <!--
     	Define your models in the list with mapping tag, LitePal will

@@ -2,6 +2,7 @@ package com.ace.qnote.adapter;
 
 import android.support.annotation.Nullable;
 import com.ace.qnote.R;
+import com.ace.qnote.util.Const;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import java.util.List;
@@ -15,6 +16,6 @@ public class TermAdapter extends BaseQuickAdapter<TermBean,BaseViewHolder> {
 
     @Override
     protected void convert(BaseViewHolder helper, TermBean item) {
-        helper.setText(R.id.tv_text,item.getTerm());
+        helper.setText(R.id.tv_text, Const.termToChinese[item.getTerm()]);
     }
 }

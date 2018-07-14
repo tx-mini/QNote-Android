@@ -24,6 +24,7 @@
             android:layout_height="wrap_content" />
 
         <TextView
+            android:id="@+id/tv_nickname"
             android:textColor="#fff"
             android:layout_marginLeft="10dp"
             android:textSize="@dimen/text_size_welcome"

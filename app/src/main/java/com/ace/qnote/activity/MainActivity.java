@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -15,7 +16,6 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -63,9 +63,7 @@ public class MainActivity extends BaseActivity {
     private ArrayList noteList;
     private BookBean notebook;
     private TextView tvName;
-
-    private RelativeLayout layoutHide;
-    private RelativeLayout layoutNormal;
+    private DrawerLayout drawerLayout;
     private int term;
 
     @Override
@@ -100,6 +98,7 @@ public class MainActivity extends BaseActivity {
         ivTakePhoto = findViewById(R.id.iv_take_photo);
         rvNote = findViewById(R.id.rv_note);
         tvName = findViewById(R.id.tv_name);
+        drawerLayout = findViewById(R.id.drawer_layout);
     }
 
     @Override
@@ -150,7 +149,7 @@ public class MainActivity extends BaseActivity {
 
             case R.id.tv_nickname:
             case R.id.iv_image:
-                startActivity(new Intent(this,InformationActivity.class));
+                startActivityForResult(new Intent(this,InformationActivity.class),Const.TO_INFORMATION);
                 break;
             case R.id.iv_edit:
 
@@ -275,7 +274,8 @@ public class MainActivity extends BaseActivity {
         noteAdapter = new NoteAdapter(R.layout.item_note,noteList,this,notebook,rootView);
         noteAdapter.setOnItemClickListener((adapter, view, position) -> {
             Bundle bundle = new Bundle();
-            bundle.putString("title", (String) adapter.getData().get(position));
+            NoteBean noteBean = (NoteBean) adapter.getData().get(position);
+            bundle.putString("title", noteBean.getName());
             startActivity(NoteContentActivity.class,bundle);
         });
         rvNote.setAdapter(noteAdapter);
@@ -286,6 +286,27 @@ public class MainActivity extends BaseActivity {
         drawerNoteAdapter = new DrawerNoteAdapter(R.layout.item_drawer_note,notebookList);
         rvNotebook.setAdapter(drawerNoteAdapter);
         rvNotebook.setLayoutManager(new LinearLayoutManager(this));
+        drawerNoteAdapter.setOnItemClickListener((adapter, view, position) -> {
+            BookBean bookbean = notebookList.get(position);
+            tvName.setText(bookbean.getName());
+            NetUtil.doRetrofitRequest(NetUtil.noteService.getNoteList(Const.OPEN_ID,bookbean.getId(),0,0), new CallBack<List<NoteBean>>() {
+                @Override
+                public void onSuccess(List<NoteBean> data) {
+                    noteAdapter.setNewData(data);
+                    drawerLayout.closeDrawer(Gravity.LEFT);
+                }
+
+                @Override
+                public void onError(Throwable throwable) {
+                    Toast.makeText(MainActivity.this, "出错了!", Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onFailure(String message) {
+
+                }
+            });
+        });
     }
 
 
@@ -293,7 +314,7 @@ public class MainActivity extends BaseActivity {
     private void showNoteList(String book_id){
 
         noteList = new ArrayList<>();
-        NetUtil.doRetrofitRequest(NetUtil.getRetrofitInstance().create(NoteService.class).getNoteList("1"), new CallBack<List<NoteBean>>() {
+        NetUtil.doRetrofitRequest(NetUtil.getRetrofitInstance().create(NoteService.class).getNoteList(Const.OPEN_ID,book_id,0,0), new CallBack<List<NoteBean>>() {
             @Override
             public void onSuccess(List<NoteBean> data) {
                     noteList.clear();
@@ -375,6 +396,8 @@ public class MainActivity extends BaseActivity {
                         data.getStringArrayListExtra(PhotoPicker.KEY_SELECTED_PHOTOS);
 
             }
+        }else if(resultCode == Const.LOGOUT && requestCode == Const.TO_INFORMATION){
+            finish();
         }
     }
 

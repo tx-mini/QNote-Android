@@ -24,7 +24,6 @@ import java.util.List;
 import csu.edu.ice.model.model.CustomCourse;
 
 import static com.ace.qnote.util.Const.CHOOSE_UNIVERISTY;
-import static com.ace.qnote.util.Const.debug;
 
 public class ImportCourseActivity extends BaseActivity {
 
@@ -71,16 +70,6 @@ public class ImportCourseActivity extends BaseActivity {
     public void widgetClick(View v) throws Exception {
         switch (v.getId()){
             case R.id.btn_import:
-                if(LitePal.find(CustomCourse.class,1)!=null){
-                    startActivity(new Intent(this,MainActivity.class));
-                    finish();
-                    return;
-                }
-                if(debug){
-                    startActivity(new Intent(this,MainActivity.class));
-                    return;
-                }
-
                 String university = tvUniversity.getText().toString();
                 String id = tvId.getText().toString();
                 String password = tvPassword.getText().toString();
@@ -104,8 +93,10 @@ public class ImportCourseActivity extends BaseActivity {
 
                     @Override
                     public void onSuccess(List<CustomCourse> data) {
+                        LitePal.deleteAll(CustomCourse.class);
                         LitePal.saveAll(data);
                         startActivity(new Intent(ImportCourseActivity.this,MainActivity.class));
+                        finish();
                     }
 
                     @Override
@@ -142,7 +133,7 @@ public class ImportCourseActivity extends BaseActivity {
 
     @Override
     public void doBusiness(Context mContext) {
-
+        ((TextView)findViewById(R.id.tv_nickname)).setText(getSharedPreferences(Const.SP_NAME,MODE_PRIVATE).getString("nickname","新用户"));
     }
 
 }

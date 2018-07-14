@@ -99,7 +99,7 @@ public class ChooseUniversityActivity extends BaseActivity {
             @Override
             public <T> void onFinish(List<T> t) {
                 notifyDataChanged((List<University>) t);
-                if(t==null) {
+                if(t==null || t.size()==0) {
                     loadFromServer();
                 }
             }

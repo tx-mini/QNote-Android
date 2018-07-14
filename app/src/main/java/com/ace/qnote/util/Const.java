@@ -3,6 +3,8 @@ package com.ace.qnote.util;
 public class Const {
     public static final int CHOOSE_UNIVERISTY = 1001;
     public static final String SP_NAME = "sp_name";
+    public static final int TO_INFORMATION = 2002;
+    public static final int LOGOUT = 2003;
     public static char[] weekdays = {'一', '二', '三', '四', '五', '六', '日'};
 
     public static final int CONTENT_TYPE_IMG = 2000;
