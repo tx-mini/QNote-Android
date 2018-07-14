@@ -112,7 +112,6 @@ public class LoginActivity extends BaseActivity {
         if(getSharedPreferences(Const.SP_NAME,MODE_PRIVATE).getBoolean("autoLogin",false)){
             Const.OPEN_ID = getSharedPreferences(Const.SP_NAME,MODE_PRIVATE).getString("openId","");
             //已经有值了
-            Const.OPEN_ID = "123";
             startActivity(new Intent(this,MainActivity.class));
             finish();
         }

@@ -47,8 +47,10 @@ import com.tencent.tauth.UiError;
 
 import org.litepal.LitePal;
 import org.litepal.crud.callback.FindMultiCallback;
+import org.litepal.crud.callback.SaveCallback;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import csu.edu.ice.model.dao.NoteBean;
@@ -77,8 +79,11 @@ public class NoteContentActivity extends BaseActivity {
     private String title = "";
     private String noteId = "";
     private ArrayList<SimpleContentBean> contentList;
-    private int curItem;
+    private int curModifyItem;
     private NoteBean noteBean;
+    private ContentBean contentBean;
+    private int startMoveIndex;
+    private int endMoveIndex;
 
     @Override
     public void initParams(Bundle params) {
@@ -131,6 +136,7 @@ public class NoteContentActivity extends BaseActivity {
                 if (vibrator != null) {
                     vibrator.vibrate(500);
                 }
+                startMoveIndex =pos;
             }
 
             @Override
@@ -140,7 +146,19 @@ public class NoteContentActivity extends BaseActivity {
 
             @Override
             public void onItemDragEnd(RecyclerView.ViewHolder viewHolder, int pos) {
-
+                if (contentBean!=null){
+                    Collections.swap(contentBean.getBlocks(),startMoveIndex,pos);
+                    Gson gson = new Gson();
+                    noteBean.setContent(gson.toJson(contentBean));
+                    noteBean.saveAsync().listen(new SaveCallback() {
+                        @Override
+                        public void onFinish(boolean success) {
+                            if (success){
+                                //TODO:保存成功
+                            }
+                        }
+                    });
+                }
             }
         };
         onItemSwipeListener = new OnItemSwipeListener() {
@@ -150,6 +168,19 @@ public class NoteContentActivity extends BaseActivity {
             public void clearView(RecyclerView.ViewHolder viewHolder, int pos) {}
             @Override
             public void onItemSwiped(RecyclerView.ViewHolder viewHolder, int pos) {
+                if (contentBean!=null){
+                    contentBean.getBlocks().remove(pos);
+                    Gson gson = new Gson();
+                    noteBean.setContent(gson.toJson(contentBean));
+                    noteBean.saveAsync().listen(new SaveCallback() {
+                        @Override
+                        public void onFinish(boolean success) {
+                            if (success){
+                                //TODO:保存成功
+                            }
+                        }
+                    });
+                }
             }
             @Override
             public void onItemSwipeMoving(Canvas canvas, RecyclerView.ViewHolder viewHolder, float dX, float dY, boolean isCurrentlyActive) {
@@ -238,11 +269,8 @@ public class NoteContentActivity extends BaseActivity {
                 });
                 break;
             case R.id.iv_add_text:
-                showAddTextDialog();
+                showModifyTextPopWindow("",true);
         }
-    }
-
-    private void showAddTextDialog() {
     }
 
     private void doFadeIn(View view) {
@@ -311,6 +339,7 @@ public class NoteContentActivity extends BaseActivity {
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
                 switch (view.getId()){
                     case R.id.tv_text_edit:
+                        curModifyItem = position;
                         showModifyTextPopWindow(((TextView)view).getText().toString(),false);
                         break;
                 }
@@ -341,13 +370,31 @@ public class NoteContentActivity extends BaseActivity {
             editText.setText(text);
             btnOk.setOnClickListener(v -> {
                 if (!CommonUtils.isEmpty(editText.getText().toString())){
-                    if (isAdd){
-                        if (noteBean!=null){
-//                            noteBean.setContent();
-//                            noteBean.saveAsync()
+                    if (contentBean!=null){
+                        ContentBean.BlocksBean blocksBean = new ContentBean().new BlocksBean();
+                        blocksBean.setKey("abcde");
+                        blocksBean.setText(editText.getText().toString());
+                        blocksBean.setType("unstyled");
+                        blocksBean.setDepth(0);
+                        blocksBean.setInlineStyleRanges(new ArrayList<>());
+                        blocksBean.setEntityRanges(new ArrayList<>());
+                        blocksBean.setData(new ContentBean().new BlocksBean().new DataBean());
+                        if (isAdd){
+                            contentBean.getBlocks().add(blocksBean);
+                        }else {
+                            contentBean.getBlocks().remove(curModifyItem);
+                            contentBean.getBlocks().add(curModifyItem,blocksBean);
                         }
-                    }else {
-
+                        Gson gson = new Gson();
+                        noteBean.setContent(gson.toJson(contentBean));
+                        noteBean.saveAsync().listen(new SaveCallback() {
+                            @Override
+                            public void onFinish(boolean success) {
+                                if (success){
+                                    //TODO:保存成功
+                                }
+                            }
+                        });
                     }
                 }
                 popWindow.dissmiss();
@@ -365,7 +412,7 @@ public class NoteContentActivity extends BaseActivity {
 //                String _tempJson =
 //                        "{\"blocks\":[{\"key\":\"d5l3p\",\"text\":\"123asdasdasdas23d1as321d856qw4e65wq41651d53as1d8qw4r56qw4f5631asf56a4sf654as5f6a4s56f4as65465\",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}},{\"key\":\"9f3dc\",\"text\":\"\",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}},{\"key\":\"3vq85\",\"text\":\"xxxx\",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}},{\"key\":\"fgknl\",\"text\":\"\",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}},{\"key\":\"uhbi\",\"text\":\"\",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}},{\"key\":\"dk450\",\"text\":\"\",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}},{\"key\":\"13li4\",\"text\":\"\",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}},{\"key\":\"3cjrf\",\"text\":\" \",\"type\":\"atomic\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[{\"offset\":0,\"length\":1,\"key\":0}],\"data\":{}},{\"key\":\"e783e\",\"text\":\" \",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}},{\"key\":\"6dsjs\",\"text\":\"\",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}},{\"key\":\"6g1l5\",\"text\":\"dsadasd\",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}},{\"key\":\"a2oet\",\"text\":\" \",\"type\":\"atomic\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[{\"offset\":0,\"length\":1,\"key\":1}],\"data\":{}},{\"key\":\"dpbis\",\"text\":\"\",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}}],\"entityMap\":{\"0\":{\"type\":\"IMAGE\",\"mutability\":\"IMMUTABLE\",\"data\":{\"url\":\"https://cdn.flutterchina.club/images/flutter-mark-square-100.png\",\"name\":\"QQ20180526-104511@2x.png\",\"type\":\"IMAGE\",\"meta\":{}}},\"1\":{\"type\":\"IMAGE\",\"mutability\":\"IMMUTABLE\",\"data\":{\"url\":\"https://cdn.flutterchina.club/images/flutter-mark-square-100.png\",\"name\":\"QQ20180526-104511@2x.png\",\"type\":\"IMAGE\",\"meta\":{}}}}}";
                 Gson gson = new Gson();
-                ContentBean contentBean = gson.fromJson(_tempJson,ContentBean.class);
+                contentBean = gson.fromJson(_tempJson,ContentBean.class);
                 for (ContentBean.BlocksBean blocksBean : contentBean.getBlocks()) {
                     SimpleContentBean simpleContentBean = new SimpleContentBean();
                     if (blocksBean.getEntityRanges().size()>0){
