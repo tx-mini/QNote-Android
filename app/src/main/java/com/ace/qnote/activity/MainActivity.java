@@ -22,7 +22,6 @@ import android.widget.Toast;
 import com.ace.network.service.NoteService;
 import com.ace.network.util.CallBack;
 import com.ace.network.util.NetUtil;
-import com.ace.network.util.RxReturnData;
 import com.ace.qnote.R;
 import com.ace.qnote.adapter.DrawerNoteAdapter;
 import com.ace.qnote.adapter.NoteAdapter;
@@ -48,7 +47,7 @@ import me.iwf.photopicker.PhotoPicker;
 
 public class MainActivity extends BaseActivity {
     private final int REQUEST_CODE_CHOOSE = 1000;
-    private ImageView ivPic,ivEdit,ivTakePhoto,ivDeleteNoteBook,ivAddNote;
+    private ImageView ivEdit,ivTakePhoto;
     private TextView tvNickname;
     private TextView tvTerm;
     private LinearLayout layoutTerm;
@@ -88,7 +87,6 @@ public class MainActivity extends BaseActivity {
     @Override
     public void initView(View view) {
         rootView = view;
-        ivPic = findViewById(R.id.iv_pic);
         tvNickname = findViewById(R.id.tv_nickname);
         tvTerm = findViewById(R.id.tv_term);
         layoutTerm = findViewById(R.id.layout_term);
@@ -106,7 +104,6 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public void setListener() {
-        ivPic.setOnClickListener(this);
         tvNickname.setOnClickListener(this);
         tvTerm.setOnClickListener(this);
         layoutTerm.setOnClickListener(this);
@@ -121,8 +118,6 @@ public class MainActivity extends BaseActivity {
             addPicFromFile();
             return false;
         });
-        ivDeleteNoteBook.setOnClickListener(this);
-        ivAddNote.setOnClickListener(this);
     }
 
     private void addPicFromFile() {
@@ -154,7 +149,7 @@ public class MainActivity extends BaseActivity {
                 break;
 
             case R.id.tv_nickname:
-            case R.id.iv_pic:
+            case R.id.iv_image:
                 startActivity(new Intent(this,InformationActivity.class));
                 break;
             case R.id.iv_edit:
@@ -261,7 +256,7 @@ public class MainActivity extends BaseActivity {
 
         Glide.with(this).load(getSharedPreferences(Const.SP_NAME,MODE_PRIVATE).getString("imageUrl",""))
                 .apply(new RequestOptions().circleCrop().placeholder(R.mipmap.ic_launcher).error(R.mipmap.ic_launcher))
-                .into((ImageView) findViewById(R.id.iv_img));
+                .into((ImageView) findViewById(R.id.iv_image));
 
         ((TextView)findViewById(R.id.tv_nickname)).setText(getSharedPreferences(Const.SP_NAME,MODE_PRIVATE).getString("nickname","加载失败"));
 
@@ -298,14 +293,12 @@ public class MainActivity extends BaseActivity {
     private void showNoteList(String book_id){
 
         noteList = new ArrayList<>();
-        NetUtil.doRetrofitRequest(NetUtil.getRetrofitInstance().create(NoteService.class).getNoteList("1"), new CallBack<RxReturnData<List<NoteBean>>>() {
+        NetUtil.doRetrofitRequest(NetUtil.getRetrofitInstance().create(NoteService.class).getNoteList("1"), new CallBack<List<NoteBean>>() {
             @Override
-            public void onSuccess(RxReturnData<List<NoteBean>> data) {
-                if(data.getCode() == 200){
+            public void onSuccess(List<NoteBean> data) {
                     noteList.clear();
-                    noteList.addAll(data.getResult());
+                    noteList.addAll(data);
                     noteAdapter.notifyDataSetChanged();
-                }
             }
 
             @Override
