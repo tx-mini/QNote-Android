@@ -39,9 +39,16 @@ public interface NoteService {
 
     Observable<String> update(String openId, String noteId,String title,String bookId, boolean updateContent, String content, boolean isKeyNote);
 
-    Observable<BookBean> addBook(String openId, int term, String name);
+    @FormUrlEncoded
+    @POST("http://yapi.demo.qunar.com/mock/13512/createBook")
+    Observable<BookBean> addBook(@Field("openid") String openId,@Field("term") int term,@Field("name") String name);
+
+    Observable<String> deleteNote(String openId, String noteId);
 
     @FormUrlEncoded
     @POST("/listNote")
     Observable<List<NoteBean>> getNoteList(@Field("openid") String openId,@Field("book_id") String bookId,@Field("is_rubbish") int isRubbish,@Field("is_imp") int is_imp);
+
+
+    Observable<>
 }

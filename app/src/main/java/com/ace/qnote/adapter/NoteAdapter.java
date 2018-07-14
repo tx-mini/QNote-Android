@@ -10,11 +10,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ace.network.util.CallBack;
 import com.ace.network.util.NetUtil;
 import com.ace.qnote.R;
 import com.ace.qnote.util.CommonUtils;
+import com.ace.qnote.util.Const;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.example.zhouwei.library.CustomPopWindow;
@@ -134,13 +136,61 @@ public class NoteAdapter extends BaseQuickAdapter<NoteBean, BaseViewHolder> {
 
 
     private void showDeletePopwindow(View rootView, NoteBean item) {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.layout_pop_delete_note, null);
+        View view = LayoutInflater.from(mContext).inflate(R.layout.layout_pop_delete_note,null);
+        if(item.getIsRubbish()==1) {
+            ((TextView) view.findViewById(R.id.tv_message)).setText("确定要删除「"+item.getName()+"」吗？");
+        }else{
+            ((TextView) view.findViewById(R.id.tv_message)).setText("确定要将「"+item.getName()+"」移入垃圾桶么？");
+        }
         CustomPopWindow popDeleteWindow = new CustomPopWindow.PopupWindowBuilder(mContext)
                 .setView(view)
                 .enableBackgroundDark(true)
                 .setBgDarkAlpha(0.7f)
                 .create()
-                .showAtLocation(rootView, Gravity.CENTER, 0, 0);
+                .showAtLocation(rootView, Gravity.CENTER,0,0);
+        view.findViewById(R.id.btn_cancel).setOnClickListener(v->popDeleteWindow.dissmiss());
+        view.findViewById(R.id.btn_ok).setOnClickListener(v->{
+            //确定删除
+            if(item.getIsRubbish()==1){
+                //已经是垃圾桶里面的了 直接删除
+                NetUtil.doRetrofitRequest(NetUtil.noteService.deleteNote(Const.OPEN_ID, item.getId()), new CallBack<String>() {
+                    @Override
+                    public void onSuccess(String data) {
+                        getData().remove(item);
+                        notifyDataSetChanged();
+                        Toast.makeText(activity, "删除成功", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+
+                    }
+
+                    @Override
+                    public void onFailure(String message) {
+
+                    }
+                });
+            }else{
+                //移动到垃圾桶
+/*                NetUtil.doRetrofitRequest(NetUtil.noteService.update(), new CallBack<String>() {
+                    @Override
+                    public void onSuccess(String data) {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+
+                    }
+
+                    @Override
+                    public void onFailure(String message) {
+
+                    }
+                });*/
+            }
+        });
     }
 
     View lastView;

@@ -10,7 +10,7 @@ public class Const {
 
     public static final boolean debug = false;
 
-    public static final String OPEN_ID = "123";
+    public static String OPEN_ID = "123";
 
     public static final String[] termToChinese = {"2016-2017学年上学期","2016-2017学年下学期","2017-2018学年上学期","2017-2018学年下学期"};
 

@@ -13,6 +13,7 @@ public class NoteBean extends LitePalSupport implements Serializable {
 
     @SerializedName("note_id")
     private String id;
+
     private String name;
 
     @SerializedName("is_imp")
@@ -31,7 +32,6 @@ public class NoteBean extends LitePalSupport implements Serializable {
 
     @SerializedName("openid")
     private String openId;
-
 
     public NoteBean(){}
 
@@ -63,40 +63,6 @@ public class NoteBean extends LitePalSupport implements Serializable {
         this.name = name;
     }
 
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public String getBookRef() {
-        return bookRef;
-    }
-
-    public void setBookRef(String bookRef) {
-        this.bookRef = bookRef;
-    }
-
-    public String getRecentTime() {
-        return recentTime;
-    }
-
-    public void setRecentTime(String recentTime) {
-        this.recentTime = recentTime;
-    }
-
-
-    public String getOpenId() {
-        return openId;
-    }
-
-    public void setOpenId(String openId) {
-        this.openId = openId;
-    }
-
     public int getIsKeyNote() {
         return isKeyNote;
     }
@@ -111,5 +77,37 @@ public class NoteBean extends LitePalSupport implements Serializable {
 
     public void setIsRubbish(int isRubbish) {
         this.isRubbish = isRubbish;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public String getRecentTime() {
+        return recentTime;
+    }
+
+    public void setRecentTime(String recentTime) {
+        this.recentTime = recentTime;
+    }
+
+    public String getBookRef() {
+        return bookRef;
+    }
+
+    public void setBookRef(String bookRef) {
+        this.bookRef = bookRef;
+    }
+
+    public String getOpenId() {
+        return openId;
+    }
+
+    public void setOpenId(String openId) {
+        this.openId = openId;
     }
 }
