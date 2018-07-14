@@ -194,6 +194,7 @@ public class MainActivity extends BaseActivity {
     @Override
     public void doBusiness(Context mContext) {
         syncDataFromNet();
+        getDataFromLocal();
         drawerNoteAdapter = new DrawerNoteAdapter(R.layout.item_drawer_note,notebookList);
         rvNotebook.setAdapter(drawerNoteAdapter);
         rvNotebook.setLayoutManager(new LinearLayoutManager(this));
@@ -212,12 +213,21 @@ public class MainActivity extends BaseActivity {
         rvNote.setLayoutManager(new LinearLayoutManager(this));
     }
 
+    private void getDataFromLocal() {
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        });
+        thread.run();
+    }
+
     private void syncDataFromNet() {
         NetUtil.doRetrofitRequest(NetUtil.getRetrofitInstance().create(NoteService.class).getTermAndRubbish(Const.OPEN_ID), new CallBack<RxReturnData<TermResult>>() {
             @Override
             public void onSuccess(RxReturnData<TermResult> data) {
 //                data.getResult().getBrushList();
-                notebookList.clear();
                 termList.clear();
                 termList.addAll(data.getResult().getClassDir());
                 notebookList.clear();
