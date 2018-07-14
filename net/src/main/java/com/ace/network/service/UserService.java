@@ -9,8 +9,8 @@ public interface UserService {
 
     @FormUrlEncoded
     @POST("register")
-    Observable< String > register(@Field("openId") String openId,
-                                  @Field("imageUrl") String imageUrl,
-                                  @Field("nickname") String nickname);
+    Observable<Object> register(@Field("openid") String openId,
+                                  @Field("logo_url") String imageUrl,
+                                  @Field("nick_name") String nickname);
 
 }

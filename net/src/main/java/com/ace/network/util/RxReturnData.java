@@ -1,32 +1,23 @@
 package com.ace.network.util;
 
 
-public class RxReturnData<T> {
-    private boolean success;
-    private Integer code;
-    private T result;
+public class RxReturnData{
+    private String status;
+    private String msg;
 
-    public boolean isSuccess() {
-        return success;
+    public String getStatus() {
+        return status;
     }
 
-    public void setSuccess(boolean success) {
-        this.success = success;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
-    public T getResult() {
-        return result;
+    public String getMsg() {
+        return msg;
     }
 
-    public void setResult(T result) {
-        this.result = result;
-    }
-
-    public Integer getCode() {
-        return code;
-    }
-
-    public void setCode(Integer code) {
-        this.code = code;
+    public void setMsg(String msg) {
+        this.msg = msg;
     }
 }

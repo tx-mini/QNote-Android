@@ -15,6 +15,7 @@ import com.ace.network.util.CallBack;
 import com.ace.network.util.NetUtil;
 import com.ace.qnote.R;
 import com.ace.qnote.base.BaseActivity;
+import com.ace.qnote.util.Const;
 
 import org.litepal.LitePal;
 
@@ -98,7 +99,7 @@ public class ImportCourseActivity extends BaseActivity {
                     return;
                 }
 
-                NetUtil.doRetrofitRequest(NetUtil.courseService.getCourseList(id), new CallBack<List<CustomCourse>>() {
+                NetUtil.doRetrofitRequest(NetUtil.courseService.getCourseList(id,password,university, Const.OPEN_ID), new CallBack<List<CustomCourse>>() {
 
 
                     @Override

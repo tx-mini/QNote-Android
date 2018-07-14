@@ -4,8 +4,9 @@ import java.util.List;
 
 import csu.edu.ice.model.model.CustomCourse;
 import io.reactivex.Observable;
-import retrofit2.http.GET;
-import retrofit2.http.Path;
+import retrofit2.http.Field;
+import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.POST;
 
 /**
  * Created by ice on 2018/7/13.
@@ -13,7 +14,9 @@ import retrofit2.http.Path;
 
 public interface CourseService {
 
-        @GET("getSub/{stu_num}")
-        Observable<List<CustomCourse>> getCourseList(@Path("stu_num") String stuId);
+        @FormUrlEncoded
+        @POST("getSub")
+        Observable<List<CustomCourse>> getCourseList(@Field("stu_num") String stuId,@Field("password")String password,
+                                                     @Field("college") String schoolName,@Field("openid")String openId);
 
 }

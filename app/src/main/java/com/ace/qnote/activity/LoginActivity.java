@@ -211,9 +211,9 @@ public class LoginActivity extends BaseActivity {
     private void registerToServer(String openId, String figureUrl, String nickname) {
 
 
-        NetUtil.doRetrofitRequest(NetUtil.getRetrofitInstance().create(UserService.class).register(openId, figureUrl, nickname), new CallBack<String>() {
+        NetUtil.doRetrofitRequest(NetUtil.getRetrofitInstance().create(UserService.class).register(openId, figureUrl, nickname), new CallBack<Object>() {
             @Override
-            public void onSuccess(String data) {
+            public void onSuccess(Object data) {
                 SharedPreferences sharedPreferences = getSharedPreferences(Const.SP_NAME,MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putBoolean("autoLogin",true).commit();

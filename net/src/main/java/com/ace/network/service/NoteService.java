@@ -1,7 +1,5 @@
 package com.ace.network.service;
 
-import com.ace.network.util.RxReturnData;
-
 import java.util.List;
 
 import csu.edu.ice.model.dao.BookBean;
@@ -31,7 +29,7 @@ public interface NoteService {
     Observable<NoteBean> getNoteContent(@Query("key") String value);
 
     @GET("http://yapi.demo.qunar.com/mock/13512/getNoteList/{id}")
-    Observable<RxReturnData<List<NoteBean>>> getNote(@Path("id") String id);
+    Observable<List<NoteBean>> getNoteList(@Path("id") String id);
 
     Observable<String> move(String noteId,String bookId);
 
@@ -50,5 +48,4 @@ public interface NoteService {
     Observable<List<NoteBean>> getNoteList(@Field("openid") String openId,@Field("book_id") String bookId,@Field("is_rubbish") int isRubbish,@Field("is_imp") int is_imp);
 
 
-    Observable<>
 }
