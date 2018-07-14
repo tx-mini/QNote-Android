@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -30,12 +31,18 @@ import com.ace.qnote.adapter.TermAdapter;
 import com.ace.qnote.base.BaseActivity;
 import com.ace.qnote.util.CommonUtils;
 import com.ace.qnote.util.Const;
+import com.ace.qnote.util.oss.OssListener;
+import com.ace.qnote.util.oss.OssUtil;
 import com.ace.qnote.util.permission.ActionCallBackListener;
 import com.ace.qnote.util.permission.RxPermissionUtil;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.zhouwei.library.CustomPopWindow;
 import com.google.gson.Gson;
+import com.tencent.cos.xml.exception.CosXmlClientException;
+import com.tencent.cos.xml.exception.CosXmlServiceException;
+import com.tencent.cos.xml.model.CosXmlRequest;
+import com.tencent.cos.xml.model.CosXmlResult;
 
 import org.litepal.LitePal;
 import org.litepal.crud.callback.SaveCallback;
@@ -444,7 +451,22 @@ public class MainActivity extends BaseActivity {
             if (data != null) {
                 ArrayList<String> photos =
                         data.getStringArrayListExtra(PhotoPicker.KEY_SELECTED_PHOTOS);
+                OssUtil.upload(OssUtil.getService(getBaseContext()), photos, new OssListener() {
+                    @Override
+                    public void onProgress(long progress, long max) {
 
+                    }
+
+                    @Override
+                    public void onSuccess(ArrayList<String> url) {
+                        showToast("上传成功");
+                    }
+
+                    @Override
+                    public void onFail() {
+
+                    }
+                });
             }
         }else if(resultCode == Const.LOGOUT && requestCode == Const.TO_INFORMATION){
             finish();
