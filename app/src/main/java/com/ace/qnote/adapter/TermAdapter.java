@@ -15,6 +15,6 @@ public class TermAdapter extends BaseQuickAdapter<TermBean,BaseViewHolder> {
 
     @Override
     protected void convert(BaseViewHolder helper, TermBean item) {
-        helper.setText(R.id.tv_university,item.getValue());
+        helper.setText(R.id.tv_text,item.getValue());
     }
 }

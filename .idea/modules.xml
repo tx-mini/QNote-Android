@@ -3,7 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/PhotoPicker/PhotoPicker.iml" filepath="$PROJECT_DIR$/PhotoPicker/PhotoPicker.iml" />
-      <module fileurl="file://$PROJECT_DIR$/QNote-Android.iml" filepath="$PROJECT_DIR$/QNote-Android.iml" />
+      <module fileurl="file://E:\androidstudioFile\QNote_Android\QNote-Android.iml" filepath="E:\androidstudioFile\QNote_Android\QNote-Android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/QNote_Android.iml" filepath="$PROJECT_DIR$/QNote_Android.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/model/model.iml" filepath="$PROJECT_DIR$/model/model.iml" />
       <module fileurl="file://$PROJECT_DIR$/net/net.iml" filepath="$PROJECT_DIR$/net/net.iml" />

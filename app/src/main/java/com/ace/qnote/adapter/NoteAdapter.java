@@ -11,6 +11,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.ace.network.util.CallBack;
+import com.ace.network.util.NetUtil;
 import com.ace.qnote.R;
 import com.ace.qnote.util.CommonUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -19,61 +21,72 @@ import com.example.zhouwei.library.CustomPopWindow;
 
 import org.litepal.LitePal;
 
-import java.util.Arrays;
 import java.util.List;
 
-import csu.edu.ice.model.dao.TermBean;
-import csu.edu.ice.model.model.University;
+import csu.edu.ice.model.dao.BookBean;
+import csu.edu.ice.model.dao.NoteBean;
 
 /**
  * Created by ice on 2018/7/10.
  */
 
-public class NoteAdapter extends BaseQuickAdapter<String,BaseViewHolder> {
+public class NoteAdapter extends BaseQuickAdapter<NoteBean,BaseViewHolder> {
     Activity activity;
     View rootView;
     private int moveToIndex;
     private int curPosition;
-
-    public NoteAdapter(int layoutResId, @Nullable List<String> data,Activity activity,View rootView) {
+    private BookBean noteBook;
+    public NoteAdapter(int layoutResId, @Nullable List<NoteBean> data, Activity activity, BookBean notebook,View rootView) {
         super(layoutResId, data);
         this.activity = activity;
         this.rootView = rootView;
+        this.noteBook = notebook;
     }
 
     @Override
-    protected void convert(BaseViewHolder helper, String item) {
-        helper.setText(R.id.tv_note_title,item);
+    protected void convert(BaseViewHolder helper, NoteBean item) {
+        helper.setText(R.id.tv_note_title,item.getName());
+        if(item.getCreateTime()!=null){
+            helper.setText(R.id.tv_date,item.getCreateTime().toString());
+        }
 
         helper.getView(R.id.layout_root)
                 .setOnLongClickListener(v -> {
-                    View view = LayoutInflater.from(mContext).inflate(R.layout.layout_pop_menu,null);
-                    TextView tvDelete = view.findViewById(R.id.tv_delete);
+                    //弹出菜单
+                    View menuView = LayoutInflater.from(mContext).inflate(R.layout.layout_pop_menu,null);
+                    TextView tvDelete = menuView.findViewById(R.id.tv_delete);
+                    TextView tvTitle = menuView.findViewById(R.id.tv_title);
+                    tvTitle.setText(item.getName());
+
                     int xOffset = (int) (CommonUtils.getScreenWidth(activity)*0.45);
-                    CustomPopWindow popWindow = new CustomPopWindow.PopupWindowBuilder(mContext)
-                            .setView(view)//显示的布局
-                            .create()//创建PopupWindow
-                            .showAsDropDown(v,xOffset,-CommonUtils.dip2px(mContext,25), Gravity.CENTER);//显示PopupWindow
+                    CustomPopWindow popMenuWindow = new CustomPopWindow.PopupWindowBuilder(mContext)
+                            .setView(menuView)
+                            .create()
+                            .showAsDropDown(v,xOffset,-CommonUtils.dip2px(mContext,25), Gravity.CENTER);
+
+                    //删除
                     tvDelete.setOnClickListener(v1 -> {
-                        popWindow.dissmiss();
+                        popMenuWindow.dissmiss();
                         CustomPopWindow popDeleteWindow = new CustomPopWindow.PopupWindowBuilder(mContext)
-                                .setView(R.layout.layout_pop_delete_note)//显示的布局
-                                .enableBackgroundDark(true) //弹出popWindow时，背景是否变暗
-                                .setBgDarkAlpha(0.7f) // 控制亮度
-                                .create()//创建PopupWindow
-                                .showAtLocation(v, Gravity.CENTER,0,0);//显示PopupWindow
+                                .setView(R.layout.layout_pop_delete_note)
+                                .enableBackgroundDark(true)
+                                .setBgDarkAlpha(0.7f)
+                                .create()
+                                .showAtLocation(v, Gravity.CENTER,0,0);
                     });
 
-                    TextView tvMove = view.findViewById(R.id.tv_move);
+                    //移动
+                    TextView tvMove = menuView.findViewById(R.id.tv_move);
                     tvMove.setOnClickListener(v12 -> {
-                        popWindow.dissmiss();
-                        showMoveNotePopwindow(rootView);
+                        popMenuWindow.dissmiss();
+                        showMoveNotePopwindow(rootView,item);
                     });
 
-                    TextView tvRename = view.findViewById(R.id.tv_rename);
+                    //重命名
+                    TextView tvRename = menuView.findViewById(R.id.tv_rename);
                     tvRename.setOnClickListener(v12 -> {
-                        popWindow.dissmiss();
-                        showRenameNotePopwindow(rootView);
+                        popMenuWindow.dissmiss();
+                        showRenameNotePopwindow(rootView,item);
                     });
                     return false;
                 });
@@ -81,12 +94,14 @@ public class NoteAdapter extends BaseQuickAdapter<String,BaseViewHolder> {
         curPosition = helper.getAdapterPosition();
     }
     View lastView;
-    private void showMoveNotePopwindow(View rootView){
+    private void showMoveNotePopwindow(View rootView,NoteBean noteBean){
         //初始化为-1
         moveToIndex = -1;
-        List<TermBean> termList = LitePal.select("*").find(TermBean.class);
-        TermAdapter termAdapter = new TermAdapter(R.layout.item_text_line, termList);
+        List<BookBean> bookList = LitePal.where("term = ?",noteBook.getTerm()).find(BookBean.class);
+        DrawerNoteAdapter termAdapter = new DrawerNoteAdapter(R.layout.item_text_line, bookList);
         View view = LayoutInflater.from(mContext).inflate(R.layout.layout_move_note,null);
+        TextView tvTitle = view.findViewById(R.id.tv_title);
+        tvTitle.setText(noteBook.getTerm());
         RecyclerView recyclerView = view.findViewById(R.id.rv_notebook);
         recyclerView.setAdapter(termAdapter);
         termAdapter.setOnItemClickListener((adapter, view1, position) -> {
@@ -112,12 +127,28 @@ public class NoteAdapter extends BaseQuickAdapter<String,BaseViewHolder> {
         btnMove.setOnClickListener(v -> {
             popWindow.dissmiss();
             //Todo 移动
+            NetUtil.doRetrofitRequest(NetUtil.noteService.move(noteBean.getId(), noteBook.getId()), new CallBack<String>() {
+                @Override
+                public void onSuccess(String data) {
+
+                }
+
+                @Override
+                public void onError(Throwable throwable) {
+
+                }
+
+                @Override
+                public void onFailure(String message) {
+
+                }
+            });
         });
 
         btnCancel.setOnClickListener(v -> popWindow.dissmiss());
     }
 
-    private void showRenameNotePopwindow(View rootView){
+    private void showRenameNotePopwindow(View rootView, NoteBean item){
         //初始化为-1
         moveToIndex = -1;
         View view = LayoutInflater.from(mContext).inflate(R.layout.layout_pop_rename,null);
@@ -131,9 +162,29 @@ public class NoteAdapter extends BaseQuickAdapter<String,BaseViewHolder> {
         View btnOk = view.findViewById(R.id.btn_ok);
         View btnCancel = view.findViewById(R.id.btn_cancel);
         EditText editText = view.findViewById(R.id.et_name);
-        editText.setText(getData().get(curPosition));
+        editText.setText(getData().get(curPosition).getName());
         btnOk.setOnClickListener(v -> {
-            if (!CommonUtils.isEmpty(editText.getText().toString())){
+            String newTitle = editText.getText().toString();
+            if (!CommonUtils.isEmpty(newTitle)){
+
+                NetUtil.doRetrofitRequest(NetUtil.noteService.rename(item.getId(), newTitle), new CallBack<String>() {
+                    @Override
+                    public void onSuccess(String data) {
+                        //刷新界面
+                        item.setName(newTitle);
+                        notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+
+                    }
+
+                    @Override
+                    public void onFailure(String message) {
+
+                    }
+                });
 
             }
             popWindow.dissmiss();

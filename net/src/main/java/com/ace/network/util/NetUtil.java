@@ -1,5 +1,11 @@
 package com.ace.network.util;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+
+import com.ace.network.service.CourseService;
+import com.ace.network.service.NoteService;
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
 import java.util.concurrent.TimeUnit;
@@ -20,6 +26,9 @@ public class NetUtil {
     private static Retrofit retrofit;
 
     private static final int DEFAULT_TIMEOUT = 5;
+
+    public static CourseService courseService;
+    public static NoteService noteService;
 
     public static Retrofit getRetrofitInstance() {
         if (retrofit == null) {
@@ -44,24 +53,38 @@ public class NetUtil {
                 .baseUrl(ConstUrl.HOST)
                 .client(httpClient)
                 .build();
+
+        courseService = retrofit.create(CourseService.class);
+        noteService = retrofit.create(NoteService.class);
         return retrofit;
     }
 
     public static <T> void doRetrofitRequest(Observable<T> observable, final CallBack<T> callBack) {
-        observable
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<T>() {
-                    @Override
-                    public void accept(@NonNull T t) throws Exception {
+
+            observable
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Consumer<T>() {
+                        @Override
+                        public void accept(@NonNull T t) throws Exception {
                             callBack.onSuccess(t);
-                    }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(@NonNull Throwable throwable) throws Exception {
-                        throwable.printStackTrace();
-                        callBack.onError(throwable);
-                    }
-                });
+                        }
+                    }, new Consumer<Throwable>() {
+                        @Override
+                        public void accept(@NonNull Throwable throwable) throws Exception {
+                            throwable.printStackTrace();
+                            callBack.onError(throwable);
+                        }
+                    });
+
     }
+
+    public static boolean isNetworkConnected(Context context) {
+        ConnectivityManager connMgr = (ConnectivityManager)
+                context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        return (networkInfo != null && networkInfo.isConnected());
+    }
+
+
 }

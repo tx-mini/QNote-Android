@@ -21,7 +21,7 @@
         <mapping class="csu.edu.ice.model.dao.RubbishBean"/>
         <mapping class="csu.edu.ice.model.dao.TermBean"/>
         <mapping class="csu.edu.ice.model.dao.BookBean"/>
-        <mapping class="csu.edu.ice.model.dao.PageBean"/>
+        <mapping class="csu.edu.ice.model.dao.NoteBean"/>
 
     </list>
 </litepal>

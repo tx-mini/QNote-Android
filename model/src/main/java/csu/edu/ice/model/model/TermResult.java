@@ -1,29 +1,22 @@
 package csu.edu.ice.model.model;
 
-import java.util.ArrayList;
+import com.google.gson.annotations.SerializedName;
+
 import java.util.List;
 
-import csu.edu.ice.model.dao.RubbishBean;
 import csu.edu.ice.model.dao.TermBean;
 
 public class TermResult {
-    private List<TermBean> classDir;
-    private List<RubbishBean> brushList;
+    @SerializedName("term_list")
+    private List<TermBean> termList;
 
-    public List<TermBean> getClassDir() {
-        return classDir;
+    public List<TermBean> getTermList() {
+        return termList;
     }
 
-    public void setClassDir(List<TermBean> classDir) {
-        this.classDir = classDir;
+    public void setTermList(List<TermBean> termList) {
+        this.termList = termList;
     }
 
-    public List<RubbishBean> getBrushList() {
-        return brushList;
-    }
-
-    public void setBrushList(List<RubbishBean> brushList) {
-        this.brushList = brushList;
-    }
 }
 

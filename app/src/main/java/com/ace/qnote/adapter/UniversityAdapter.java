@@ -21,6 +21,6 @@ public class UniversityAdapter extends BaseQuickAdapter<University,BaseViewHolde
 
     @Override
     protected void convert(BaseViewHolder helper, University item) {
-        helper.setText(R.id.tv_university,item.getName());
+        helper.setText(R.id.tv_text,item.getName());
     }
 }

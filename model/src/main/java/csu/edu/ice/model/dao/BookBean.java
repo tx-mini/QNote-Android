@@ -12,6 +12,8 @@ public class BookBean extends LitePalSupport implements Serializable {
 
     private String id;
     private String value;
+    private String term;
+
 
     public int get_id() {
         return _id;
@@ -35,5 +37,13 @@ public class BookBean extends LitePalSupport implements Serializable {
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    public String getTerm() {
+        return term;
+    }
+
+    public void setTerm(String term) {
+        this.term = term;
     }
 }

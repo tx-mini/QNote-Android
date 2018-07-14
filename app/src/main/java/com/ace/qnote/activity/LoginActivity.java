@@ -13,6 +13,9 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import com.ace.network.service.UserService;
+import com.ace.network.util.CallBack;
+import com.ace.network.util.NetUtil;
 import com.ace.qnote.R;
 import com.ace.qnote.adapter.BannerAdapter;
 import com.ace.qnote.base.BaseActivity;
@@ -27,7 +30,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class LoginActivity extends BaseActivity {
-    private Tencent mTencent;
+    private Tencent tencent;
     private String openId;
     private IUiListener loginListener = new IUiListener() {
         @Override
@@ -48,7 +51,6 @@ public class LoginActivity extends BaseActivity {
             initOpenidAndToken((JSONObject) response);
             updateUserInfo();
 
-            startActivity(new Intent(LoginActivity.this,ImportCourseActivity.class));
         }
 
         @Override
@@ -105,6 +107,14 @@ public class LoginActivity extends BaseActivity {
 
     @Override
     public void doBusiness(Context mContext) {
+
+
+        if(getSharedPreferences(Const.SP_NAME,MODE_PRIVATE).getBoolean("autoLogin",false)){
+            //已经有值了
+            startActivity(new Intent(this,MainActivity.class));
+            finish();
+        }
+
         vpBanner.setAdapter(new BannerAdapter());
     }
 
@@ -117,8 +127,8 @@ public class LoginActivity extends BaseActivity {
             this.openId = openId;
             if (!TextUtils.isEmpty(token) && !TextUtils.isEmpty(expires)
                     && !TextUtils.isEmpty(openId)) {
-                mTencent.setAccessToken(token, expires);
-                mTencent.setOpenId(openId);
+                tencent.setAccessToken(token, expires);
+                tencent.setOpenId(openId);
             }
         } catch(Exception e) {
             e.printStackTrace();
@@ -148,7 +158,7 @@ public class LoginActivity extends BaseActivity {
      }
      */
     private void updateUserInfo() {
-        if (mTencent != null && mTencent.isSessionValid()) {
+        if (tencent != null && tencent.isSessionValid()) {
             IUiListener listener = new IUiListener() {
 
                 @Override
@@ -176,6 +186,8 @@ public class LoginActivity extends BaseActivity {
                             Log.d(TAG, "onComplete: "+response.toString());
                             Toast.makeText(LoginActivity.this, "欢迎"+nickname, Toast.LENGTH_LONG).show();
 
+                            registerToServer(openId,figureUrl,nickname);
+
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -187,20 +199,47 @@ public class LoginActivity extends BaseActivity {
 
                 }
             };
-            mInfo = new UserInfo(this, mTencent.getQQToken());
+            mInfo = new UserInfo(this, tencent.getQQToken());
             mInfo.getUserInfo(listener);
 
         } else {
-            Toast.makeText(this, "mTencent == null || !mTencent.isSessionValid()", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "tencent == null || !tencent.isSessionValid()", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void registerToServer(String openId, String figureUrl, String nickname) {
+
+
+        NetUtil.doRetrofitRequest(NetUtil.getRetrofitInstance().create(UserService.class).register(openId, figureUrl, nickname), new CallBack<String>() {
+            @Override
+            public void onSuccess(String data) {
+                SharedPreferences sharedPreferences = getSharedPreferences(Const.SP_NAME,MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putBoolean("autoLogin",true).commit();
+                startActivity(new Intent(LoginActivity.this,ImportCourseActivity.class));
+                finish();
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                showToast("对不起，网络状况不佳，请重新登录！");
+            }
+
+            @Override
+            public void onFailure(String message) {
+
+            }
+        });
+
+
     }
 
     private void doLogin() {
 //        startActivity(new Intent(LoginActivity.this,ImportCourseActivity.class));
 //        finish();
-           if(mTencent == null || !mTencent.isSessionValid()) {
-                mTencent = Tencent.createInstance("101488552", this);
-                mTencent.login(this, "all", loginListener, true);
+           if(tencent == null || !tencent.isSessionValid()) {
+                tencent = Tencent.createInstance("101488552", this);
+                tencent.login(this, "all", loginListener, true);
             }else{
                 updateUserInfo();
             }

@@ -5,7 +5,7 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:openDrawer="start">
+    tools:openDrawer="end">
 
 
     <RelativeLayout
@@ -25,23 +25,35 @@
                 android:textColor="#FF676767"
                 android:layout_marginTop="21dp"
                 android:text="2018-2019学年上"
-                android:id="@+id/year"
+                android:id="@+id/tv_year"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
             <TextView
+                android:id="@+id/tv_name"
                 android:textColor="#FF676767"
                 android:layout_marginTop="4dp"
-                android:layout_below="@id/year"
+                android:layout_below="@id/tv_year"
                 android:text="软件度量"
                 android:textSize="18sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
             <ImageView
-
-                android:layout_width="20dp"
-                android:layout_height="20dp" />
-
+                android:id="@+id/iv_delete_book"
+                android:layout_marginTop="4dp"
+                android:layout_below="@id/tv_year"
+                android:layout_toRightOf="@id/tv_name"
+                android:src="@mipmap/dustbin"
+                android:layout_width="25dp"
+                android:layout_height="25dp" />
+            <ImageView
+                android:id="@+id/iv_add_note"
+                android:layout_marginTop="4dp"
+                android:layout_below="@id/tv_year"
+                android:layout_alignParentRight="true"
+                android:src="@mipmap/add_note"
+                android:layout_width="25dp"
+                android:layout_height="25dp" />
         </RelativeLayout>
 
 

@@ -16,4 +16,6 @@ public interface CourseService {
         @GET("getSub/{stu_num}")
         Observable<List<CustomCourse>> getCourseList(@Path("stu_num") String stuId);
 
+
+
 }

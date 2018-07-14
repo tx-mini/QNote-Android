@@ -11,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -24,29 +25,28 @@ import com.ace.qnote.adapter.DrawerNoteAdapter;
 import com.ace.qnote.adapter.NoteAdapter;
 import com.ace.qnote.adapter.TermAdapter;
 import com.ace.qnote.base.BaseActivity;
-import com.ace.qnote.util.CommonUtils;
 import com.ace.qnote.util.Const;
 import com.ace.qnote.util.permission.ActionCallBackListener;
 import com.ace.qnote.util.permission.RxPermissionUtil;
-import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.example.zhouwei.library.CustomPopWindow;
 
 import org.litepal.LitePal;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import csu.edu.ice.model.dao.BookBean;
+import csu.edu.ice.model.dao.NoteBean;
 import csu.edu.ice.model.dao.TermBean;
 import csu.edu.ice.model.model.TermResult;
 import me.iwf.photopicker.PhotoPicker;
 
 public class MainActivity extends BaseActivity {
     private final int REQUEST_CODE_CHOOSE = 1000;
-    private ImageView ivPic,ivEdit,ivTakePhoto;
+    private ImageView ivPic,ivEdit,ivTakePhoto,ivDeleteNoteBook,ivAddNote;
     private TextView tvNickname;
     private TextView tvTerm;
+    private TextView tvYear;
     private LinearLayout layoutTerm;
     private LinearLayout layoutArchive,layoutNewNote, layoutCourseTable,layoutDustbin,layoutStudy;
     private RecyclerView rvNotebook,rvNote;
@@ -57,6 +57,8 @@ public class MainActivity extends BaseActivity {
     private View rootView;
     private DrawerNoteAdapter drawerNoteAdapter;
     private NoteAdapter noteAdapter;
+    private ArrayList noteList;
+    private BookBean notebook;
 
     @Override
     public void initParams(Bundle params) {
@@ -90,6 +92,9 @@ public class MainActivity extends BaseActivity {
         ivEdit = findViewById(R.id.iv_edit);
         ivTakePhoto = findViewById(R.id.iv_take_photo);
         rvNote = findViewById(R.id.rv_note);
+        ivDeleteNoteBook = findViewById(R.id.iv_delete_book);
+        ivAddNote = findViewById(R.id.iv_add_note);
+        tvYear = findViewById(R.id.tv_year);
     }
 
     @Override
@@ -109,6 +114,8 @@ public class MainActivity extends BaseActivity {
             addPicFromFile();
             return false;
         });
+        ivDeleteNoteBook.setOnClickListener(this);
+        ivAddNote.setOnClickListener(this);
     }
 
     private void addPicFromFile() {
@@ -162,7 +169,47 @@ public class MainActivity extends BaseActivity {
                     addPic();
                 }
                 break;
+
+            case R.id.iv_delete_book:
+                showDeleteNoteBookPopwindow();
+                break;
+            case R.id.iv_add_note:
+                showAddNotePopwindow();
+                break;
         }
+    }
+
+    private void showDeleteNoteBookPopwindow() {
+        View view = LayoutInflater.from(this).inflate(R.layout.layout_pop_delete_note,null);
+        TextView tvMessage = view.findViewById(R.id.tv_message);
+        CustomPopWindow popWindow = showWindow(view);
+        view.findViewById(R.id.btn_cancel).setOnClickListener(v-> popWindow.dissmiss());
+        view.findViewById(R.id.btn_ok).setOnClickListener(v -> {
+            //删除笔记本
+            popWindow.dissmiss();
+        });
+    }
+
+    private CustomPopWindow showWindow(View view){
+        return  new CustomPopWindow.PopupWindowBuilder(this)
+                .setView(view)//显示的布局
+                .enableBackgroundDark(true) //弹出popWindow时，背景是否变暗
+                .setBgDarkAlpha(0.7f) // 控制亮度
+                .create()//创建PopupWindow
+                .showAtLocation(getmContextView(), Gravity.CENTER,0, 0);//显示PopupWindow
+    }
+
+    private void showAddNotePopwindow() {
+        View view = LayoutInflater.from(this).inflate(R.layout.layout_pop_rename,null);
+        EditText etName = view.findViewById(R.id.et_name);
+        etName.setHint("请输入笔记名称");
+        CustomPopWindow popWindow = showWindow(view);
+        view.findViewById(R.id.btn_ok).setOnClickListener(v->{
+            showToast("添加笔记");
+        });
+        view.findViewById(R.id.btn_cancel).setOnClickListener(v->{
+            popWindow.dissmiss();
+        });
     }
 
     private void showChooseTermPopwindow() {
@@ -174,15 +221,8 @@ public class MainActivity extends BaseActivity {
 
         });
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        int margin = CommonUtils.dip2px(this,10)*2;
-        int width = CommonUtils.dip2px(this,260)+margin;
-        CustomPopWindow popWindow = new CustomPopWindow.PopupWindowBuilder(this)
-                .setView(view)//显示的布局
-                .size(width, (int) (getResources().getDimension(R.dimen.item_term_height)*termList.size()+margin))
-                .enableBackgroundDark(true) //弹出popWindow时，背景是否变暗
-                .setBgDarkAlpha(0.7f) // 控制亮度
-                .create()//创建PopupWindow
-                .showAtLocation(getmContextView(), Gravity.CENTER,0, 0);//显示PopupWindow
+        CustomPopWindow popWindow = showWindow(view);
+
     }
 
     private void addPic() {
@@ -194,39 +234,73 @@ public class MainActivity extends BaseActivity {
     @Override
     public void doBusiness(Context mContext) {
         syncDataFromNet();
-        drawerNoteAdapter = new DrawerNoteAdapter(R.layout.item_drawer_note,notebookList);
-        rvNotebook.setAdapter(drawerNoteAdapter);
-        rvNotebook.setLayoutManager(new LinearLayoutManager(this));
-
-        List<String> noteList = Arrays.asList("2018-7-6笔记","2018-7-8笔记","2018-7-10笔记","2018-7-16笔记");
-        NoteAdapter noteAdapter = new NoteAdapter(R.layout.item_note,noteList,this,rootView);
-        noteAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                Bundle bundle = new Bundle();
-                bundle.putString("title", (String) adapter.getData().get(position));
-                startActivity(NoteContentActivity.class,bundle);
-            }
+        noteAdapter = new NoteAdapter(R.layout.item_note,noteList,this,notebook,rootView);
+        noteAdapter.setOnItemClickListener((adapter, view, position) -> {
+            Bundle bundle = new Bundle();
+            bundle.putString("title", (String) adapter.getData().get(position));
+            startActivity(NoteContentActivity.class,bundle);
         });
         rvNote.setAdapter(noteAdapter);
         rvNote.setLayoutManager(new LinearLayoutManager(this));
+
+        //侧滑栏recycleView初始化
+        drawerNoteAdapter = new DrawerNoteAdapter(R.layout.item_drawer_note,notebookList);
+        rvNotebook.setAdapter(drawerNoteAdapter);
+        rvNotebook.setLayoutManager(new LinearLayoutManager(this));
+    }
+
+    private void showNoteList(){
+
+        noteList = new ArrayList<>();
+        NetUtil.doRetrofitRequest(NetUtil.getRetrofitInstance().create(NoteService.class).getNoteList("1"), new CallBack<RxReturnData<List<NoteBean>>>() {
+            @Override
+            public void onSuccess(RxReturnData<List<NoteBean>> data) {
+                if(data.getCode() == 200){
+                    noteList.clear();
+                    noteList.addAll(data.getResult());
+                    noteAdapter.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+
+            }
+
+            @Override
+            public void onFailure(String message) {
+
+            }
+        });
     }
 
     private void syncDataFromNet() {
-        NetUtil.doRetrofitRequest(NetUtil.getRetrofitInstance().create(NoteService.class).getTermAndRubbish(Const.OPEN_ID), new CallBack<RxReturnData<TermResult>>() {
+        NetUtil.doRetrofitRequest(NetUtil.getRetrofitInstance().create(NoteService.class).getTermAndRubbish(Const.OPEN_ID), new CallBack<TermResult>() {
             @Override
-            public void onSuccess(RxReturnData<TermResult> data) {
-//                data.getResult().getBrushList();
+            public void onSuccess(TermResult data) {
                 notebookList.clear();
+                notebookList.addAll(data.getTermList().get(0).getChildren());
+                for (TermBean termBean : data.getTermList()) {
+                    for (BookBean bookBean : termBean.getChildren()) {
+                        bookBean.setTerm(termBean.getTerm());
+                    }
+                    notebookList.addAll(termBean.getChildren());
+                }
+
                 termList.clear();
-                termList.addAll(data.getResult().getClassDir());
-                notebookList.clear();
-                notebookList.addAll(data.getResult().getClassDir().get(0).getChildrens());
+                termList.addAll(data.getTermList());
+
                 LitePal.saveAll(notebookList);
                 LitePal.saveAll(termList);
-                LitePal.saveAll(data.getResult().getBrushList());
                 drawerNoteAdapter.notifyDataSetChanged();
+                if(notebookList!=null && notebookList.size()>0) {
+                    notebook = notebookList.get(0);
+                }
 //                notebookList.addAll()
+
+                //显示最新的学期
+                tvYear.setText(termList.get(termList.size()-1).getTerm());
+                showNoteList();
             }
 
             @Override
@@ -252,4 +326,5 @@ public class MainActivity extends BaseActivity {
             }
         }
     }
+
 }
