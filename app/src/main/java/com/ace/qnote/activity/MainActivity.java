@@ -11,6 +11,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -144,7 +145,7 @@ public class MainActivity extends BaseActivity {
                 openDustbin();
                 break;
             case R.id.layout_new_notebook:
-                showAddNotePopwindow(term);
+                showAddNoteBookPopwindow(term);
                 break;
             case R.id.layout_study:
                 break;
@@ -218,10 +219,10 @@ public class MainActivity extends BaseActivity {
                 .showAtLocation(getmContextView(), Gravity.CENTER,0, 0);//显示PopupWindow
     }
 
-    private void showAddNotePopwindow(int term) {
+    private void showAddNoteBookPopwindow(int term) {
         View view = LayoutInflater.from(this).inflate(R.layout.layout_pop_rename,null);
         EditText etName = view.findViewById(R.id.et_name);
-        etName.setHint("请输入笔记名称");
+        etName.setHint("请输入笔记本名称");
         CustomPopWindow popWindow = showWindow(view);
         view.findViewById(R.id.btn_ok).setOnClickListener(v->{
 
@@ -235,6 +236,8 @@ public class MainActivity extends BaseActivity {
                     data.save();
                     notebookList.add(data);
                     drawerNoteAdapter.notifyDataSetChanged();
+                    popWindow.dissmiss();
+                    showToast("创建成功！");
                 }
 
                 @Override
@@ -257,14 +260,45 @@ public class MainActivity extends BaseActivity {
     private void showChooseTermPopwindow() {
         TermAdapter termAdapter = new TermAdapter(R.layout.item_text_line, termList);
         View view = LayoutInflater.from(this).inflate(R.layout.layout_pop_term,null);
+        CustomPopWindow popWindow = showWindow(view);
         RecyclerView recyclerView = view.findViewById(R.id.rv_term);
         recyclerView.setAdapter(termAdapter);
-        termAdapter.setOnItemChildClickListener((adapter, view1, position) -> {
+        termAdapter.setOnItemClickListener((adapter, view1, position) -> {
+            TermBean termBean = termList.get(position);
+            tvTerm.setText(Const.termToChinese[termBean.getTerm()]);
+            List<BookBean> bookList = LitePal.where("term = ?", termBean.getTerm() + "").find(BookBean.class);
+            drawerNoteAdapter.setNewData(bookList);
+
+            popWindow.dissmiss();
+            drawerLayout.closeDrawer(Gravity.LEFT);
+            term = termBean.getTerm();
+            if(bookList.size()>0) {
+                showLatestNoteList(bookList.get(0).getId());
+            }
 
         });
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        CustomPopWindow popWindow = showWindow(view);
 
+    }
+
+    private void showLatestNoteList(String  bookId){
+        NetUtil.doRetrofitRequest(NetUtil.noteService.getNoteList(Const.OPEN_ID,bookId,0,0), new CallBack<List<NoteBean>>() {
+            @Override
+            public void onSuccess(List<NoteBean> data) {
+                noteAdapter.setNewData(data);
+                drawerLayout.closeDrawer(Gravity.LEFT);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                Toast.makeText(MainActivity.this, "出错了!", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(String message) {
+
+            }
+        });
     }
 
     private void addPic() {
@@ -313,49 +347,15 @@ public class MainActivity extends BaseActivity {
         drawerNoteAdapter.setOnItemClickListener((adapter, view, position) -> {
             BookBean bookbean = notebookList.get(position);
             tvName.setText(bookbean.getName());
-            NetUtil.doRetrofitRequest(NetUtil.noteService.getNoteList(Const.OPEN_ID,bookbean.getId(),0,0), new CallBack<List<NoteBean>>() {
-                @Override
-                public void onSuccess(List<NoteBean> data) {
-                    noteAdapter.setNewData(data);
-                    drawerLayout.closeDrawer(Gravity.LEFT);
-                }
-
-                @Override
-                public void onError(Throwable throwable) {
-                    Toast.makeText(MainActivity.this, "出错了!", Toast.LENGTH_SHORT).show();
-                }
-
-                @Override
-                public void onFailure(String message) {
-
-                }
-            });
+            showLatestNoteList(bookbean.getId());
         });
     }
 
 
 
     private void showNoteList(String book_id){
-
         noteList = new ArrayList<>();
-        NetUtil.doRetrofitRequest(NetUtil.noteService.getNoteList(Const.OPEN_ID,book_id,0,0), new CallBack<List<NoteBean>>() {
-            @Override
-            public void onSuccess(List<NoteBean> data) {
-                    noteList.clear();
-                    noteList.addAll(data);
-                    noteAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onError(Throwable throwable) {
-
-            }
-
-            @Override
-            public void onFailure(String message) {
-
-            }
-        });
+        showLatestNoteList(book_id);
     }
 
     private void getDataFromLocal() {
@@ -369,7 +369,8 @@ public class MainActivity extends BaseActivity {
     }
 
     private void syncDataFromNet() {
-        NetUtil.doRetrofitRequest(NetUtil.getRetrofitInstance().create(NoteService.class).getTermAndRubbish(Const.OPEN_ID), new CallBack<TermResult>() {
+        NetUtil.doRetrofitRequest(NetUtil.getRetrofitInstance().create(NoteService.class).getTermAndRubbish(Const.OPEN_ID),
+                new CallBack<TermResult>() {
             @Override
             public void onSuccess(TermResult data) {
                 notebookList.clear();
@@ -383,8 +384,9 @@ public class MainActivity extends BaseActivity {
 
                 termList.clear();
                 termList.addAll(data.getTermList());
-
+                LitePal.deleteAll(BookBean.class);
                 LitePal.saveAll(notebookList);
+                LitePal.deleteAll(TermBean.class);
                 LitePal.saveAll(termList);
                 drawerNoteAdapter.notifyDataSetChanged();
                 if(notebookList!=null && notebookList.size()>0) {
@@ -425,4 +427,16 @@ public class MainActivity extends BaseActivity {
         }
     }
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(keyCode == KeyEvent.KEYCODE_BACK){
+            if(drawerLayout.isDrawerOpen(Gravity.LEFT)){
+                drawerLayout.closeDrawer(Gravity.LEFT);
+                return true;
+            }else{
+                return super.onKeyDown(keyCode, event);
+            }
+        }
+        return super.onKeyDown(keyCode,event);
+    }
 }

@@ -4,14 +4,12 @@ import java.util.List;
 
 import csu.edu.ice.model.dao.BookBean;
 import csu.edu.ice.model.dao.NoteBean;
-import csu.edu.ice.model.dao.RubbishBean;
 import csu.edu.ice.model.model.TermResult;
 import io.reactivex.Observable;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
-import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface NoteService {
@@ -22,7 +20,6 @@ public interface NoteService {
     @FormUrlEncoded
     @POST("listBook")
     Observable<TermResult> getTermAndRubbish(@Field("openid") String value);
-
 
     @FormUrlEncoded
     @POST("getNote")

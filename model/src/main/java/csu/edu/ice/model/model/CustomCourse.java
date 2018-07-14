@@ -35,6 +35,8 @@ public class CustomCourse extends LitePalSupport implements Serializable,ICourse
     private int userId;//自定义课程userId不为0
     private int backgroundColor;
 
+    private int term;
+
     public CustomCourse() {
     }
 
@@ -166,5 +168,21 @@ public class CustomCourse extends LitePalSupport implements Serializable,ICourse
 
     public void setDuration(String duration) {
         this.duration = duration;
+    }
+
+    public int get_id() {
+        return _id;
+    }
+
+    public void set_id(int _id) {
+        this._id = _id;
+    }
+
+    public int getTerm() {
+        return term;
+    }
+
+    public void setTerm(int term) {
+        this.term = term;
     }
 }
