@@ -8,13 +8,16 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ace.network.service.NoteService;
 import com.ace.network.util.CallBack;
@@ -48,7 +51,6 @@ public class MainActivity extends BaseActivity {
     private ImageView ivPic,ivEdit,ivTakePhoto,ivDeleteNoteBook,ivAddNote;
     private TextView tvNickname;
     private TextView tvTerm;
-    private TextView tvYear;
     private LinearLayout layoutTerm;
     private LinearLayout layoutArchive,layoutNewNote, layoutCourseTable,layoutDustbin,layoutStudy;
     private RecyclerView rvNotebook,rvNote;
@@ -62,6 +64,10 @@ public class MainActivity extends BaseActivity {
     private ArrayList noteList;
     private BookBean notebook;
     private TextView tvName;
+
+    private RelativeLayout layoutHide;
+    private RelativeLayout layoutNormal;
+    private int term;
 
     @Override
     public void initParams(Bundle params) {
@@ -97,7 +103,6 @@ public class MainActivity extends BaseActivity {
         rvNote = findViewById(R.id.rv_note);
         ivDeleteNoteBook = findViewById(R.id.iv_delete_book);
         ivAddNote = findViewById(R.id.iv_add_note);
-        tvYear = findViewById(R.id.tv_year);
         tvName = findViewById(R.id.tv_name);
     }
 
@@ -145,6 +150,7 @@ public class MainActivity extends BaseActivity {
             case R.id.layout_dustbin:
                 break;
             case R.id.layout_new_notebook:
+                showAddNotePopwindow(term);
                 break;
             case R.id.layout_study:
                 break;
@@ -178,7 +184,7 @@ public class MainActivity extends BaseActivity {
                 showDeleteNoteBookPopwindow();
                 break;
             case R.id.iv_add_note:
-                showAddNotePopwindow();
+                showAddNotePopwindow(term);
                 break;
         }
     }
@@ -203,13 +209,36 @@ public class MainActivity extends BaseActivity {
                 .showAtLocation(getmContextView(), Gravity.CENTER,0, 0);//显示PopupWindow
     }
 
-    private void showAddNotePopwindow() {
+    private void showAddNotePopwindow(int term) {
         View view = LayoutInflater.from(this).inflate(R.layout.layout_pop_rename,null);
         EditText etName = view.findViewById(R.id.et_name);
         etName.setHint("请输入笔记名称");
         CustomPopWindow popWindow = showWindow(view);
         view.findViewById(R.id.btn_ok).setOnClickListener(v->{
-            showToast("添加笔记");
+
+            if(TextUtils.isEmpty(etName.getText().toString())){
+                Toast.makeText(this, "请输入笔记本名称！", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            NetUtil.doRetrofitRequest(NetUtil.noteService.addBook(Const.OPEN_ID, term, etName.getText().toString()), new CallBack<BookBean>() {
+                @Override
+                public void onSuccess(BookBean data) {
+                    data.save();
+                    notebookList.add(data);
+                    drawerNoteAdapter.notifyDataSetChanged();
+                }
+
+                @Override
+                public void onError(Throwable throwable) {
+
+                }
+
+                @Override
+                public void onFailure(String message) {
+
+                }
+            });
+
         });
         view.findViewById(R.id.btn_cancel).setOnClickListener(v->{
             popWindow.dissmiss();
@@ -333,8 +362,8 @@ public class MainActivity extends BaseActivity {
                 }
 
                 //显示最新的学期
-                tvYear.setText(Const.termToChinese[termList.get(termList.size()-1).getTerm()]);
                 tvTerm.setText(Const.termToChinese[termList.get(termList.size()-1).getTerm()]);
+                term = termList.get(termList.size()-1).getTerm();
                 //显示课程名称
                 tvName.setText(notebook.getName());
                 showNoteList(notebook.getId());

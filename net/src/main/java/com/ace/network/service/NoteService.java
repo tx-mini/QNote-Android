@@ -4,6 +4,7 @@ import com.ace.network.util.RxReturnData;
 
 import java.util.List;
 
+import csu.edu.ice.model.dao.BookBean;
 import csu.edu.ice.model.dao.NoteBean;
 import csu.edu.ice.model.dao.NoteContentBean;
 import csu.edu.ice.model.model.TermResult;
@@ -34,5 +35,8 @@ public interface NoteService {
     Observable<String> rename(String noteId,String newName);
 
     Observable<String> update(String openId, String noteId,String title,String bookId, boolean updateContent, String content, boolean isKeyNote);
+
+    Observable<BookBean> addBook(String openId, int term, String name);
+
 
 }
