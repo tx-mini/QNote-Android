@@ -2,7 +2,7 @@ package com.ace.network.service;
 
 import java.util.List;
 
-import csu.edu.ice.model.University;
+import csu.edu.ice.model.model.University;
 import io.reactivex.Observable;
 import retrofit2.http.GET;
 import retrofit2.http.Query;

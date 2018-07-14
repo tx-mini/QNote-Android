@@ -12,13 +12,18 @@ import android.os.Vibrator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.ace.network.service.NoteService;
+import com.ace.network.util.CallBack;
+import com.ace.network.util.NetUtil;
 import com.ace.qnote.R;
 import com.ace.qnote.adapter.NoteContentAdapter;
 import com.ace.qnote.adapter.NoteContentEditAdapter;
@@ -32,6 +37,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.callback.ItemDragAndSwipeCallback;
 import com.chad.library.adapter.base.listener.OnItemDragListener;
 import com.chad.library.adapter.base.listener.OnItemSwipeListener;
+import com.example.zhouwei.library.CustomPopWindow;
 import com.github.clans.fab.FloatingActionMenu;
 import com.google.gson.Gson;
 import com.tencent.connect.share.QQShare;
@@ -42,6 +48,7 @@ import com.tencent.tauth.UiError;
 import java.util.ArrayList;
 import java.util.List;
 
+import csu.edu.ice.model.dao.NoteContentBean;
 import csu.edu.ice.model.model.ContentBean;
 import csu.edu.ice.model.model.SimpleContentBean;
 import me.iwf.photopicker.PhotoPicker;
@@ -72,6 +79,7 @@ public class NoteContentActivity extends BaseActivity {
         if (params != null) {
             title = params.getString("title");
         }
+        contentList = new ArrayList<>();
     }
 
     @Override
@@ -129,8 +137,6 @@ public class NoteContentActivity extends BaseActivity {
             public void clearView(RecyclerView.ViewHolder viewHolder, int pos) {}
             @Override
             public void onItemSwiped(RecyclerView.ViewHolder viewHolder, int pos) {
-//                noteContentEditAdapter.getData().remove(pos);
-                noteContentAdapter.getData().remove(pos);
             }
             @Override
             public void onItemSwipeMoving(Canvas canvas, RecyclerView.ViewHolder viewHolder, float dX, float dY, boolean isCurrentlyActive) {
@@ -265,21 +271,11 @@ public class NoteContentActivity extends BaseActivity {
 
         initPageData();
 
-        ArrayList<String> arrayList = new ArrayList<>();
-        arrayList.add("http://img3.imgtn.bdimg.com/it/u=80472546,670250703&fm=27&gp=0.jpg");
-        arrayList.add("这节课都讲的什么东西");
-        arrayList.add("http://img0.imgtn.bdimg.com/it/u=2796201933,4190184343&fm=27&gp=0.jpg");
-        arrayList.add("TCP三次握手四次挥手");
-        arrayList.add("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1531574283&di=d4d7d2226260b741c657916e7f014825&imgtype=jpg&er=1&src=http%3A%2F%2Fimg.zcool.cn%2Fcommunity%2F01fc245798c5220000018c1b3264ef.jpg%401280w_1l_2o_100sh.png");
-
         rv_note_content.setLayoutManager(new LinearLayoutManager(this));
         noteContentAdapter = new NoteContentAdapter(R.layout.item_note_content, contentList);
-        noteContentEditAdapter = new NoteContentEditAdapter(R.layout.item_note_content_edit, contentList);
         noteContentAdapter.setOnItemLongClickListener(new BaseQuickAdapter.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(BaseQuickAdapter adapter, View view, int position) {
-                Log.d(TAG, "onItemLongClick: ");
-
                 rv_note_content.post(() -> {
                     Vibrator vibrator = (Vibrator) getBaseContext().getSystemService(Service.VIBRATOR_SERVICE);
                     if (vibrator != null) {
@@ -288,9 +284,22 @@ public class NoteContentActivity extends BaseActivity {
                     rv_note_content.setAdapter(noteContentEditAdapter);
                     doFadeOut(ll_add);
                     doFadeIn(fam_tools);
+                    noteContentEditAdapter.enableSwipeItem();
+                    noteContentEditAdapter.setOnItemSwipeListener(onItemSwipeListener);
                     isEditing = true;
                 });
                 return false;
+            }
+        });
+
+        noteContentEditAdapter = new NoteContentEditAdapter(R.layout.item_note_content_edit, contentList);
+        noteContentEditAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
+            @Override
+            public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
+                switch (view.getId()){
+                    case R.id.tv_text_edit:
+                        showModifyTextPopWindow(((TextView)view).getText().toString());
+                }
             }
         });
 
@@ -299,31 +308,67 @@ public class NoteContentActivity extends BaseActivity {
         itemTouchHelper.attachToRecyclerView(rv_note_content);
         noteContentEditAdapter.enableDragItem(itemTouchHelper, R.id.cv_content, true);
         noteContentEditAdapter.setOnItemDragListener(onItemDragListener);
-
-        noteContentEditAdapter.enableSwipeItem();
-        noteContentEditAdapter.setOnItemSwipeListener(onItemSwipeListener);
-
         rv_note_content.setAdapter(noteContentAdapter);
     }
 
-    private void initPageData() {
-        contentList = new ArrayList<>();
-        String _tempJson =
-                "{\"blocks\":[{\"key\":\"d5l3p\",\"text\":\"123asdasdasdas23d1as321d856qw4e65wq41651d53as1d8qw4r56qw4f5631asf56a4sf654as5f6a4s56f4as65465\",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}},{\"key\":\"9f3dc\",\"text\":\"\",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}},{\"key\":\"3vq85\",\"text\":\"xxxx\",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}},{\"key\":\"fgknl\",\"text\":\"\",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}},{\"key\":\"uhbi\",\"text\":\"\",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}},{\"key\":\"dk450\",\"text\":\"\",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}},{\"key\":\"13li4\",\"text\":\"\",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}},{\"key\":\"3cjrf\",\"text\":\" \",\"type\":\"atomic\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[{\"offset\":0,\"length\":1,\"key\":0}],\"data\":{}},{\"key\":\"e783e\",\"text\":\" \",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}},{\"key\":\"6dsjs\",\"text\":\"\",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}},{\"key\":\"6g1l5\",\"text\":\"dsadasd\",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}},{\"key\":\"a2oet\",\"text\":\" \",\"type\":\"atomic\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[{\"offset\":0,\"length\":1,\"key\":1}],\"data\":{}},{\"key\":\"dpbis\",\"text\":\"\",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}}],\"entityMap\":{\"0\":{\"type\":\"IMAGE\",\"mutability\":\"IMMUTABLE\",\"data\":{\"url\":\"https://cdn.flutterchina.club/images/flutter-mark-square-100.png\",\"name\":\"QQ20180526-104511@2x.png\",\"type\":\"IMAGE\",\"meta\":{}}},\"1\":{\"type\":\"IMAGE\",\"mutability\":\"IMMUTABLE\",\"data\":{\"url\":\"https://cdn.flutterchina.club/images/flutter-mark-square-100.png\",\"name\":\"QQ20180526-104511@2x.png\",\"type\":\"IMAGE\",\"meta\":{}}}}}";
-        Gson gson = new Gson();
-        ContentBean contentBean = gson.fromJson(_tempJson,ContentBean.class);
-        for (ContentBean.BlocksBean blocksBean : contentBean.getBlocks()) {
-            SimpleContentBean simpleContentBean = new SimpleContentBean();
-            if (blocksBean.getEntityRanges().size()>0){
-                String key = blocksBean.getEntityRanges().get(0).getKey()+"";
-                simpleContentBean.setContent(contentBean.getEntityMap().get(key).getData().getUrl());
-                simpleContentBean.setType(Const.CONTENT_TYPE_IMG);
-            }else {
-                simpleContentBean.setContent(blocksBean.getText());
-                simpleContentBean.setType(Const.CONTENT_TYPE_TEXT);
-            }
-            contentList.add(simpleContentBean);
+    private void showModifyTextPopWindow(String text) {
+        if (!CommonUtils.isEmpty(text)){
+            View view = LayoutInflater.from(this).inflate(R.layout.layout_pop_add_text,null);
+            CustomPopWindow popWindow = new CustomPopWindow.PopupWindowBuilder(this)
+                    .setView(view)//显示的布局
+                    .enableBackgroundDark(true) //弹出popWindow时，背景是否变暗
+                    .setBgDarkAlpha(0.7f) // 控制亮度
+                    .create()//创建PopupWindow
+                    .showAtLocation(getmContextView(), Gravity.CENTER,0, 0);//显示PopupWindow
+
+            View btnOk = view.findViewById(R.id.btn_ok);
+            View btnCancel = view.findViewById(R.id.btn_cancel);
+            EditText editText = view.findViewById(R.id.et_text);
+            editText.setText(text);
+            btnOk.setOnClickListener(v -> {
+                if (!CommonUtils.isEmpty(editText.getText().toString())){
+
+                }
+                popWindow.dissmiss();
+            });
+
+            btnCancel.setOnClickListener(v -> popWindow.dissmiss());
         }
+    }
+
+    private void initPageData() {
+        NetUtil.doRetrofitRequest(NetUtil.getRetrofitInstance().create(NoteService.class).getNoteContent(Const.OPEN_ID), new CallBack<NoteContentBean>() {
+            @Override
+            public void onSuccess(NoteContentBean data) {
+//                String _tempJson = data.getContent();
+                String _tempJson =
+                        "{\"blocks\":[{\"key\":\"d5l3p\",\"text\":\"123asdasdasdas23d1as321d856qw4e65wq41651d53as1d8qw4r56qw4f5631asf56a4sf654as5f6a4s56f4as65465\",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}},{\"key\":\"9f3dc\",\"text\":\"\",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}},{\"key\":\"3vq85\",\"text\":\"xxxx\",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}},{\"key\":\"fgknl\",\"text\":\"\",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}},{\"key\":\"uhbi\",\"text\":\"\",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}},{\"key\":\"dk450\",\"text\":\"\",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}},{\"key\":\"13li4\",\"text\":\"\",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}},{\"key\":\"3cjrf\",\"text\":\" \",\"type\":\"atomic\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[{\"offset\":0,\"length\":1,\"key\":0}],\"data\":{}},{\"key\":\"e783e\",\"text\":\" \",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}},{\"key\":\"6dsjs\",\"text\":\"\",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}},{\"key\":\"6g1l5\",\"text\":\"dsadasd\",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}},{\"key\":\"a2oet\",\"text\":\" \",\"type\":\"atomic\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[{\"offset\":0,\"length\":1,\"key\":1}],\"data\":{}},{\"key\":\"dpbis\",\"text\":\"\",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}}],\"entityMap\":{\"0\":{\"type\":\"IMAGE\",\"mutability\":\"IMMUTABLE\",\"data\":{\"url\":\"https://cdn.flutterchina.club/images/flutter-mark-square-100.png\",\"name\":\"QQ20180526-104511@2x.png\",\"type\":\"IMAGE\",\"meta\":{}}},\"1\":{\"type\":\"IMAGE\",\"mutability\":\"IMMUTABLE\",\"data\":{\"url\":\"https://cdn.flutterchina.club/images/flutter-mark-square-100.png\",\"name\":\"QQ20180526-104511@2x.png\",\"type\":\"IMAGE\",\"meta\":{}}}}}";
+                Gson gson = new Gson();
+                ContentBean contentBean = gson.fromJson(_tempJson,ContentBean.class);
+                for (ContentBean.BlocksBean blocksBean : contentBean.getBlocks()) {
+                    SimpleContentBean simpleContentBean = new SimpleContentBean();
+                    if (blocksBean.getEntityRanges().size()>0){
+                        String key = blocksBean.getEntityRanges().get(0).getKey()+"";
+                        simpleContentBean.setContent(contentBean.getEntityMap().get(key).getData().getUrl());
+                        simpleContentBean.setType(Const.CONTENT_TYPE_IMG);
+                    }else {
+                        simpleContentBean.setContent(blocksBean.getText());
+                        simpleContentBean.setType(Const.CONTENT_TYPE_TEXT);
+                    }
+                    contentList.add(simpleContentBean);
+                }
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+
+            }
+
+            @Override
+            public void onFailure(String message) {
+
+            }
+        });
     }
 
     @Override
@@ -342,6 +387,9 @@ public class NoteContentActivity extends BaseActivity {
         if (isEditing){
             rv_note_content.setAdapter(noteContentAdapter);
             isEditing = false;
+            doFadeOut(fam_tools);
+            doFadeIn(ll_add);
+            noteContentEditAdapter.disableSwipeItem();
         }else {
             super.onBackPressed();
         }

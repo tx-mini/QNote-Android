@@ -8,7 +8,7 @@ import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.util.List;
 
-import csu.edu.ice.model.University;
+import csu.edu.ice.model.model.University;
 
 /**
  * Created by ice on 2018/7/9.

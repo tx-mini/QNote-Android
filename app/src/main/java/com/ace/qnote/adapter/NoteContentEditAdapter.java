@@ -33,6 +33,7 @@ public class NoteContentEditAdapter extends BaseItemDraggableAdapter<SimpleConte
             helper.setText(R.id.tv_text_edit, item.getContent());
             helper.setGone(R.id.iv_img_edit,false);
             helper.setGone(R.id.tv_text_edit,true);
+            helper.addOnClickListener(R.id.tv_text_edit);
         }
     }
 }

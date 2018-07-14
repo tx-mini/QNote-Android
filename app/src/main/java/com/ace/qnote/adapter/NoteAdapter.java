@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.ace.qnote.R;
@@ -16,8 +17,13 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.example.zhouwei.library.CustomPopWindow;
 
+import org.litepal.LitePal;
+
 import java.util.Arrays;
 import java.util.List;
+
+import csu.edu.ice.model.dao.TermBean;
+import csu.edu.ice.model.model.University;
 
 /**
  * Created by ice on 2018/7/10.
@@ -27,14 +33,13 @@ public class NoteAdapter extends BaseQuickAdapter<String,BaseViewHolder> {
     Activity activity;
     View rootView;
     private int moveToIndex;
+    private int curPosition;
 
     public NoteAdapter(int layoutResId, @Nullable List<String> data,Activity activity,View rootView) {
         super(layoutResId, data);
         this.activity = activity;
         this.rootView = rootView;
     }
-
-
 
     @Override
     protected void convert(BaseViewHolder helper, String item) {
@@ -44,7 +49,6 @@ public class NoteAdapter extends BaseQuickAdapter<String,BaseViewHolder> {
                 .setOnLongClickListener(v -> {
                     View view = LayoutInflater.from(mContext).inflate(R.layout.layout_pop_menu,null);
                     TextView tvDelete = view.findViewById(R.id.tv_delete);
-
                     int xOffset = (int) (CommonUtils.getScreenWidth(activity)*0.45);
                     CustomPopWindow popWindow = new CustomPopWindow.PopupWindowBuilder(mContext)
                             .setView(view)//显示的布局
@@ -63,16 +67,24 @@ public class NoteAdapter extends BaseQuickAdapter<String,BaseViewHolder> {
                     TextView tvMove = view.findViewById(R.id.tv_move);
                     tvMove.setOnClickListener(v12 -> {
                         popWindow.dissmiss();
-                        showMoveNotoPopwindow(rootView);
+                        showMoveNotePopwindow(rootView);
+                    });
+
+                    TextView tvRename = view.findViewById(R.id.tv_rename);
+                    tvRename.setOnClickListener(v12 -> {
+                        popWindow.dissmiss();
+                        showRenameNotePopwindow(rootView);
                     });
                     return false;
                 });
+
+        curPosition = helper.getAdapterPosition();
     }
     View lastView;
-    private void showMoveNotoPopwindow(View rootView){
+    private void showMoveNotePopwindow(View rootView){
         //初始化为-1
         moveToIndex = -1;
-        List<String> termList = Arrays.asList("2017-2018上学期","2017-2018上学期","2017-2018上学期","2017-2018上学期");
+        List<TermBean> termList = LitePal.select("*").find(TermBean.class);
         TermAdapter termAdapter = new TermAdapter(R.layout.item_text_line, termList);
         View view = LayoutInflater.from(mContext).inflate(R.layout.layout_move_note,null);
         RecyclerView recyclerView = view.findViewById(R.id.rv_notebook);
@@ -100,6 +112,31 @@ public class NoteAdapter extends BaseQuickAdapter<String,BaseViewHolder> {
         btnMove.setOnClickListener(v -> {
             popWindow.dissmiss();
             //Todo 移动
+        });
+
+        btnCancel.setOnClickListener(v -> popWindow.dissmiss());
+    }
+
+    private void showRenameNotePopwindow(View rootView){
+        //初始化为-1
+        moveToIndex = -1;
+        View view = LayoutInflater.from(mContext).inflate(R.layout.layout_pop_rename,null);
+        CustomPopWindow popWindow = new CustomPopWindow.PopupWindowBuilder(mContext)
+                .setView(view)//显示的布局
+                .enableBackgroundDark(true) //弹出popWindow时，背景是否变暗
+                .setBgDarkAlpha(0.7f) // 控制亮度
+                .create()//创建PopupWindow
+                .showAtLocation(rootView, Gravity.CENTER,0, 0);//显示PopupWindow
+
+        View btnOk = view.findViewById(R.id.btn_ok);
+        View btnCancel = view.findViewById(R.id.btn_cancel);
+        EditText editText = view.findViewById(R.id.et_name);
+        editText.setText(getData().get(curPosition));
+        btnOk.setOnClickListener(v -> {
+            if (!CommonUtils.isEmpty(editText.getText().toString())){
+
+            }
+            popWindow.dissmiss();
         });
 
         btnCancel.setOnClickListener(v -> popWindow.dissmiss());
