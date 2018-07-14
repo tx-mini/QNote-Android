@@ -38,5 +38,7 @@ public interface NoteService {
 
     Observable<BookBean> addBook(String openId, int term, String name);
 
+    Observable<String> deleteNote(String openId, String noteId);
+
 
 }

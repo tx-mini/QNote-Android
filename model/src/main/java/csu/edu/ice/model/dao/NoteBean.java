@@ -22,7 +22,8 @@ public class NoteBean extends LitePalSupport implements Serializable {
 
     @SerializedName("book_ref")
     private String bookRef;
-
+    @SerializedName("is_rubbish")
+    private int isRubbish;
 
     public NoteBean(){}
 
@@ -84,5 +85,13 @@ public class NoteBean extends LitePalSupport implements Serializable {
 
     public void setRecentTime(String recentTime) {
         this.recentTime = recentTime;
+    }
+
+    public int getIsRubbish() {
+        return isRubbish;
+    }
+
+    public void setIsRubbish(int isRubbish) {
+        this.isRubbish = isRubbish;
     }
 }
