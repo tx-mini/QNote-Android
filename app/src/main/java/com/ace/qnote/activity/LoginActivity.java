@@ -2,6 +2,7 @@ package com.ace.qnote.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
@@ -15,6 +16,7 @@ import android.widget.Toast;
 import com.ace.qnote.R;
 import com.ace.qnote.adapter.BannerAdapter;
 import com.ace.qnote.base.BaseActivity;
+import com.ace.qnote.util.Const;
 import com.tencent.connect.UserInfo;
 import com.tencent.connect.common.Constants;
 import com.tencent.tauth.IUiListener;
@@ -26,6 +28,7 @@ import org.json.JSONObject;
 
 public class LoginActivity extends BaseActivity {
     private Tencent mTencent;
+    private String openId;
     private IUiListener loginListener = new IUiListener() {
         @Override
         public void onComplete(Object response) {
@@ -111,6 +114,7 @@ public class LoginActivity extends BaseActivity {
             String token = jsonObject.getString(Constants.PARAM_ACCESS_TOKEN);
             String expires = jsonObject.getString(Constants.PARAM_EXPIRES_IN);
             String openId = jsonObject.getString(Constants.PARAM_OPEN_ID);
+            this.openId = openId;
             if (!TextUtils.isEmpty(token) && !TextUtils.isEmpty(expires)
                     && !TextUtils.isEmpty(openId)) {
                 mTencent.setAccessToken(token, expires);
@@ -159,10 +163,19 @@ public class LoginActivity extends BaseActivity {
                     if(json.has("figureurl")){
                         try {
                             String figureUrl = json.getString("figureurl_qq_2");
+
 //                            Glide.with(LoginActivity.this).load(figureUrl).into((ImageView) findViewById(R.id.iv_pic));
                             String nickname =json.getString("nickname");
+
+                            SharedPreferences sharedPreferences = getSharedPreferences(Const.SP_NAME,MODE_PRIVATE);
+                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                            editor.putString("imageUrl",figureUrl);
+                            editor.putString("nickname",nickname);
+                            editor.putString("openId",openId);
+                            editor.commit();
                             Log.d(TAG, "onComplete: "+response.toString());
                             Toast.makeText(LoginActivity.this, "欢迎"+nickname, Toast.LENGTH_LONG).show();
+
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -183,14 +196,14 @@ public class LoginActivity extends BaseActivity {
     }
 
     private void doLogin() {
-        startActivity(new Intent(LoginActivity.this,ImportCourseActivity.class));
-        finish();
-/*        if(mTencent == null || !mTencent.isSessionValid()) {
-            mTencent = Tencent.createInstance("101488552", this);
-            mTencent.login(this, "all", loginListener, true);
-        }else{
-            updateUserInfo();
-        }*/
+//        startActivity(new Intent(LoginActivity.this,ImportCourseActivity.class));
+//        finish();
+           if(mTencent == null || !mTencent.isSessionValid()) {
+                mTencent = Tencent.createInstance("101488552", this);
+                mTencent.login(this, "all", loginListener, true);
+            }else{
+                updateUserInfo();
+            }
     }
 
     @Override
