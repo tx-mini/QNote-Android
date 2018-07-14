@@ -16,4 +16,8 @@ public class Const {
 
     public static final String[] termToChinese = {"","2016-2017学年上学期","2016-2017学年下学期","2017-2018学年上学期","2017-2018学年下学期"};
 
+    public static final String START_DAY = "2018-07-09";
+
+    public static final int[] startTimes = {800,1000,1400,1600,1900};
+    public static final int courseDuration = 100;
 }

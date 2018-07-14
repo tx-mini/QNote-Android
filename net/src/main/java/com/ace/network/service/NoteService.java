@@ -1,5 +1,7 @@
 package com.ace.network.service;
 
+import com.ace.network.util.RxReturnData;
+
 import java.util.List;
 
 import csu.edu.ice.model.dao.BookBean;
@@ -10,6 +12,7 @@ import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface NoteService {
@@ -29,18 +32,19 @@ public interface NoteService {
     @POST("listNote")
     Observable<List<NoteBean>> getNoteList(@Field("openid") String openId, @Field("book_id") String bookId, @Field("is_rubbish") int isRubbish, @Field("is_imp") int isImportant);
 
-    Observable<String> move(String noteId, String bookId);
-
-
-    Observable<String> rename(String noteId, String newName);
-
-    Observable<String> update(String openId, String noteId, String title, String bookId, boolean updateContent, String content, boolean isKeyNote);
+    @FormUrlEncoded
+    @POST("modNote")
+    Observable<RxReturnData> update(@Field("openid") String openId, @Field("note_id") String noteId, @Field("name") String title, @Field("book_id") String bookId,
+                                    @Field("is_imp") int isImportant, @Field("is_rubbish") int isRubbish,
+                                    @Field("is_bool") boolean updateContent, @Field("content") String content);
 
     @FormUrlEncoded
     @POST("http://yapi.demo.qunar.com/mock/13512/createBook")
     Observable<BookBean> addBook(@Field("openid") String openId, @Field("term") int term, @Field("name") String name);
 
-    Observable<String> deleteNote(String openId, String noteId);
+    @FormUrlEncoded
+    @POST("rmNote/{openid}/{note_id}")
+    Observable<String> deleteNote(@Path("openid") String openId,@Path("note_id") String noteId);
 
 
 }
