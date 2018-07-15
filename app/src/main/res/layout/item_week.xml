@@ -17,7 +17,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <TextView
-            android:id="@+id/layoutWeek"
+            android:id="@+noteId/layoutWeek"
             android:textColor="#000"
             android:textSize="20sp"
             android:text="12"
@@ -34,7 +34,7 @@
 
     <TextView
         android:visibility="invisible"
-        android:id="@+id/textThisWeek"
+        android:id="@+noteId/textThisWeek"
         android:textColor="#000"
         android:text="本周"
         android:layout_width="wrap_content"

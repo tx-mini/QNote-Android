@@ -4,7 +4,7 @@
     tools:context=".MainActivity"
     >
   <item
-      android:id="@+id/delete"
+      android:id="@+noteId/delete"
       android:title="@string/__picker_delete"
       android:icon="@drawable/__picker_delete"
       android:orderInCategory="100"

@@ -13,7 +13,7 @@
         app:titleTextColor="#fff"
         android:background="@color/colorPrimary"
         app:title="添加课程"
-        android:id="@+id/toolbar"
+        android:id="@+noteId/toolbar"
         android:layout_width="match_parent"
         android:layout_height="56dp"/>
 
@@ -33,7 +33,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <EditText
-            android:id="@+id/et_name"
+            android:id="@+noteId/et_name"
             android:textSize="@dimen/login_text_size"
             android:paddingLeft="10dp"
             android:hint="未填写"
@@ -57,7 +57,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <EditText
-            android:id="@+id/et_address"
+            android:id="@+noteId/et_address"
             android:textSize="@dimen/login_text_size"
             android:paddingLeft="10dp"
             android:hint="未填写"
@@ -81,7 +81,7 @@
             android:layout_height="wrap_content" />
         <TextView
             android:onClick="viewClicked"
-            android:id="@+id/tv_choose_week"
+            android:id="@+noteId/tv_choose_week"
             android:textSize="@dimen/login_text_size"
             android:paddingLeft="10dp"
             android:text="点击选择"
@@ -129,7 +129,7 @@
         <TextView
             android:onClick="viewClicked"
             android:focusable="false"
-            android:id="@+id/tv_choose_course_time"
+            android:id="@+noteId/tv_choose_course_time"
             android:textSize="@dimen/login_text_size"
             android:paddingLeft="10dp"
             android:text="点击选择"
@@ -142,7 +142,7 @@
 
     <Button
         android:textColor="#fff"
-        android:id="@+id/btn_add"
+        android:id="@+noteId/btn_add"
         android:layout_marginTop="20dp"
         android:layout_gravity="center_horizontal"
         android:background="@drawable/shape_btn_white"
@@ -152,7 +152,7 @@
 
     <Button
         android:textColor="#fff"
-        android:id="@+id/btn_save"
+        android:id="@+noteId/btn_save"
         android:layout_marginTop="20dp"
         android:layout_gravity="center_horizontal"
         android:background="@drawable/shape_btn_red"
@@ -162,7 +162,7 @@
 
     <Button
         android:visibility="gone"
-        android:id="@+id/btn_delete"
+        android:id="@+noteId/btn_delete"
         android:layout_marginTop="20dp"
         android:layout_gravity="center_horizontal"
         android:background="@color/colorPrimary"

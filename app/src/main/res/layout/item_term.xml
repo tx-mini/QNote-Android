@@ -8,7 +8,7 @@
     android:layout_height="@dimen/item_term_height">
     <TextView
         android:textSize="16sp"
-        android:id="@+id/tv_university"
+        android:id="@+noteId/tv_university"
         android:layout_marginLeft="5dp"
         android:gravity="center"
         android:layout_weight="1"

@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/activity_main"
+    android:id="@+noteId/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
 
     <SurfaceView
-        android:id="@+id/camera_sf"
+        android:id="@+noteId/camera_sf"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         />
 
     <ImageView
-        android:id="@+id/present_photo"
+        android:id="@+noteId/present_photo"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone"
@@ -21,7 +21,7 @@
         />
 
     <ImageButton
-        android:id="@+id/take_photo_btn"
+        android:id="@+noteId/take_photo_btn"
         android:layout_width="65dp"
         android:layout_height="65dp"
         android:layout_centerInParent="true"
@@ -32,7 +32,7 @@
         android:layout_margin="15dp"/>
 
     <Button
-        android:id="@+id/restart_take_photo"
+        android:id="@+noteId/restart_take_photo"
         android:layout_marginLeft="50dp"
         android:layout_alignParentLeft="true"
         android:layout_width="65dp"
@@ -46,7 +46,7 @@
         />
 
     <Button
-        android:id="@+id/continue_take_photo"
+        android:id="@+noteId/continue_take_photo"
         android:layout_marginRight="50dp"
         android:layout_alignParentRight="true"
         android:layout_width="65dp"
@@ -60,12 +60,12 @@
         />
 
     <RelativeLayout
-        android:id="@+id/rl_title_bar"
+        android:id="@+noteId/rl_title_bar"
         android:layout_width="fill_parent"
         android:layout_height="@dimen/title_bar_height"
         android:background="@color/title_bar_transparent">
         <LinearLayout
-            android:id="@+id/ll_back"
+            android:id="@+noteId/ll_back"
             android:layout_width="40dp"
             android:layout_height="match_parent"
             android:gravity="center">
@@ -77,7 +77,7 @@
 
         </LinearLayout>
         <TextView
-            android:id="@+id/course_name_text"
+            android:id="@+noteId/course_name_text"
             style="@style/white_title_bar_text"
             android:textColor="@color/white"
             android:layout_width="wrap_content"
@@ -89,7 +89,7 @@
             android:layout_alignParentEnd="true">
 
             <TextView
-                android:id="@+id/finish_text"
+                android:id="@+noteId/finish_text"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:textSize="@dimen/app_text_size_middle"
@@ -98,7 +98,7 @@
                 android:textColor="@color/white"/>
 
             <TextView
-                android:id="@+id/photo_num_text"
+                android:id="@+noteId/photo_num_text"
                 android:layout_marginRight="10dp"
                 android:layout_width="15dp"
                 android:layout_height="15dp"

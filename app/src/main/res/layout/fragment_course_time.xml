@@ -13,12 +13,12 @@
         android:layout_height="wrap_content">
 
         <com.ace.qnote.view.WheelView
-            android:id="@+id/wheelWeekday"
+            android:id="@+noteId/wheelWeekday"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/number_picker_height"></com.ace.qnote.view.WheelView>
 
         <com.ace.qnote.view.WheelView
-            android:id="@+id/wheelStartTime"
+            android:id="@+noteId/wheelStartTime"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/number_picker_height"></com.ace.qnote.view.WheelView>
 
@@ -29,14 +29,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <com.ace.qnote.view.WheelView
-            android:id="@+id/wheelEndTime"
+            android:id="@+noteId/wheelEndTime"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/number_picker_height"></com.ace.qnote.view.WheelView>
 
 
     </LinearLayout>
     <Button
-        android:id="@+id/btnOk"
+        android:id="@+noteId/btnOk"
         android:layout_gravity="center"
         android:layout_marginTop="10dp"
         android:textColor="#fff"

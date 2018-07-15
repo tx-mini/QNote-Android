@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
-    android:id="@+id/layout_root"
+    android:id="@+noteId/layout_root"
     android:background="@drawable/selector_item_note"
     android:orientation="vertical"
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="34dp">
         <TextView
-            android:id="@+id/tv_note_title"
+            android:id="@+noteId/tv_note_title"
             android:text="2018-7-6笔记"
             android:layout_weight="1"
             android:textSize="14sp"
@@ -23,7 +23,7 @@
         <TextView
             android:textSize="12sp"
             android:textColor="#C7C7C7"
-            android:id="@+id/tv_date"
+            android:id="@+noteId/tv_date"
             android:text="2018年7月6日"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />

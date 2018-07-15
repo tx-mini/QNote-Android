@@ -9,7 +9,7 @@
     tools:context="com.ace.qnote.activity.LoginActivity">
 
     <android.support.v4.view.ViewPager
-        android:id="@+id/vp_banner"
+        android:id="@+noteId/vp_banner"
         android:layout_marginTop="133dp"
         android:layout_width="match_parent"
         android:layout_height="325dp"></android.support.v4.view.ViewPager>
@@ -21,7 +21,7 @@
         android:text="使用QQ登录"
         android:layout_marginTop="499dp"
         android:background="@drawable/login_edittext_shape"
-        android:id="@+id/btn_login"
+        android:id="@+noteId/btn_login"
         android:layout_width="177dp"
         android:layout_height="35dp" />
 

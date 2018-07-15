@@ -10,14 +10,14 @@
 
         <LinearLayout
             android:gravity="center"
-            android:id="@+id/layoutWeek"
+            android:id="@+noteId/layoutWeek"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:orientation="horizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
             <TextView
-                android:id="@+id/textWeek"
+                android:id="@+noteId/textWeek"
                 android:layout_width="wrap_content"
                 android:layout_height="30dp"
                 android:gravity="center"
@@ -25,7 +25,7 @@
                 android:textColor="@color/colorPrimary"
                 android:textSize="20sp" />
             <ImageView
-                android:id="@+id/imageArrow"
+                android:id="@+noteId/imageArrow"
                 android:layout_marginLeft="2dp"
                 android:src="@drawable/down"
                 android:layout_width="15dp"
@@ -33,7 +33,7 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/textTerm"
+            android:id="@+noteId/textTerm"
             android:textColor="@color/colorPrimary"
             android:layout_centerHorizontal="true"
             android:layout_below="@id/layoutWeek"
@@ -43,7 +43,7 @@
 
 
         <ImageView
-            android:id="@+id/iv_add_course"
+            android:id="@+noteId/iv_add_course"
             android:layout_centerVertical="true"
             android:layout_marginRight="10dp"
             android:layout_alignParentRight="true"
@@ -55,18 +55,18 @@
 
     <HorizontalScrollView
         android:visibility="gone"
-        android:id="@+id/scrollWeek"
+        android:id="@+noteId/scrollWeek"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
         <LinearLayout
             android:orientation="horizontal"
-            android:id="@+id/layoutWeekWrapper"
+            android:id="@+noteId/layoutWeekWrapper"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
             <TextView
                 android:visibility="gone"
-                android:id="@+id/settingNowWeek"
+                android:id="@+noteId/settingNowWeek"
                 android:drawableTop="@drawable/modify"
                 android:textColor="#000"
                 android:gravity="center"
@@ -79,7 +79,7 @@
     </HorizontalScrollView>
 
     <com.ace.qnote.view.CourseLayout
-        android:id="@+id/courseLayout"
+        android:id="@+noteId/courseLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"></com.ace.qnote.view.CourseLayout>
 

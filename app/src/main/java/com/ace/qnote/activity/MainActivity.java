@@ -32,7 +32,6 @@ import com.ace.qnote.adapter.DrawerNoteAdapter;
 import com.ace.qnote.adapter.NoteAdapter;
 import com.ace.qnote.adapter.TermAdapter;
 import com.ace.qnote.base.BaseActivity;
-import com.ace.qnote.util.CommonUtils;
 import com.ace.qnote.util.Const;
 import com.ace.qnote.util.MD5Util;
 import com.ace.qnote.util.oss.OssListener;
@@ -301,6 +300,10 @@ public class MainActivity extends BaseActivity {
     }
 
     private void showNoteList(List<NoteBean> data) {
+        //TODO:后台返回创建时间后删除
+        for (NoteBean datum : data) {
+            datum.setCreateTime(System.currentTimeMillis()+"");
+        }
 
         if(tvName.getText().equals("垃圾桶")){
             tvNullTip.setText("垃圾桶暂无笔记");
@@ -452,7 +455,7 @@ public class MainActivity extends BaseActivity {
             Bundle bundle = new Bundle();
             NoteBean noteBean = (NoteBean) adapter.getData().get(position);
             bundle.putString("title", noteBean.getName());
-            bundle.putString("noteId", noteBean.getId());
+            bundle.putString("noteId", noteBean.getNoteId());
             startActivity(NoteContentActivity.class,bundle);
         });
         rvNote.setAdapter(noteAdapter);
@@ -502,70 +505,72 @@ public class MainActivity extends BaseActivity {
         }
         if (bookBean != null){
             ArrayList<NoteBean> noteBeans = new ArrayList<>();
+            BookBean finalBookBean = bookBean;
             LitePal.where("bookRef = ?",bookBean.getId()).findAsync(NoteBean.class).listen(new FindMultiCallback() {
                 @Override
                 public <T> void onFinish(List<T> t) {
                     noteBeans.addAll((List<NoteBean>) t);
-                }
-            });
-            Date nowDate = new Date(System.currentTimeMillis());
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy年MM月dd日笔记", Locale.CHINESE);
-            NoteBean createBean = new NoteBean(
-                    MD5Util.crypt(UUID.randomUUID().toString()),
-                    simpleDateFormat.format(nowDate),
-                    bookBean.getId(),
-                    Const.OPEN_ID
-            );
-            for (NoteBean noteBean : noteBeans) {
-                Date noteDate = new Date(Long.parseLong(noteBean.getCreateTime()));
-                Calendar noteCalendar = Calendar.getInstance();
-                noteCalendar.setTime(noteDate);
-                Calendar nowCalendar = Calendar.getInstance();
-                nowCalendar.setTime(nowDate);
-                if (noteCalendar.get(Calendar.DAY_OF_YEAR) == nowCalendar.get(Calendar.DAY_OF_YEAR)){
-                    createBean = noteBean;
-                }
-            }
+                    Date nowDate = new Date(System.currentTimeMillis());
+                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy年MM月dd日笔记", Locale.CHINESE);
+                    NoteBean createBean = new NoteBean(
+                            MD5Util.crypt(UUID.randomUUID().toString()),
+                            simpleDateFormat.format(nowDate),
+                            finalBookBean.getId(),
+                            Const.OPEN_ID
+                    );
+                    for (NoteBean noteBean : noteBeans) {
+                        Date noteDate = new Date(Long.parseLong(noteBean.getCreateTime()));
+                        Calendar noteCalendar = Calendar.getInstance();
+                        noteCalendar.setTime(noteDate);
+                        Calendar nowCalendar = Calendar.getInstance();
+                        nowCalendar.setTime(nowDate);
+                        if (noteCalendar.get(Calendar.DAY_OF_YEAR) == nowCalendar.get(Calendar.DAY_OF_YEAR)){
+                            createBean = noteBean;
+                        }
+                    }
 
-            ContentBean.BlocksBean blocksBean = new ContentBean().new BlocksBean();
-            blocksBean.setKey(MD5Util.crypt(UUID.randomUUID().toString()).substring(0,5));
-            blocksBean.setText(data);
-            blocksBean.setType("unstyled");
-            blocksBean.setDepth(0);
-            blocksBean.setInlineStyleRanges(new ArrayList<>());
-            blocksBean.setEntityRanges(new ArrayList<>());
-            blocksBean.setData(new ContentBean().new BlocksBean().new DataBean());
-            if (isText){
-                if (createBean.getContent()==null){
-                    ArrayList<ContentBean.BlocksBean> blocksBeans = new ArrayList<>();
-                    blocksBeans.add(blocksBean);
-                    ContentBean contentBean = new ContentBean(new HashMap<String,ContentBean.EntityBean>(),blocksBeans);
-                    Gson gson = new Gson();
-                    createBean.setContent(gson.toJson(contentBean));
-                }
-            }
+                    ContentBean.BlocksBean blocksBean = new ContentBean().new BlocksBean();
+                    blocksBean.setKey(MD5Util.crypt(UUID.randomUUID().toString()).substring(0,5));
+                    blocksBean.setText(data);
+                    blocksBean.setType("unstyled");
+                    blocksBean.setDepth(0);
+                    blocksBean.setInlineStyleRanges(new ArrayList<>());
+                    blocksBean.setEntityRanges(new ArrayList<>());
+                    blocksBean.setData(new ContentBean().new BlocksBean().new DataBean());
+                    if (isText){
+                        if (createBean.getContent()==null){
+                            ArrayList<ContentBean.BlocksBean> blocksBeans = new ArrayList<>();
+                            blocksBeans.add(blocksBean);
+                            ContentBean contentBean = new ContentBean(new HashMap<String,ContentBean.EntityBean>(),blocksBeans);
+                            Gson gson = new Gson();
+                            createBean.setContent(gson.toJson(contentBean));
+                        }
+                    }
 
-            createBean.saveAsync().listen(new SaveCallback() {
-                @Override
-                public void onFinish(boolean success) {
-                }
-            });
-            NoteBean finalCreateBean = createBean;
-            NetUtil.doRetrofitRequest(NetUtil.noteService.addNote(Const.OPEN_ID, createBean.getBookRef(),
-                    createBean.getName(), createBean.getContent(), createBean.getIsKeyNote()), new CallBack<RxReturnData>() {
-                @Override
-                public void onSuccess(RxReturnData data) {
-                    finalCreateBean.setLocal(0);
-                    finalCreateBean.setSyncTime(System.currentTimeMillis()+"");
-                    finalCreateBean.update(finalCreateBean.get_id());
-                }
+                    createBean.saveAsync().listen(new SaveCallback() {
+                        @Override
+                        public void onFinish(boolean success) {
+                        }
+                    });
+                    NoteBean finalCreateBean = createBean;
+                    NetUtil.doRetrofitRequest(NetUtil.noteService.addNote(Const.OPEN_ID, createBean.getBookRef(),
+                            createBean.getName(), createBean.getContent(), createBean.getIsKeyNote()), new CallBack<RxReturnData>() {
+                        @Override
+                        public void onSuccess(RxReturnData data) {
+                            finalCreateBean.setLocal(0);
+                            finalCreateBean.setSyncTime(System.currentTimeMillis()+"");
+                            finalCreateBean.update(finalCreateBean.get_id());
+                        }
 
-                @Override
-                public void onError(Throwable throwable) {
-                }
+                        @Override
+                        public void onError(Throwable throwable) {
+                        }
 
-                @Override
-                public void onFailure(String message) {
+                        @Override
+                        public void onFailure(String message) {
+
+                        }
+                    });
 
                 }
             });

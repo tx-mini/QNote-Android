@@ -6,7 +6,7 @@
     >
 
   <android.support.v7.widget.RecyclerView
-      android:id="@+id/rv_photos"
+      android:id="@+noteId/rv_photos"
       android:layout_width="match_parent"
       android:gravity="center"
       android:layout_weight="1"
@@ -20,7 +20,7 @@
 	  android:background="?attr/colorPrimary"
       >
         <Button
-            android:id="@+id/button"
+            android:id="@+noteId/button"
             android:text="@string/__picker_all_image"
             android:layout_width="wrap_content"
             android:gravity="center"

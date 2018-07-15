@@ -6,7 +6,7 @@
     
     <ImageView
         android:src="@mipmap/navigator_1"
-        android:id="@+id/iv_banner"
+        android:id="@+noteId/iv_banner"
         android:layout_gravity="center"
         android:layout_width="280dp"
         android:layout_height="match_parent" />

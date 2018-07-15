@@ -18,7 +18,7 @@
             <TextView
                 style="@style/pop_menu_text_style"
                 android:textColor="#FF70A8FF"
-                android:id="@+id/tv_title"
+                android:id="@+noteId/tv_title"
                 android:text="2018-7-9笔记"
                 android:layout_height="33dp" />
 
@@ -28,7 +28,7 @@
                 android:layout_height="@dimen/line_height"/>
 
             <TextView
-                android:id="@+id/tv_restore"
+                android:id="@+noteId/tv_restore"
                 android:text="恢复"
                 style="@style/pop_menu_text_style"/>
             <View
@@ -37,7 +37,7 @@
                 android:layout_height="@dimen/line_height"/>
 
             <TextView
-                android:id="@+id/tv_delete"
+                android:id="@+noteId/tv_delete"
                 android:text="永久删除"
                 style="@style/pop_menu_text_style"/>
             <View

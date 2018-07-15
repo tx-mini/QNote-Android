@@ -6,7 +6,7 @@
   <ImageView
       android:padding="1dip"
       android:layout_gravity="center"
-      android:id="@+id/iv_photo"
+      android:id="@+noteId/iv_photo"
       android:scaleType="centerCrop"
       android:layout_width="match_parent"
       android:background="@drawable/__picker_photo_bg"
@@ -22,7 +22,7 @@
       android:paddingRight="10dip"
       android:paddingLeft="20dip"
       android:paddingBottom="20dip"
-      android:id="@+id/v_selected"
+      android:id="@+noteId/v_selected"
       android:src="@drawable/__picker_checkbox_bg"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"

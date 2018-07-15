@@ -2,7 +2,7 @@
 <android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/drawer_layout"
+    android:id="@+noteId/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:openDrawer="start">
@@ -14,12 +14,12 @@
         android:background="#fff">
 
         <RelativeLayout
-            android:id="@+id/course_wrapper"
+            android:id="@+noteId/course_wrapper"
             android:layout_width="fill_parent"
             android:layout_height="@dimen/title_bar_height"
             android:background="@color/title_bar_white">
             <TextView
-                android:id="@+id/tv_name"
+                android:id="@+noteId/tv_name"
                 android:text="软件度量"
                 style="@style/white_title_bar_text"
                 android:layout_width="wrap_content"
@@ -34,13 +34,13 @@
 
 
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/rv_note"
+            android:id="@+noteId/rv_note"
             android:layout_below="@id/course_wrapper"
             android:layout_width="match_parent"
             android:layout_height="match_parent"></android.support.v7.widget.RecyclerView>
 
         <ImageView
-            android:id="@+id/iv_edit"
+            android:id="@+noteId/iv_edit"
             android:translationZ="10dp"
             android:layout_marginLeft="42dp"
             android:layout_marginBottom="83dp"
@@ -50,7 +50,7 @@
             android:layout_height="68dp" />
 
         <ImageView
-            android:id="@+id/iv_take_photo"
+            android:id="@+noteId/iv_take_photo"
             android:translationZ="10dp"
             android:layout_marginRight="42dp"
             android:layout_marginBottom="83dp"
@@ -62,7 +62,7 @@
 
         <TextView
             android:visibility="invisible"
-            android:id="@+id/tv_null_tip"
+            android:id="@+noteId/tv_null_tip"
             android:layout_marginTop="200dp"
             android:layout_centerHorizontal="true"
             android:textSize="20sp"
@@ -73,7 +73,7 @@
 
     </RelativeLayout>
     <android.support.design.widget.NavigationView
-        android:id="@+id/nav_view"
+        android:id="@+noteId/nav_view"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
@@ -89,7 +89,7 @@
                 android:gravity="center_vertical"
                 android:layout_height="97dp">
                 <ImageView
-                    android:id="@+id/iv_image"
+                    android:id="@+noteId/iv_image"
                     android:src="@mipmap/ic_launcher"
                     android:layout_marginLeft="16dp"
                     android:layout_width="55dp"
@@ -97,7 +97,7 @@
                 <TextView
                     android:layout_marginRight="20dp"
                     android:layout_weight="1"
-                    android:id="@+id/tv_nickname"
+                    android:id="@+noteId/tv_nickname"
                     android:text="昵称"
                     android:layout_marginLeft="15dp"
                     android:textColor="#fff"
@@ -105,7 +105,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
                 <ImageView
-                    android:id="@+id/iv_sync"
+                    android:id="@+noteId/iv_sync"
                     android:layout_marginRight="16dp"
                     android:src="@mipmap/sync"
                     android:layout_width="30dp"
@@ -113,13 +113,13 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/layout_term"
+                android:id="@+noteId/layout_term"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="40dp">
                 <TextView
-                    android:id="@+id/tv_term"
+                    android:id="@+noteId/tv_term"
                     android:layout_marginLeft="14dp"
                     android:text="2018-2019年下学期"
                     android:textSize="16sp"
@@ -138,12 +138,12 @@
                 android:layout_height="@dimen/line_height"/>
 
             <android.support.v7.widget.RecyclerView
-                android:id="@+id/rv_notebook"
+                android:id="@+noteId/rv_notebook"
                 android:layout_width="match_parent"
                 android:layout_height="300dp"></android.support.v7.widget.RecyclerView>
 
             <LinearLayout
-                android:id="@+id/layout_archive"
+                android:id="@+noteId/layout_archive"
                 android:gravity="center_vertical"
                 android:paddingLeft="27dp"
                 android:orientation="horizontal"
@@ -161,7 +161,7 @@
                     android:layout_height="wrap_content" />
             </LinearLayout>
             <LinearLayout
-                android:id="@+id/layout_new_notebook"
+                android:id="@+noteId/layout_new_notebook"
                 android:gravity="center_vertical"
                 android:paddingLeft="27dp"
                 android:orientation="horizontal"
@@ -192,7 +192,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <LinearLayout
-                    android:id="@+id/layout_course_table"
+                    android:id="@+noteId/layout_course_table"
                     style="@style/drawer_bottom_layout">
                     <ImageView
                         android:src="@mipmap/setting"
@@ -210,7 +210,7 @@
                     android:layout_width="1dp"
                     android:layout_height="match_parent"/>
                 <LinearLayout
-                    android:id="@+id/layout_dustbin"
+                    android:id="@+noteId/layout_dustbin"
                     style="@style/drawer_bottom_layout">
                     <ImageView
                         android:src="@mipmap/dustbin"
@@ -228,7 +228,7 @@
                     android:layout_width="1dp"
                     android:layout_height="match_parent"/>
                 <LinearLayout
-                    android:id="@+id/layout_study"
+                    android:id="@+noteId/layout_study"
                     style="@style/drawer_bottom_layout">
                     <ImageView
                         android:src="@mipmap/study"

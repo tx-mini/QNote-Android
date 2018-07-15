@@ -4,7 +4,7 @@
     tools:context=".MainActivity"
     >
   <item
-      android:id="@+id/done"
+      android:id="@+noteId/done"
       android:title="@string/__picker_done"
       android:orderInCategory="100"
       app:showAsAction="ifRoom"

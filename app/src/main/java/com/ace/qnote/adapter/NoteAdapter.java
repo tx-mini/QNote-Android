@@ -154,7 +154,7 @@ public class NoteAdapter extends BaseQuickAdapter<NoteBean, BaseViewHolder> {
             //确定删除
             if(item.getIsRubbish()==1){
                 //已经是垃圾桶里面的了 直接删除
-                NetUtil.doRetrofitRequest(NetUtil.noteService.deleteNote(Const.OPEN_ID, item.getId()), new CallBack<String>() {
+                NetUtil.doRetrofitRequest(NetUtil.noteService.deleteNote(Const.OPEN_ID, item.getNoteId()), new CallBack<String>() {
                     @Override
                     public void onSuccess(String data) {
                         LitePal.delete(NoteBean.class,item.get_id());
@@ -175,7 +175,7 @@ public class NoteAdapter extends BaseQuickAdapter<NoteBean, BaseViewHolder> {
                 });
             }else{
                 //移动到垃圾桶
-                NetUtil.doRetrofitRequest(NetUtil.noteService.update(Const.OPEN_ID, item.getId(),
+                NetUtil.doRetrofitRequest(NetUtil.noteService.update(Const.OPEN_ID, item.getNoteId(),
                         item.getName(), item.getBookRef(), item.getIsKeyNote(), 1, false, null), new CallBack<RxReturnData>() {
                     @Override
                     public void onSuccess(RxReturnData data) {
@@ -234,7 +234,7 @@ public class NoteAdapter extends BaseQuickAdapter<NoteBean, BaseViewHolder> {
         btnMove.setOnClickListener(v -> {
             popWindow.dissmiss();
             //Todo 移动
-            NetUtil.doRetrofitRequest(NetUtil.noteService.update(Const.OPEN_ID, item.getId(),
+            NetUtil.doRetrofitRequest(NetUtil.noteService.update(Const.OPEN_ID, item.getNoteId(),
                     item.getName(),bookList.get(moveToIndex).getId(), item.getIsKeyNote(), item.getIsRubbish(), false, null), new CallBack<RxReturnData>() {
                 @Override
                 public void onSuccess(RxReturnData data) {
@@ -277,7 +277,7 @@ public class NoteAdapter extends BaseQuickAdapter<NoteBean, BaseViewHolder> {
             String newTitle = editText.getText().toString();
             if (!CommonUtils.isEmpty(newTitle)) {
 
-                NetUtil.doRetrofitRequest(NetUtil.noteService.update(Const.OPEN_ID, item.getId(),
+                NetUtil.doRetrofitRequest(NetUtil.noteService.update(Const.OPEN_ID, item.getNoteId(),
                         newTitle, item.getBookRef(), item.getIsKeyNote(), item.getIsRubbish(), false, null), new CallBack<RxReturnData>() {
                     @Override
                     public void onSuccess(RxReturnData data) {

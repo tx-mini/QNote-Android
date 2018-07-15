@@ -18,7 +18,7 @@
             <TextView
                 style="@style/pop_menu_text_style"
                 android:textColor="#FF70A8FF"
-                android:id="@+id/tv_title"
+                android:id="@+noteId/tv_title"
                 android:text="2018-7-9笔记"
                 android:layout_height="33dp" />
 
@@ -28,7 +28,7 @@
                 android:layout_height="@dimen/line_height"/>
 
             <TextView
-                android:id="@+id/tv_rename"
+                android:id="@+noteId/tv_rename"
                 android:text="重命名"
                 style="@style/pop_menu_text_style"/>
             <View
@@ -37,7 +37,7 @@
                 android:layout_height="@dimen/line_height"/>
 
             <TextView
-                android:id="@+id/tv_move"
+                android:id="@+noteId/tv_move"
                 android:text="移动到"
                 style="@style/pop_menu_text_style"/>
             <View
@@ -45,7 +45,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/line_height"/>
             <TextView
-                android:id="@+id/tv_delete"
+                android:id="@+noteId/tv_delete"
                 android:text="删除"
                 style="@style/pop_menu_text_style"/>
             <View

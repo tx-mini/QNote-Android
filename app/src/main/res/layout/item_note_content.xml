@@ -8,12 +8,12 @@
     android:gravity="center"
     android:layout_height="wrap_content">
     <ImageView
-        android:id="@+id/iv_img"
+        android:id="@+noteId/iv_img"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
     <TextView
-        android:id="@+id/tv_text"
+        android:id="@+noteId/tv_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 

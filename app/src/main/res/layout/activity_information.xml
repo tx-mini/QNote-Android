@@ -13,13 +13,13 @@
         app:titleTextColor="#fff"
         android:background="@color/colorPrimary"
         app:title="个人资料"
-        android:id="@+id/toolbar"
+        android:id="@+noteId/toolbar"
         android:layout_width="match_parent"
         android:layout_height="56dp"/>
 
 
     <TextView
-        android:id="@+id/tv_pic"
+        android:id="@+noteId/tv_pic"
         android:textSize="16sp"
         android:layout_marginTop="43dp"
         android:layout_marginLeft="19dp"
@@ -37,11 +37,11 @@
         app:layout_constraintBottom_toBottomOf="@id/tv_pic"
         android:layout_marginRight="16dp"
         app:layout_constraintRight_toRightOf="parent"
-        android:id="@+id/iv_right_arrow1"
+        android:id="@+noteId/iv_right_arrow1"
         android:layout_width="8dp"
         android:layout_height="13dp" />
     <ImageView
-        android:id="@+id/iv_image"
+        android:id="@+noteId/iv_image"
         android:layout_marginRight="18dp"
         app:layout_constraintRight_toLeftOf="@id/iv_right_arrow1"
         app:layout_constraintTop_toTopOf="@id/tv_pic"
@@ -52,7 +52,7 @@
 
 
     <View
-        android:id="@+id/line1"
+        android:id="@+noteId/line1"
         android:background="#FFF6F6F6"
         android:layout_marginTop="25dp"
         app:layout_constraintTop_toBottomOf="@id/tv_pic"
@@ -68,7 +68,7 @@
         android:layout_height="wrap_content" />
 
     <TextView
-        android:id="@+id/tv_nickname"
+        android:id="@+noteId/tv_nickname"
         app:layout_constraintRight_toLeftOf="@id/iv_right_arrow2"
         app:layout_constraintTop_toBottomOf="@id/line1"
         android:text="XXXXXX"
@@ -84,7 +84,7 @@
         android:layout_marginRight="16dp"
         android:layout_marginTop="17dp"
         app:layout_constraintRight_toRightOf="parent"
-        android:id="@+id/iv_right_arrow2"
+        android:id="@+noteId/iv_right_arrow2"
         android:layout_width="8dp"
         android:layout_height="13dp" />
 
