@@ -5,7 +5,7 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:openDrawer="start">
+    tools:openDrawer="off">
 
 
     <RelativeLayout
@@ -45,7 +45,7 @@
             android:layout_marginLeft="42dp"
             android:layout_marginBottom="83dp"
             android:layout_alignParentBottom="true"
-            android:src="@mipmap/ic_add_text"
+            android:src="@mipmap/picture"
             android:layout_width="68dp"
             android:layout_height="68dp" />
 
@@ -56,7 +56,7 @@
             android:layout_marginBottom="83dp"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
-            android:src="@mipmap/ic_add_photo"
+            android:src="@mipmap/take_photo"
             android:layout_width="68dp"
             android:layout_height="68dp" />
 
@@ -213,54 +213,27 @@
                     android:id="@+id/layout_course_table"
                     style="@style/drawer_bottom_layout">
                     <ImageView
-                        android:src="@mipmap/setting"
-                        android:layout_width="@dimen/drawer_icon_size"
-                        android:layout_height="@dimen/drawer_icon_size" />
-                    <TextView
-                        android:textSize="10sp"
-                        android:textColor="@color/drawer_text_color"
-                        android:layout_marginLeft="2dp"
-                        android:text="查看课表"
-                        android:layout_width="wrap_content"
+                        android:scaleType="center"
+                        android:src="@mipmap/setting_layout"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
                 </LinearLayout>
-                <View
-                    android:background="#FFE7E7E7"
-                    android:layout_width="1dp"
-                    android:layout_height="match_parent"/>
                 <LinearLayout
                     android:id="@+id/layout_dustbin"
                     style="@style/drawer_bottom_layout">
                     <ImageView
-                        android:src="@mipmap/dustbin"
-                        android:layout_width="@dimen/drawer_icon_size"
-                        android:layout_height="@dimen/drawer_icon_size" />
-                    <TextView
-                        android:textSize="10sp"
-
-                        android:textColor="@color/drawer_text_color"
-                        android:layout_marginLeft="2dp"
-                        android:text="垃圾桶"
-                        android:layout_width="wrap_content"
+                        android:scaleType="center"
+                        android:src="@mipmap/dustbin_layout"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
                 </LinearLayout>
-                <View
-                    android:background="#FFE7E7E7"
-                    android:layout_width="1dp"
-                    android:layout_height="match_parent"/>
                 <LinearLayout
                     android:id="@+id/layout_study"
                     style="@style/drawer_bottom_layout">
                     <ImageView
-                        android:src="@mipmap/study"
-                        android:layout_width="@dimen/drawer_icon_size"
-                        android:layout_height="@dimen/drawer_icon_size" />
-                    <TextView
-                        android:textSize="10sp"
-                        android:textColor="@color/drawer_text_color"
-                        android:layout_marginLeft="2dp"
-                        android:text="学习园地"
-                        android:layout_width="wrap_content"
+                        android:scaleType="center"
+                        android:src="@mipmap/study_layout"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
                 </LinearLayout>
             </LinearLayout>

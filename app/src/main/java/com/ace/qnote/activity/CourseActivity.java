@@ -99,7 +99,7 @@ public class CourseActivity extends AppCompatActivity {
         customCourseList = new ArrayList<>();
         List<CustomCourse> courseList = LitePal.where("term = ?","4").find(CustomCourse.class);
         for (CustomCourse customCourse : courseList) {
-            customCourse.setBackgroundColor(colors[customCourse.getName().hashCode()%colors.length]);
+            customCourse.setBackgroundColor(colors[Math.abs(customCourse.getName().hashCode()%colors.length)]);
         }
         customCourseList.addAll(courseList);
 
