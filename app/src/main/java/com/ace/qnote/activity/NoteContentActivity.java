@@ -20,9 +20,11 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ace.network.service.NoteService;
 import com.ace.network.util.CallBack;
+import com.ace.network.util.ConstUrl;
 import com.ace.network.util.NetUtil;
 import com.ace.network.util.RxReturnData;
 import com.ace.qnote.R;
@@ -57,6 +59,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 import java.util.UUID;
 
 import csu.edu.ice.model.dao.NoteBean;
@@ -90,6 +93,8 @@ public class NoteContentActivity extends BaseActivity {
     private ContentBean contentBean;
     private int startMoveIndex;
     private int endMoveIndex;
+    private Stack<String> contentStack;
+    private LinearLayout llRevoke;
 
     @Override
     public void initParams(Bundle params) {
@@ -99,6 +104,7 @@ public class NoteContentActivity extends BaseActivity {
             needToScroll = params.getBoolean("isAdd");
         }
         contentList = new ArrayList<>();
+        contentStack = new Stack<>();
         noteBean = LitePal.where("noteId = ?", noteId).find(NoteBean.class).get(0);
     }
 
@@ -121,6 +127,7 @@ public class NoteContentActivity extends BaseActivity {
         llShare = findViewById(R.id.ll_share);
         llBack = findViewById(R.id.ll_back);
         llAdd = findViewById(R.id.ll_add);
+        llRevoke = findViewById(R.id.ll_revoke);
     }
 
     @Override
@@ -129,6 +136,7 @@ public class NoteContentActivity extends BaseActivity {
         ivAddText.setOnClickListener(this);
         llBack.setOnClickListener(this);
         llShare.setOnClickListener(this);
+        llRevoke.setOnClickListener(this);
         onItemDragListener = new OnItemDragListener() {
             @Override
             public void onItemDragStart(RecyclerView.ViewHolder viewHolder, int pos) {
@@ -232,8 +240,8 @@ public class NoteContentActivity extends BaseActivity {
                 final Bundle params = new Bundle();
                 params.putInt(QQShare.SHARE_TO_QQ_KEY_TYPE, QQShare.SHARE_TO_QQ_TYPE_DEFAULT);
                 params.putString(QQShare.SHARE_TO_QQ_TITLE, noteBean.getName());
-                params.putString(QQShare.SHARE_TO_QQ_SUMMARY, "");
-                params.putString(QQShare.SHARE_TO_QQ_TARGET_URL, "http://www.qq.com/news/1.html");
+                params.putString(QQShare.SHARE_TO_QQ_SUMMARY, "来自好友分享的笔记");
+                params.putString(QQShare.SHARE_TO_QQ_TARGET_URL, ConstUrl.HOST+"#/share/"+noteId);
                 params.putString(QQShare.SHARE_TO_QQ_IMAGE_URL, "http://qnote-1253746866.cos.ap-guangzhou.myqcloud.com/logo.png");
                 params.putString(QQShare.SHARE_TO_QQ_APP_NAME, "企鹅笔记");
 //                params.putInt(QQShare.SHARE_TO_QQ_EXT_INT,  "其他附加功能");
@@ -256,6 +264,14 @@ public class NoteContentActivity extends BaseActivity {
                 break;
             case R.id.iv_add_text:
                 showModifyTextPopWindow("",true);
+                break;
+            case R.id.ll_revoke:
+                if (!contentStack.isEmpty()){
+                    String contentTemp = contentStack.pop();
+                    noteBean.setContent(contentTemp);
+                    parseContent(noteBean);
+                }
+                break;
         }
     }
 
@@ -417,9 +433,9 @@ public class NoteContentActivity extends BaseActivity {
             contentList.add(simpleContentBean);
         }
         noteContentAdapter.notifyDataSetChanged();
-        if (needToScroll){
-            rvNoteContent.scrollToPosition(contentList.size()-1);
-        }
+//        if (needToScroll){
+//            rvNoteContent.scrollToPosition(contentList.size()-1);
+//        }
     }
 
     @Override

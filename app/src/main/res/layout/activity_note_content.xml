@@ -52,7 +52,7 @@
             <ImageView
                 android:layout_width="@dimen/back_arrow_width"
                 android:layout_height="@dimen/back_arrow_height"
-                android:background="@mipmap/ic_share_gray" />
+                android:background="@mipmap/ic_revoke" />
 
         </LinearLayout>
 
