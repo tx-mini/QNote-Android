@@ -299,6 +299,27 @@ public class MainActivity extends BaseActivity {
         });
     }
 
+    private void openOtherBook(){
+        NetUtil.doRetrofitRequest(NetUtil.noteService.getNoteList(Const.OPEN_ID, "-1", 0, 0), new CallBack<List<NoteBean>>() {
+            @Override
+            public void onSuccess(List<NoteBean> data) {
+                tvName.setText("归档笔记");
+                showNoteList(data);
+                drawerLayout.closeDrawer(Gravity.LEFT);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                showToast("网络可能有问题，请重试！");
+            }
+
+            @Override
+            public void onFailure(String message) {
+
+            }
+        });
+    }
+
     private void showNoteList(List<NoteBean> data) {
         //TODO:后台返回创建时间后删除
         for (NoteBean datum : data) {
