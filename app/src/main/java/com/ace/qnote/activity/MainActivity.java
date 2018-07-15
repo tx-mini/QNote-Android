@@ -57,6 +57,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.UUID;
 
 import csu.edu.ice.model.dao.BookBean;
@@ -263,7 +264,7 @@ public class MainActivity extends BaseActivity {
                 noteBean.getName(), noteBean.getContent(), noteBean.getIsKeyNote()), new CallBack<RxReturnData>() {
             @Override
             public void onSuccess(RxReturnData data) {
-                noteBean.setLocal(0);
+                noteBean.setIsLocal(0);
                 noteBean.update(noteBean.get_id());
                 unSyncList.remove(0);
                 createNote(unSyncList);
@@ -532,14 +533,16 @@ public class MainActivity extends BaseActivity {
         View btnCancel = view.findViewById(R.id.btn_cancel);
         EditText editText = view.findViewById(R.id.et_text);
         btnOk.setOnClickListener(v -> {
-            addTextOrPic(editText.getText().toString(),true);
+            ArrayList<String> arrayList = new ArrayList<>();
+            arrayList.add(editText.getText().toString());
+            addTextOrPic(arrayList,true);
             popWindow.dissmiss();
         });
 
         btnCancel.setOnClickListener(v -> popWindow.dissmiss());
     }
 
-    private void addTextOrPic(String data, boolean isText) {
+    private void addTextOrPic(ArrayList<String> data, boolean isText) {
         BookBean bookBean = getNowBookBean();
         if (bookBean==null){
             bookBean = notebook;
@@ -569,54 +572,161 @@ public class MainActivity extends BaseActivity {
                             createBean = noteBean;
                         }
                     }
+
+                    if (createBean.getContent()==null){
+                        addNoteToEmpty(data,isText,createBean);
+                    }else {
+                        addNoteToExist(data,isText,createBean);
+                    }
+
+                }
+            });
+        }
+    }
+
+    private void addNoteToEmpty(ArrayList<String> data, boolean isText, NoteBean createBean) {
+        Map<String,ContentBean.EntityBean> entityBeanMap = new HashMap<>();
+        ArrayList<ContentBean.BlocksBean> blocksBeans = new ArrayList<>();
+        if (isText){
+            ContentBean.BlocksBean blocksBean = new ContentBean().new BlocksBean();
+            blocksBean.setKey(MD5Util.crypt(UUID.randomUUID().toString()).substring(0,5));
+            blocksBean.setDepth(0);
+            blocksBean.setInlineStyleRanges(new ArrayList<>());
+            blocksBean.setEntityRanges(new ArrayList<>());
+            blocksBean.setData(new ContentBean().new BlocksBean().new DataBean());
+            blocksBean.setText(data.get(0));
+            blocksBean.setType("unstyled");
+            blocksBeans.add(blocksBean);
+        }else {
+            for (int i = 0; i < data.size(); i++) {
+                String picPath = data.get(i);
+                ContentBean.BlocksBean blocksBean = new ContentBean().new BlocksBean();
+                blocksBean.setKey(MD5Util.crypt(UUID.randomUUID().toString()).substring(0,5));
+                blocksBean.setDepth(0);
+                blocksBean.setInlineStyleRanges(new ArrayList<>());
+                blocksBean.setEntityRanges(new ArrayList<>());
+                blocksBean.setData(new ContentBean().new BlocksBean().new DataBean());
+                blocksBean.setText(" ");
+                blocksBean.setType("atomic");
+                ContentBean.BlocksBean.EntityRangesBean entityRangesBean = new ContentBean().new BlocksBean().new EntityRangesBean();
+                entityRangesBean.setKey(i);
+                entityRangesBean.setLength(1);
+                entityRangesBean.setOffset(0);
+                blocksBean.getEntityRanges().add(entityRangesBean);
+                blocksBeans.add(blocksBean);
+
+                ContentBean.EntityBean entityBean = new ContentBean().new EntityBean();
+                ContentBean.EntityBean.DataBean dataBean = new ContentBean().new EntityBean().new DataBean();
+                dataBean.setMeta(new ContentBean().new EntityBean().new DataBean().new MetaBean());
+                dataBean.setName(MD5Util.crypt(UUID.randomUUID().toString()));
+                dataBean.setUrl(picPath);
+                dataBean.setType("IMAGE");
+                entityBean.setData(dataBean);
+                entityBean.setMutability("IMMUTABLE");
+                entityBean.setType("IMAGE");
+                entityBeanMap.put(i+"",entityBean);
+            }
+        }
+        Gson gson = new Gson();
+        ContentBean contentBean = new ContentBean(entityBeanMap,blocksBeans);
+        createBean.setContent(gson.toJson(contentBean));
+        saveNoteInfo(createBean);
+    }
+
+    private void addNoteToExist(ArrayList<String> noteData, boolean isText, NoteBean createBean){
+        NetUtil.doRetrofitRequest(NetUtil.getRetrofitInstance().create(NoteService.class).getNoteContent(createBean.getNoteId(),Const.OPEN_ID), new CallBack<NoteBean>() {
+            @Override
+            public void onSuccess(NoteBean data) {
+                String _tempJson = data.getContent();
+                Gson gson = new Gson();
+                ContentBean contentBean = gson.fromJson(_tempJson,ContentBean.class);
+                if (isText){
                     ContentBean.BlocksBean blocksBean = new ContentBean().new BlocksBean();
                     blocksBean.setKey(MD5Util.crypt(UUID.randomUUID().toString()).substring(0,5));
-                    blocksBean.setText(data);
-                    blocksBean.setType("unstyled");
                     blocksBean.setDepth(0);
                     blocksBean.setInlineStyleRanges(new ArrayList<>());
                     blocksBean.setEntityRanges(new ArrayList<>());
                     blocksBean.setData(new ContentBean().new BlocksBean().new DataBean());
-                    if (isText){
-                        if (createBean.getContent()==null){
-                            ArrayList<ContentBean.BlocksBean> blocksBeans = new ArrayList<>();
-                            blocksBeans.add(blocksBean);
-                            ContentBean contentBean = new ContentBean(new HashMap<String,ContentBean.EntityBean>(),blocksBeans);
-                            Gson gson = new Gson();
-                            createBean.setContent(gson.toJson(contentBean));
+                    blocksBean.setText(noteData.get(0));
+                    blocksBean.setType("unstyled");
+                    contentBean.getBlocks().add(blocksBean);
+                }else {
+                    int imgSize = 0;
+                    for (ContentBean.BlocksBean blocksBean : contentBean.getBlocks()) {
+                        if (blocksBean.getEntityRanges().size()>0){
+                            imgSize++;
                         }
                     }
+                    for (int i = 0; i < noteData.size(); i++) {
+                        String picPath = noteData.get(i);
+                        ContentBean.BlocksBean blocksBean = new ContentBean().new BlocksBean();
+                        blocksBean.setKey(MD5Util.crypt(UUID.randomUUID().toString()).substring(0,5));
+                        blocksBean.setDepth(0);
+                        blocksBean.setInlineStyleRanges(new ArrayList<>());
+                        blocksBean.setEntityRanges(new ArrayList<>());
+                        blocksBean.setData(new ContentBean().new BlocksBean().new DataBean());
+                        blocksBean.setText(" ");
+                        blocksBean.setType("atomic");
+                        ContentBean.BlocksBean.EntityRangesBean entityRangesBean = new ContentBean().new BlocksBean().new EntityRangesBean();
+                        entityRangesBean.setKey(imgSize+i+1);
+                        entityRangesBean.setLength(1);
+                        entityRangesBean.setOffset(0);
+                        blocksBean.getEntityRanges().add(entityRangesBean);
+                        contentBean.getBlocks().add(blocksBean);
 
-                    createBean.saveAsync().listen(new SaveCallback() {
-                        @Override
-                        public void onFinish(boolean success) {
-                        }
-                    });
-                    NoteBean finalCreateBean = createBean;
-                    NetUtil.doRetrofitRequest(NetUtil.noteService.addNote(Const.OPEN_ID, createBean.getBookRef(),
-                            createBean.getName(), createBean.getContent(), createBean.getIsKeyNote()), new CallBack<RxReturnData>() {
-                        @Override
-                        public void onSuccess(RxReturnData data) {
-                            finalCreateBean.setLocal(0);
-                            finalCreateBean.setSyncTime(System.currentTimeMillis()+"");
-                            finalCreateBean.update(finalCreateBean.get_id());
-                        }
-
-                        @Override
-                        public void onError(Throwable throwable) {
-                        }
-
-                        @Override
-                        public void onFailure(String message) {
-
-                        }
-                    });
-
+                        ContentBean.EntityBean entityBean = new ContentBean().new EntityBean();
+                        ContentBean.EntityBean.DataBean dataBean = new ContentBean().new EntityBean().new DataBean();
+                        dataBean.setMeta(new ContentBean().new EntityBean().new DataBean().new MetaBean());
+                        dataBean.setName(MD5Util.crypt(UUID.randomUUID().toString()));
+                        dataBean.setUrl(picPath);
+                        dataBean.setType("IMAGE");
+                        entityBean.setData(dataBean);
+                        entityBean.setMutability("IMMUTABLE");
+                        entityBean.setType("IMAGE");
+                        contentBean.getEntityMap().put((imgSize+i+1)+"",entityBean);
+                    }
                 }
-            });
+                createBean.setContent(gson.toJson(contentBean));
+                saveNoteInfo(createBean);
+            }
 
-        }
+            @Override
+            public void onError(Throwable throwable) {
 
+            }
+
+            @Override
+            public void onFailure(String message) {
+
+            }
+        });
+    }
+
+    private void saveNoteInfo(NoteBean createBean) {
+        createBean.saveAsync().listen(new SaveCallback() {
+            @Override
+            public void onFinish(boolean success) {
+            }
+        });
+        NetUtil.doRetrofitRequest(NetUtil.noteService.addNote(Const.OPEN_ID, createBean.getBookRef(),
+                createBean.getName(), createBean.getContent(), createBean.getIsKeyNote()), new CallBack<RxReturnData>() {
+            @Override
+            public void onSuccess(RxReturnData data) {
+                createBean.setIsLocal(0);
+                createBean.setSyncTime(System.currentTimeMillis()+"");
+                createBean.update(createBean.get_id());
+
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+            }
+
+            @Override
+            public void onFailure(String message) {
+
+            }
+        });
     }
 
     private void showNoteList(String book_id){
@@ -757,6 +867,7 @@ public class MainActivity extends BaseActivity {
 
                     @Override
                     public void onSuccess(ArrayList<String> url) {
+                        addTextOrPic(url,false);
                         showToast("上传成功");
                     }
 
