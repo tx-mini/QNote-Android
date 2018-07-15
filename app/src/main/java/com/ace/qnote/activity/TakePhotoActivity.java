@@ -1,5 +1,6 @@
 package com.ace.qnote.activity;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
@@ -61,6 +62,8 @@ public class TakePhotoActivity extends AppCompatActivity implements View.OnClick
 
     //这是相片数组
     private ArrayList<Bitmap> mPictures = new ArrayList<Bitmap>();
+
+    private ArrayList<String> mPicPath = new ArrayList<>();
 
     private final static int MSG_GET_A_PHOTO = 1;
     private final static int MSG_TAKE_PHOTO_FAIL = 2;
@@ -198,9 +201,10 @@ public class TakePhotoActivity extends AppCompatActivity implements View.OnClick
                 break;
             }
             case R.id.finish_text: {
-
-                //在这里填入点击完成的业务逻辑
-
+                Intent intent = new Intent();
+                intent.putExtra("picPath",mPicPath);
+                setResult(RESULT_OK,intent);
+                finish();
                 break;
             }
 
@@ -243,6 +247,7 @@ public class TakePhotoActivity extends AppCompatActivity implements View.OnClick
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss:SSS");
         String fileName = dateFormat.format(date) + ".jpg";
         String filePath = tempStr + "/" + fileName;
+        mPicPath.add(filePath);
         try {
             fos = new FileOutputStream(filePath);
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
@@ -354,6 +359,7 @@ public class TakePhotoActivity extends AppCompatActivity implements View.OnClick
                 case MSG_GET_A_PHOTO:{
                     Bitmap pic = (Bitmap) msg.obj;
                     mPictures.add(pic);
+                    saveData(pic);
                     mPicNumText.setText(Integer.toString(mPictures.size()));
                     mPresentImage.setImageBitmap(pic);
                     mPresentImage.setVisibility(View.VISIBLE);

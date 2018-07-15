@@ -13,6 +13,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
             <EditText
+                android:gravity="start"
                 android:textSize="16sp"
                 android:background="@drawable/shape_bg_rename"
                 android:id="@+id/et_text"

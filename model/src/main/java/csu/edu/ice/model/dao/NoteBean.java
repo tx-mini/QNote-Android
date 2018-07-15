@@ -35,6 +35,7 @@ public class NoteBean extends LitePalSupport implements Serializable {
 
     private String syncTime;
 
+    @SerializedName("create_time")
     private String createTime;
 
     private Integer isLocal;
@@ -108,7 +109,7 @@ public class NoteBean extends LitePalSupport implements Serializable {
     }
 
     public String getRecentTime() {
-        return recentTime;
+        return String.valueOf(Long.valueOf(recentTime)*1000);
     }
 
     public void setRecentTime(String recentTime) {
@@ -132,7 +133,7 @@ public class NoteBean extends LitePalSupport implements Serializable {
     }
 
     public String getSyncTime() {
-        return syncTime;
+        return String.valueOf(Long.valueOf(syncTime)*1000);
     }
 
     public void setSyncTime(String syncTime) {
@@ -159,7 +160,7 @@ public class NoteBean extends LitePalSupport implements Serializable {
     }
 
     public String getCreateTime() {
-        return createTime;
+        return String.valueOf(Long.valueOf(createTime)*1000);
     }
 
     public void setCreateTime(String createTime) {

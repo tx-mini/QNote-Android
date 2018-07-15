@@ -86,6 +86,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
             <com.github.clans.fab.FloatingActionButton
+                android:id="@+id/fab_"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <com.github.clans.fab.FloatingActionButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </com.github.clans.fab.FloatingActionMenu>

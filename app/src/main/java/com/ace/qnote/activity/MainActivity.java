@@ -71,13 +71,13 @@ import me.iwf.photopicker.PhotoPicker;
 public class MainActivity extends BaseActivity {
     private LinearLayout layoutLoading;
     private final int REQUEST_CODE_CHOOSE = 1000;
-    private ImageView ivEdit,ivTakePhoto;
+    private ImageView ivEdit, ivTakePhoto;
     private TextView tvNickname;
     private TextView tvTerm;
     private LinearLayout layoutTerm;
-    private LinearLayout layoutOtherBook,layoutNewNote, layoutCourseTable,layoutDustbin,layoutStudy;
-    private RecyclerView rvNotebook,rvNote;
-    private String[] m_upLoadImgPermission =  {Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
+    private LinearLayout layoutOtherBook, layoutNewNote, layoutCourseTable, layoutDustbin, layoutStudy;
+    private RecyclerView rvNotebook, rvNote;
+    private String[] m_upLoadImgPermission = {Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
     private List<Uri> mSelected;
     private List<BookBean> notebookList;
     private List<TermBean> termList;
@@ -162,7 +162,7 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public void widgetClick(View v) throws Exception {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.tv_term:
                 showChooseTermPopwindow();
                 break;
@@ -170,14 +170,14 @@ public class MainActivity extends BaseActivity {
                 showOtherBook();
                 break;
             case R.id.layout_course_table:
-                if(LitePal.count(CustomCourse.class)>0){
-                    startActivity(new Intent(this,CourseActivity.class));
-                }else{
+                if (LitePal.count(CustomCourse.class) > 0) {
+                    startActivity(new Intent(this, CourseActivity.class));
+                } else {
                     NetUtil.doRetrofitRequest(NetUtil.courseService.getCourseList(Const.OPEN_ID), new CallBack<List<CustomCourse>>() {
                         @Override
                         public void onSuccess(List<CustomCourse> data) {
                             LitePal.saveAll(data);
-                            startActivity(new Intent(MainActivity.this,CourseActivity.class));
+                            startActivity(new Intent(MainActivity.this, CourseActivity.class));
                         }
 
                         @Override
@@ -203,7 +203,7 @@ public class MainActivity extends BaseActivity {
 
             case R.id.tv_nickname:
             case R.id.iv_image:
-                startActivityForResult(new Intent(this,InformationActivity.class),Const.TO_INFORMATION);
+                startActivityForResult(new Intent(this, InformationActivity.class), Const.TO_INFORMATION);
                 break;
             case R.id.iv_edit:
                 showAddTextPopWindow();
@@ -221,12 +221,12 @@ public class MainActivity extends BaseActivity {
                             showToast("QNote似乎缺少了一些权限，无法上传照片，请到设置中授予权限再尝试");
                         }
                     }, m_upLoadImgPermission);
-                }else {
+                } else {
                     addPic();
                 }
                 break;
             case R.id.iv_sync:
-                if(isSync){
+                if (isSync) {
                     showToast("正在同步中......");
                     return;
                 }
@@ -242,7 +242,7 @@ public class MainActivity extends BaseActivity {
 
     private void syncToServer() {
 
-        RotateAnimation rotateAnimation = new RotateAnimation(0f,360f,RotateAnimation.RELATIVE_TO_SELF,0.5f,RotateAnimation.RELATIVE_TO_SELF,0.5f);
+        RotateAnimation rotateAnimation = new RotateAnimation(0f, 360f, RotateAnimation.RELATIVE_TO_SELF, 0.5f, RotateAnimation.RELATIVE_TO_SELF, 0.5f);
         rotateAnimation.setRepeatCount(RotateAnimation.INFINITE);
         rotateAnimation.setDuration(1000);
         rotateAnimation.setInterpolator(new LinearInterpolator());
@@ -257,7 +257,7 @@ public class MainActivity extends BaseActivity {
     }
 
     private void createNote(List<NoteBean> unSyncList) {
-        if(unSyncList.size() == 0){
+        if (unSyncList.size() == 0) {
             syncDataFromServer();
             return;
         }
@@ -276,7 +276,7 @@ public class MainActivity extends BaseActivity {
             public void onError(Throwable throwable) {
                 isSync = false;
                 ivSync.clearAnimation();
-                showToast("同步出差啦！还差"+unSyncList.size()+"篇笔记未同步");
+                showToast("同步出差啦！还差" + unSyncList.size() + "篇笔记未同步");
             }
 
             @Override
@@ -288,7 +288,7 @@ public class MainActivity extends BaseActivity {
 
 
     private void openDustbin() {
-        NetUtil.doRetrofitRequest(NetUtil.noteService.getNoteList(Const.OPEN_ID,"",1,0), new CallBack<List<NoteBean>>() {
+        NetUtil.doRetrofitRequest(NetUtil.noteService.getNoteList(Const.OPEN_ID, "", 1, 0), new CallBack<List<NoteBean>>() {
             @Override
             public void onSuccess(List<NoteBean> data) {
                 tvName.setText("垃圾桶");
@@ -309,7 +309,7 @@ public class MainActivity extends BaseActivity {
 
     }
 
-    private void openOtherBook(){
+    private void openOtherBook() {
         NetUtil.doRetrofitRequest(NetUtil.noteService.getNoteList(Const.OPEN_ID, "-1", 0, 0), new CallBack<List<NoteBean>>() {
             @Override
             public void onSuccess(List<NoteBean> data) {
@@ -331,51 +331,47 @@ public class MainActivity extends BaseActivity {
     }
 
     private void showNoteList(List<NoteBean> data) {
-        Log.d(TAG, "showNoteList: 展示的数据："+data);
-        //TODO:后台返回创建时间后删除
-        for (NoteBean datum : data) {
-            datum.setCreateTime(System.currentTimeMillis()+"");
-        }
-        if(data !=null && data.size() > 0){
-            LitePal.deleteAll(NoteBean.class,"bookRef = ?" ,data.get(0).getBookRef());
+        Log.d(TAG, "showNoteList: 展示的数据：" + data);
+        if (data != null && data.size() > 0) {
+            LitePal.deleteAll(NoteBean.class, "bookRef = ?", data.get(0).getBookRef());
             LitePal.saveAll(data);
         }
         noteList.clear();
         noteList.addAll(data);
-        noteAdapter.setNewData(noteList);
+        noteAdapter.notifyDataSetChanged();
         updateTip();
     }
 
-    private void updateTip(){
-        if(tvName.getText().equals("垃圾桶")){
+    private void updateTip() {
+        if (tvName.getText().equals("垃圾桶")) {
             tvNullTip.setText("垃圾桶暂无笔记");
-        }else{
+        } else {
             tvNullTip.setText("暂无笔记\n点击下方的按钮创建笔记吧");
         }
-        if(noteAdapter.getData() ==null || noteAdapter.getData().size()== 0){
+        if (noteAdapter.getData() == null || noteAdapter.getData().size() == 0) {
             tvNullTip.setVisibility(View.VISIBLE);
-        }else {
+        } else {
             tvNullTip.setVisibility(View.INVISIBLE);
         }
     }
 
-    private CustomPopWindow showWindow(View view){
-        return  new CustomPopWindow.PopupWindowBuilder(this)
+    private CustomPopWindow showWindow(View view) {
+        return new CustomPopWindow.PopupWindowBuilder(this)
                 .setView(view)//显示的布局
                 .enableBackgroundDark(true) //弹出popWindow时，背景是否变暗
                 .setBgDarkAlpha(0.7f) // 控制亮度
                 .create()//创建PopupWindow
-                .showAtLocation(getmContextView(), Gravity.CENTER,0, 0);//显示PopupWindow
+                .showAtLocation(getmContextView(), Gravity.CENTER, 0, 0);//显示PopupWindow
     }
 
     private void showAddNoteBookPopwindow(int term) {
-        View view = LayoutInflater.from(this).inflate(R.layout.layout_pop_rename,null);
+        View view = LayoutInflater.from(this).inflate(R.layout.layout_pop_rename, null);
         EditText etName = view.findViewById(R.id.et_name);
         etName.setHint("请输入笔记本名称");
         CustomPopWindow popWindow = showWindow(view);
-        view.findViewById(R.id.btn_ok).setOnClickListener(v->{
+        view.findViewById(R.id.btn_ok).setOnClickListener(v -> {
 
-            if(TextUtils.isEmpty(etName.getText().toString())){
+            if (TextUtils.isEmpty(etName.getText().toString())) {
                 Toast.makeText(this, "请输入笔记本名称！", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -402,14 +398,14 @@ public class MainActivity extends BaseActivity {
             });
 
         });
-        view.findViewById(R.id.btn_cancel).setOnClickListener(v->{
+        view.findViewById(R.id.btn_cancel).setOnClickListener(v -> {
             popWindow.dissmiss();
         });
     }
 
     private void showChooseTermPopwindow() {
         TermAdapter termAdapter = new TermAdapter(R.layout.item_text_line, termList);
-        View view = LayoutInflater.from(this).inflate(R.layout.layout_pop_term,null);
+        View view = LayoutInflater.from(this).inflate(R.layout.layout_pop_term, null);
         CustomPopWindow popWindow = showWindow(view);
         RecyclerView recyclerView = view.findViewById(R.id.rv_term);
         recyclerView.setAdapter(termAdapter);
@@ -422,8 +418,8 @@ public class MainActivity extends BaseActivity {
             popWindow.dissmiss();
             drawerLayout.closeDrawer(Gravity.LEFT);
             term = termBean.getTerm();
-            if(bookList.size()>0) {
-                showLatestNoteList(bookList.get(0).getBookId(),false);
+            if (bookList.size() > 0) {
+                showLatestNoteList(bookList.get(0).getBookId(), false);
             }
             tvName.setText(bookList.get(0).getName());
             notebook = bookList.get(0);
@@ -432,16 +428,16 @@ public class MainActivity extends BaseActivity {
 
     }
 
-    private void showLatestNoteList(String  bookId,boolean isRubbish){
-        NetUtil.doRetrofitRequest(NetUtil.noteService.getNoteList(Const.OPEN_ID,bookId,0,0), new CallBack<List<NoteBean>>() {
+    private void showLatestNoteList(String bookId, boolean isRubbish) {
+        NetUtil.doRetrofitRequest(NetUtil.noteService.getNoteList(Const.OPEN_ID, bookId, 0, 0), new CallBack<List<NoteBean>>() {
             @Override
             public void onSuccess(List<NoteBean> data) {
-                Log.d(TAG, "onSuccess: 获取的数据："+data);
-                if(!isRubbish){
+                Log.d(TAG, "onSuccess: 获取的数据：" + data);
+                if (!isRubbish) {
                     Iterator<NoteBean> it = data.iterator();
-                    while (it.hasNext()){
+                    while (it.hasNext()) {
                         NoteBean tempBean = it.next();
-                        if(tempBean.getIsRubbish() == 1){
+                        if (tempBean.getIsRubbish() == 1) {
                             it.remove();
                         }
                     }
@@ -464,41 +460,49 @@ public class MainActivity extends BaseActivity {
 
     private void addPic() {
         Intent intent = new Intent(MainActivity.this, TakePhotoActivity.class);
-        intent.putExtra("course_name","软件工程");
-        startActivity(intent);
+        String name;
+        if (getNowBookBean()!=null){
+            name = getNowBookBean().getName();
+        }else {
+            name = "其他笔记";
+        }
+        intent.putExtra("course_name", name);
+        startActivityForResult(intent, REQUEST_CODE_CHOOSE);
     }
 
     @Override
     public void doBusiness(Context mContext) {
 
-        Glide.with(this).load(getSharedPreferences(Const.SP_NAME,MODE_PRIVATE).getString("imageUrl",""))
+        Glide.with(this).load(getSharedPreferences(Const.SP_NAME, MODE_PRIVATE).getString("imageUrl", ""))
                 .apply(new RequestOptions().circleCrop().placeholder(R.mipmap.ic_launcher).error(R.mipmap.ic_launcher))
                 .into((ImageView) findViewById(R.id.iv_image));
 
-        ((TextView)findViewById(R.id.tv_nickname)).setText(getSharedPreferences(Const.SP_NAME,MODE_PRIVATE).getString("nickname","加载失败"));
+        ((TextView) findViewById(R.id.tv_nickname)).setText(getSharedPreferences(Const.SP_NAME, MODE_PRIVATE).getString("nickname", "加载失败"));
 
 
-        if(NetUtil.isNetworkConnected(this)){
+        if (NetUtil.isNetworkConnected(this)) {
             //有网络 从服务器请求
             syncDataFromServer();
-        }else {
+        } else {
             getDataFromLocal();
         }
 
     }
+
     private void initNoteRecyclerView() {
 
-        noteAdapter = new NoteAdapter(R.layout.item_note,noteList,this,notebook,rootView);
+        noteAdapter = new NoteAdapter(R.layout.item_note, noteList, this, notebook, rootView);
         noteAdapter.setOnItemClickListener((adapter, view, position) -> {
             Bundle bundle = new Bundle();
             NoteBean noteBean = (NoteBean) adapter.getData().get(position);
             bundle.putString("title", noteBean.getName());
             bundle.putString("noteId", noteBean.getNoteId());
-            startActivity(NoteContentActivity.class,bundle);
+            bundle.putBoolean("isAdd",false);
+            startActivity(NoteContentActivity.class, bundle);
         });
         rvNote.setAdapter(noteAdapter);
         rvNote.setLayoutManager(new LinearLayoutManager(this));
-        if(noteList == null || noteList.size()==0){
+        if (noteList == null || noteList.size() == 0) {
             tvNullTip.setVisibility(View.VISIBLE);
         }
 
@@ -511,7 +515,7 @@ public class MainActivity extends BaseActivity {
     }
 
     private void initDrawerRecyclerView() {
-        drawerNoteAdapter = new DrawerNoteAdapter(R.layout.item_drawer_note,notebookList);
+        drawerNoteAdapter = new DrawerNoteAdapter(R.layout.item_drawer_note, notebookList);
         rvNotebook.setAdapter(drawerNoteAdapter);
         rvNotebook.setLayoutManager(new LinearLayoutManager(this));
         drawerNoteAdapter.setOnItemClickListener((adapter, view, position) -> {
@@ -519,18 +523,18 @@ public class MainActivity extends BaseActivity {
             BookBean bookbean = bookList.get(position);
             tvName.setText(bookbean.getName());
             notebook = bookbean;
-            showLatestNoteList(bookbean.getBookId(),false);
+            showLatestNoteList(bookbean.getBookId(), false);
         });
     }
 
     private void showAddTextPopWindow() {
-        View view = LayoutInflater.from(this).inflate(R.layout.layout_pop_add_text,null);
+        View view = LayoutInflater.from(this).inflate(R.layout.layout_pop_add_text, null);
         CustomPopWindow popWindow = new CustomPopWindow.PopupWindowBuilder(this)
                 .setView(view)//显示的布局
                 .enableBackgroundDark(true) //弹出popWindow时，背景是否变暗
                 .setBgDarkAlpha(0.7f) // 控制亮度
                 .create()//创建PopupWindow
-                .showAtLocation(getmContextView(), Gravity.CENTER,0, 0);//显示PopupWindow
+                .showAtLocation(getmContextView(), Gravity.CENTER, 0, 0);//显示PopupWindow
 
         View btnOk = view.findViewById(R.id.btn_ok);
         View btnCancel = view.findViewById(R.id.btn_cancel);
@@ -538,7 +542,7 @@ public class MainActivity extends BaseActivity {
         btnOk.setOnClickListener(v -> {
             ArrayList<String> arrayList = new ArrayList<>();
             arrayList.add(editText.getText().toString());
-            addTextOrPic(arrayList,true);
+            addTextOrPic(arrayList, true);
             popWindow.dissmiss();
         });
 
@@ -547,13 +551,13 @@ public class MainActivity extends BaseActivity {
 
     private void addTextOrPic(ArrayList<String> data, boolean isText) {
         BookBean bookBean = getNowBookBean();
-        if (bookBean == null){
+        if (bookBean == null) {
             bookBean = new BookBean();
             bookBean.setBookId("-1");
         }
         ArrayList<NoteBean> noteBeans = new ArrayList<>();
         BookBean finalBookBean = bookBean;
-        LitePal.where("bookRef = ?",bookBean.getBookId()).findAsync(NoteBean.class).listen(new FindMultiCallback() {
+        LitePal.where("bookRef = ?", bookBean.getBookId()).findAsync(NoteBean.class).listen(new FindMultiCallback() {
             @Override
             public <T> void onFinish(List<T> t) {
                 noteBeans.addAll((List<NoteBean>) t);
@@ -566,33 +570,34 @@ public class MainActivity extends BaseActivity {
                         Const.OPEN_ID
                 );
                 for (NoteBean noteBean : noteBeans) {
-                    Date noteDate = new Date(Long.parseLong(noteBean.getCreateTime()));
-                    Calendar noteCalendar = Calendar.getInstance();
-                    noteCalendar.setTime(noteDate);
-                    Calendar nowCalendar = Calendar.getInstance();
-                    nowCalendar.setTime(nowDate);
-                    if (noteCalendar.get(Calendar.DAY_OF_YEAR) == nowCalendar.get(Calendar.DAY_OF_YEAR)){
-                        createBean = noteBean;
+                    if (noteBean.getIsRubbish()!=1){
+                        Date noteDate = new Date(Long.parseLong(noteBean.getCreateTime()));
+                        Calendar noteCalendar = Calendar.getInstance();
+                        noteCalendar.setTime(noteDate);
+                        Calendar nowCalendar = Calendar.getInstance();
+                        nowCalendar.setTime(nowDate);
+                        if (noteCalendar.get(Calendar.DAY_OF_YEAR) == nowCalendar.get(Calendar.DAY_OF_YEAR)) {
+                            createBean = noteBean;
+                        }
                     }
                 }
 
-                if (createBean.getContent()==null){
-                    addNoteToEmpty(data,isText,createBean);
-                }else {
-                    addNoteToExist(data,isText,createBean);
+                if (createBean.getContent() == null) {
+                    addNoteToEmpty(data, isText, createBean);
+                } else {
+                    addNoteToExist(data, isText, createBean);
                 }
-
             }
         });
 
     }
 
     private void addNoteToEmpty(ArrayList<String> data, boolean isText, NoteBean createBean) {
-        Map<String,ContentBean.EntityBean> entityBeanMap = new HashMap<>();
+        Map<String, ContentBean.EntityBean> entityBeanMap = new HashMap<>();
         ArrayList<ContentBean.BlocksBean> blocksBeans = new ArrayList<>();
-        if (isText){
+        if (isText) {
             ContentBean.BlocksBean blocksBean = new ContentBean().new BlocksBean();
-            blocksBean.setKey(MD5Util.crypt(UUID.randomUUID().toString()).substring(0,5));
+            blocksBean.setKey(MD5Util.crypt(UUID.randomUUID().toString()).substring(0, 5));
             blocksBean.setDepth(0);
             blocksBean.setInlineStyleRanges(new ArrayList<>());
             blocksBean.setEntityRanges(new ArrayList<>());
@@ -600,11 +605,11 @@ public class MainActivity extends BaseActivity {
             blocksBean.setText(data.get(0));
             blocksBean.setType("unstyled");
             blocksBeans.add(blocksBean);
-        }else {
+        } else {
             for (int i = 0; i < data.size(); i++) {
                 String picPath = data.get(i);
                 ContentBean.BlocksBean blocksBean = new ContentBean().new BlocksBean();
-                blocksBean.setKey(MD5Util.crypt(UUID.randomUUID().toString()).substring(0,5));
+                blocksBean.setKey(MD5Util.crypt(UUID.randomUUID().toString()).substring(0, 5));
                 blocksBean.setDepth(0);
                 blocksBean.setInlineStyleRanges(new ArrayList<>());
                 blocksBean.setEntityRanges(new ArrayList<>());
@@ -627,25 +632,25 @@ public class MainActivity extends BaseActivity {
                 entityBean.setData(dataBean);
                 entityBean.setMutability("IMMUTABLE");
                 entityBean.setType("IMAGE");
-                entityBeanMap.put(i+"",entityBean);
+                entityBeanMap.put(i + "", entityBean);
             }
         }
         Gson gson = new Gson();
-        ContentBean contentBean = new ContentBean(entityBeanMap,blocksBeans);
+        ContentBean contentBean = new ContentBean(entityBeanMap, blocksBeans);
         createBean.setContent(gson.toJson(contentBean));
-        saveNoteInfo(createBean);
+        addNoteInfo(createBean);
     }
 
-    private void addNoteToExist(ArrayList<String> noteData, boolean isText, NoteBean createBean){
-        NetUtil.doRetrofitRequest(NetUtil.getRetrofitInstance().create(NoteService.class).getNoteContent(createBean.getNoteId(),Const.OPEN_ID), new CallBack<NoteBean>() {
+    private void addNoteToExist(ArrayList<String> noteData, boolean isText, NoteBean createBean) {
+        NetUtil.doRetrofitRequest(NetUtil.getRetrofitInstance().create(NoteService.class).getNoteContent(createBean.getNoteId(), Const.OPEN_ID), new CallBack<NoteBean>() {
             @Override
             public void onSuccess(NoteBean data) {
                 String _tempJson = data.getContent();
                 Gson gson = new Gson();
-                ContentBean contentBean = gson.fromJson(_tempJson,ContentBean.class);
-                if (isText){
+                ContentBean contentBean = gson.fromJson(_tempJson, ContentBean.class);
+                if (isText) {
                     ContentBean.BlocksBean blocksBean = new ContentBean().new BlocksBean();
-                    blocksBean.setKey(MD5Util.crypt(UUID.randomUUID().toString()).substring(0,5));
+                    blocksBean.setKey(MD5Util.crypt(UUID.randomUUID().toString()).substring(0, 5));
                     blocksBean.setDepth(0);
                     blocksBean.setInlineStyleRanges(new ArrayList<>());
                     blocksBean.setEntityRanges(new ArrayList<>());
@@ -653,17 +658,17 @@ public class MainActivity extends BaseActivity {
                     blocksBean.setText(noteData.get(0));
                     blocksBean.setType("unstyled");
                     contentBean.getBlocks().add(blocksBean);
-                }else {
+                } else {
                     int imgSize = 0;
                     for (ContentBean.BlocksBean blocksBean : contentBean.getBlocks()) {
-                        if (blocksBean.getEntityRanges().size()>0){
+                        if (blocksBean.getEntityRanges().size() > 0) {
                             imgSize++;
                         }
                     }
                     for (int i = 0; i < noteData.size(); i++) {
                         String picPath = noteData.get(i);
                         ContentBean.BlocksBean blocksBean = new ContentBean().new BlocksBean();
-                        blocksBean.setKey(MD5Util.crypt(UUID.randomUUID().toString()).substring(0,5));
+                        blocksBean.setKey(MD5Util.crypt(UUID.randomUUID().toString()).substring(0, 5));
                         blocksBean.setDepth(0);
                         blocksBean.setInlineStyleRanges(new ArrayList<>());
                         blocksBean.setEntityRanges(new ArrayList<>());
@@ -671,7 +676,7 @@ public class MainActivity extends BaseActivity {
                         blocksBean.setText(" ");
                         blocksBean.setType("atomic");
                         ContentBean.BlocksBean.EntityRangesBean entityRangesBean = new ContentBean().new BlocksBean().new EntityRangesBean();
-                        entityRangesBean.setKey(imgSize+i+1);
+                        entityRangesBean.setKey(imgSize + i + 1);
                         entityRangesBean.setLength(1);
                         entityRangesBean.setOffset(0);
                         blocksBean.getEntityRanges().add(entityRangesBean);
@@ -686,7 +691,7 @@ public class MainActivity extends BaseActivity {
                         entityBean.setData(dataBean);
                         entityBean.setMutability("IMMUTABLE");
                         entityBean.setType("IMAGE");
-                        contentBean.getEntityMap().put((imgSize+i+1)+"",entityBean);
+                        contentBean.getEntityMap().put((imgSize + i + 1) + "", entityBean);
                     }
                 }
                 createBean.setContent(gson.toJson(contentBean));
@@ -706,6 +711,35 @@ public class MainActivity extends BaseActivity {
     }
 
     private void saveNoteInfo(NoteBean createBean) {
+        createBean.update(createBean.get_id());
+        NetUtil.doRetrofitRequest(NetUtil.noteService.update(Const.OPEN_ID, createBean.getNoteId(),
+                createBean.getName(), createBean.getBookRef(), createBean.getIsKeyNote(), 0, true, createBean.getContent()), new CallBack<RxReturnData>() {
+            @Override
+            public void onSuccess(RxReturnData data) {
+                createBean.setIsLocal(0);
+                createBean.setSyncTime(System.currentTimeMillis()/1000 + "");
+                createBean.setRecentTime(System.currentTimeMillis()/1000 + "");
+                createBean.update(createBean.get_id());
+                showToast("添加成功");
+                Bundle bundle = new Bundle();
+                bundle.putString("title", createBean.getName());
+                bundle.putString("noteId", createBean.getNoteId());
+                bundle.putBoolean("isAdd",true);
+                startActivity(NoteContentActivity.class, bundle);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+            }
+
+            @Override
+            public void onFailure(String message) {
+
+            }
+        });
+    }
+
+    private void addNoteInfo(NoteBean createBean) {
         createBean.saveAsync().listen(new SaveCallback() {
             @Override
             public void onFinish(boolean success) {
@@ -716,10 +750,15 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onSuccess(RxReturnData data) {
                 createBean.setIsLocal(0);
-                createBean.setSyncTime(System.currentTimeMillis()+"");
+                createBean.setSyncTime(System.currentTimeMillis()/1000 + "");
+                createBean.setRecentTime(System.currentTimeMillis()/1000 + "");
                 createBean.update(createBean.get_id());
-                createBean.setRecentTime(System.currentTimeMillis()+"");
-                showLatestNoteList(createBean.getNoteId(),false);
+                showToast("添加成功");
+                Bundle bundle = new Bundle();
+                bundle.putString("title", createBean.getName());
+                bundle.putString("noteId", createBean.getNoteId());
+                bundle.putBoolean("isAdd",true);
+                startActivity(NoteContentActivity.class, bundle);
             }
 
             @Override
@@ -733,17 +772,17 @@ public class MainActivity extends BaseActivity {
         });
     }
 
-    private void showNoteList(String book_id){
+    private void showNoteList(String book_id) {
         noteList = new ArrayList<>();
-        showLatestNoteList(book_id,false);
+        showLatestNoteList(book_id, false);
     }
 
     private void getDataFromLocal() {
         termList = LitePal.findAll(TermBean.class);
-        if(termList!=null && termList.size()>0) {
+        if (termList != null && termList.size() > 0) {
             notebookList = LitePal.where("term = ?", termList.get(termList.size() - 1).getTerm() + "").find(BookBean.class);
-            Log.d(TAG, "getDataFromLocal: "+notebookList);
-            if(notebookList!=null && notebookList.size()>0) {
+            Log.d(TAG, "getDataFromLocal: " + notebookList);
+            if (notebookList != null && notebookList.size() > 0) {
                 noteList = LitePal.where("bookRef = ?", notebookList.get(0).getBookId()).find(NoteBean.class);
 
                 removeRubbish(noteList);
@@ -752,33 +791,33 @@ public class MainActivity extends BaseActivity {
                 initNoteRecyclerView();
                 initDrawerRecyclerView();
 //                showNoteList(noteList);
-                Log.d(TAG, "getDataFromLocal: "+noteList);
+                Log.d(TAG, "getDataFromLocal: " + noteList);
 
 
                 BookBean nowBookBean = getNowBookBean();
-                if(nowBookBean == null){
+                if (nowBookBean == null) {
                     openOtherBook();
-                }else{
+                } else {
                     tvName.setText(nowBookBean.getName());
                     showNoteList(nowBookBean.getBookId());
                 }
                 layoutLoading.setVisibility(View.GONE);
 
-            }else{
+            } else {
                 Toast.makeText(this, "网络状况不佳，请退出重试！", Toast.LENGTH_LONG).show();
             }
-        }else{
+        } else {
             Toast.makeText(this, "网络状况不佳，请退出重试！", Toast.LENGTH_LONG).show();
         }
 
     }
 
     private void removeRubbish(List<NoteBean> noteList) {
-        if(noteList==null ||noteList.size() == 0)return;
+        if (noteList == null || noteList.size() == 0) return;
         Iterator<NoteBean> it = noteList.iterator();
-        while (it.hasNext()){
+        while (it.hasNext()) {
             NoteBean noteBean = it.next();
-            if(noteBean.getIsRubbish()==1){
+            if (noteBean.getIsRubbish() == 1) {
                 it.remove();
             }
         }
@@ -787,133 +826,139 @@ public class MainActivity extends BaseActivity {
     private void syncDataFromServer() {
         NetUtil.doRetrofitRequest(NetUtil.getRetrofitInstance().create(NoteService.class).getTermAndRubbish(Const.OPEN_ID),
                 new CallBack<TermResult>() {
-            @Override
-            public void onSuccess(TermResult data) {
-                notebookList.clear();
-                Collections.sort(data.getTermList(), (o1, o2) -> o1.getTerm() - o2.getTerm());
-                for (TermBean termBean : data.getTermList()) {
-                    for (BookBean bookBean : termBean.getChildren()) {
-                        bookBean.setTerm(termBean.getTerm());
-                    }
-                    notebookList.addAll(termBean.getChildren());
-                }
+                    @Override
+                    public void onSuccess(TermResult data) {
+                        notebookList.clear();
+                        Collections.sort(data.getTermList(), (o1, o2) -> o1.getTerm() - o2.getTerm());
+                        for (TermBean termBean : data.getTermList()) {
+                            for (BookBean bookBean : termBean.getChildren()) {
+                                bookBean.setTerm(termBean.getTerm());
+                            }
+                            notebookList.addAll(termBean.getChildren());
+                        }
 
-                LitePal.deleteAll(BookBean.class);
-                LitePal.saveAll(notebookList);
+                        LitePal.deleteAll(BookBean.class);
+                        LitePal.saveAll(notebookList);
 
-                notebookList = data.getTermList().get(data.getTermList().size()-1).getChildren();
+                        notebookList = data.getTermList().get(data.getTermList().size() - 1).getChildren();
 
-                termList.clear();
-                termList.addAll(data.getTermList());
+                        termList.clear();
+                        termList.addAll(data.getTermList());
 
-                LitePal.deleteAll(TermBean.class);
-                LitePal.saveAll(termList);
-                if(notebookList!=null && notebookList.size()>0) {
-                    notebook = notebookList.get(0);
-                }else{
-                    showToast("暂无笔记");
-                }
+                        LitePal.deleteAll(TermBean.class);
+                        LitePal.saveAll(termList);
+                        if (notebookList != null && notebookList.size() > 0) {
+                            notebook = notebookList.get(0);
+                        } else {
+                            showToast("暂无笔记");
+                        }
 
-                //显示最新的学期
+                        //显示最新的学期
 //                tvTerm.setText(Const.termToChinese[termList.get(termList.size()-1).getTerm()]);
-                term = termList.get(termList.size()-1).getTerm();
-                //显示课程名称
+                        term = termList.get(termList.size() - 1).getTerm();
+                        //显示课程名称
 //                tvName.setText(notebook.getName());
 //                showNoteList(notebook.getBookId());
-                initNoteRecyclerView();
-                initDrawerRecyclerView();
+                        initNoteRecyclerView();
+                        initDrawerRecyclerView();
 
-                if(isSync){
-                    isSync = false;
-                    ivSync.clearAnimation();
-                    showToast("同步完成！");
-                }
+                        if (isSync) {
+                            isSync = false;
+                            ivSync.clearAnimation();
+                            showToast("同步完成！");
+                        }
 
-                BookBean nowBookBean = getNowBookBean();
-                if(nowBookBean == null){
-                    openOtherBook();
-                }else{
-                    tvName.setText(nowBookBean.getName());
-                    showNoteList(nowBookBean.getBookId());
-                }
-                layoutLoading.setVisibility(View.GONE);
+                        BookBean nowBookBean = getNowBookBean();
+                        if (nowBookBean == null) {
+                            openOtherBook();
+                        } else {
+                            tvName.setText(nowBookBean.getName());
+                            showNoteList(nowBookBean.getBookId());
+                        }
+                        layoutLoading.setVisibility(View.GONE);
 
-            }
+                    }
 
-            @Override
-            public void onError(Throwable throwable) {
-                showToast( "网络出现了问题，从本地读取笔记！");
-                getDataFromLocal();
-                if(isSync){
-                    isSync = false;
-                    ivSync.clearAnimation();
-                    showToast("同步失败，请检查网络！");
-                }
-            }
+                    @Override
+                    public void onError(Throwable throwable) {
+                        showToast("网络出现了问题，从本地读取笔记！");
+                        getDataFromLocal();
+                        if (isSync) {
+                            isSync = false;
+                            ivSync.clearAnimation();
+                            showToast("同步失败，请检查网络！");
+                        }
+                    }
 
-            @Override
-            public void onFailure(String message) {
+                    @Override
+                    public void onFailure(String message) {
 
-            }
-        });
+                    }
+                });
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK && requestCode == PhotoPicker.REQUEST_CODE) {
+        if (resultCode == RESULT_OK && (requestCode == PhotoPicker.REQUEST_CODE || requestCode == REQUEST_CODE_CHOOSE)) {
             if (data != null) {
-                ArrayList<String> photos =
-                        data.getStringArrayListExtra(PhotoPicker.KEY_SELECTED_PHOTOS);
-                OssUtil.upload(OssUtil.getService(getBaseContext()), photos, new OssListener() {
-                    @Override
-                    public void onProgress(long progress, long max) {
+                ArrayList<String> photos = new ArrayList<>();
+                if (requestCode == PhotoPicker.REQUEST_CODE) {
+                    photos = data.getStringArrayListExtra(PhotoPicker.KEY_SELECTED_PHOTOS);
+                }else if ( requestCode == REQUEST_CODE_CHOOSE){
+                    photos = data.getStringArrayListExtra("picPath");
+                }
+                if (photos.size()>0){
+                    OssUtil.upload(OssUtil.getService(getBaseContext()), photos, new OssListener() {
+                        @Override
+                        public void onProgress(long progress, long max) {
 
-                    }
+                        }
 
-                    @Override
-                    public void onSuccess(ArrayList<String> url) {
-                        addTextOrPic(url,false);
-                        showToast("上传成功");
-                    }
+                        @Override
+                        public void onSuccess(ArrayList<String> url) {
+                            addTextOrPic(url, false);
+                            showToast("上传成功");
+                        }
 
-                    @Override
-                    public void onFail() {
+                        @Override
+                        public void onFail() {
 
-                    }
-                });
+                        }
+                    });
+                }
             }
-        }else if(resultCode == Const.LOGOUT && requestCode == Const.TO_INFORMATION){
+        } else if (resultCode == Const.LOGOUT && requestCode == Const.TO_INFORMATION) {
             finish();
         }
     }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if(keyCode == KeyEvent.KEYCODE_BACK){
-            if(drawerLayout.isDrawerOpen(Gravity.LEFT)){
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (drawerLayout.isDrawerOpen(Gravity.LEFT)) {
                 drawerLayout.closeDrawer(Gravity.LEFT);
                 return true;
-            }else{
+            } else {
                 return super.onKeyDown(keyCode, event);
             }
         }
-        return super.onKeyDown(keyCode,event);
+        return super.onKeyDown(keyCode, event);
     }
 
-    public BookBean getNowBookBean(){
+    public BookBean getNowBookBean() {
 
         List<CustomCourse> courses = LitePal.findAll(CustomCourse.class);
         int week = CommonUtils.getWeek(Const.START_DAY);
         Calendar calendar = Calendar.getInstance();
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         int minute = calendar.get(Calendar.MINUTE);
-        int nowTime = hour*100+minute;
+        int nowTime = hour * 100 + minute;
         for (CustomCourse course : courses) {
-            if(course.getStartWeek()<=week &&course.getEndWeek()>=week){
-                if(Const.startTimes[course.getStartSection()]<=nowTime && Const.startTimes[course.getStartSection()]+Const.courseDuration>=nowTime){
+            if (course.getStartWeek() <= week && course.getEndWeek() >= week) {
+                if (Const.startTimes[course.getStartSection()] <= nowTime && Const.startTimes[course.getStartSection()] + Const.courseDuration >= nowTime) {
                     List<BookBean> books = LitePal.where("term = ? and name = ?", course.getTerm() + "", course.getName()).find(BookBean.class);
-                    if(books.size()>0){
+                    if (books.size() > 0) {
                         return books.get(0);
                     }
                     return null;
@@ -922,7 +967,6 @@ public class MainActivity extends BaseActivity {
         }
         return null;
     }
-
 
 
 }

@@ -84,6 +84,7 @@ public class NoteContentActivity extends BaseActivity {
     private boolean isEditing = false;
     private String title = "";
     private String noteId = "";
+    private Boolean needToScroll;
     private ArrayList<SimpleContentBean> contentList;
     private int curModifyItem;
     private NoteBean noteBean;
@@ -96,6 +97,7 @@ public class NoteContentActivity extends BaseActivity {
         if (params != null) {
             title = params.getString("title");
             noteId = params.getString("noteId");
+            needToScroll = params.getBoolean("isAdd");
         }
         contentList = new ArrayList<>();
         noteBean = LitePal.where("noteId = ?", noteId).find(NoteBean.class).get(0);
@@ -120,7 +122,6 @@ public class NoteContentActivity extends BaseActivity {
         llShare = findViewById(R.id.ll_share);
         llBack = findViewById(R.id.ll_back);
         llAdd = findViewById(R.id.ll_add);
-        ivAddText = findViewById(R.id.iv_add_text);
         famTools = findViewById(R.id.fam_tools);
     }
 
@@ -151,14 +152,7 @@ public class NoteContentActivity extends BaseActivity {
                     Collections.swap(contentBean.getBlocks(),startMoveIndex,pos);
                     Gson gson = new Gson();
                     noteBean.setContent(gson.toJson(contentBean));
-                    noteBean.saveAsync().listen(new SaveCallback() {
-                        @Override
-                        public void onFinish(boolean success) {
-                            if (success){
-                                //TODO:保存成功
-                            }
-                        }
-                    });
+                    saveNoteInfo(noteBean);
                 }
             }
         };
@@ -173,14 +167,7 @@ public class NoteContentActivity extends BaseActivity {
                     contentBean.getBlocks().remove(pos);
                     Gson gson = new Gson();
                     noteBean.setContent(gson.toJson(contentBean));
-                    noteBean.saveAsync().listen(new SaveCallback() {
-                        @Override
-                        public void onFinish(boolean success) {
-                            if (success){
-                                //TODO:保存成功
-                            }
-                        }
-                    });
+                    saveNoteInfo(noteBean);
                 }
             }
             @Override
@@ -301,8 +288,8 @@ public class NoteContentActivity extends BaseActivity {
 
     private void addPic() {
         Intent intent = new Intent(this, TakePhotoActivity.class);
-        intent.putExtra("course_name", "软件工程");
-        startActivity(intent);
+        intent.putExtra("course_name", noteBean.getName());
+        startActivityForResult(intent,REQUEST_CODE_CHOOSE);
     }
 
     @Override
@@ -328,6 +315,7 @@ public class NoteContentActivity extends BaseActivity {
                     doFadeIn(famTools);
                     noteContentEditAdapter.enableSwipeItem();
                     noteContentEditAdapter.setOnItemSwipeListener(onItemSwipeListener);
+                    rvNoteContent.scrollToPosition(position);
                     isEditing = true;
                 });
                 return false;
@@ -356,44 +344,42 @@ public class NoteContentActivity extends BaseActivity {
     }
 
     private void showModifyTextPopWindow(String text,Boolean isAdd) {
-        if (!CommonUtils.isEmpty(text)){
-            View view = LayoutInflater.from(this).inflate(R.layout.layout_pop_add_text,null);
-            CustomPopWindow popWindow = new CustomPopWindow.PopupWindowBuilder(this)
-                    .setView(view)//显示的布局
-                    .enableBackgroundDark(true) //弹出popWindow时，背景是否变暗
-                    .setBgDarkAlpha(0.7f) // 控制亮度
-                    .create()//创建PopupWindow
-                    .showAtLocation(getmContextView(), Gravity.CENTER,0, 0);//显示PopupWindow
+        View view = LayoutInflater.from(this).inflate(R.layout.layout_pop_add_text,null);
+        CustomPopWindow popWindow = new CustomPopWindow.PopupWindowBuilder(this)
+                .setView(view)//显示的布局
+                .enableBackgroundDark(true) //弹出popWindow时，背景是否变暗
+                .setBgDarkAlpha(0.7f) // 控制亮度
+                .create()//创建PopupWindow
+                .showAtLocation(getmContextView(), Gravity.CENTER,0, 0);//显示PopupWindow
 
-            View btnOk = view.findViewById(R.id.btn_ok);
-            View btnCancel = view.findViewById(R.id.btn_cancel);
-            EditText editText = view.findViewById(R.id.et_text);
-            editText.setText(text);
-            btnOk.setOnClickListener(v -> {
-                if (!CommonUtils.isEmpty(editText.getText().toString())){
-                    if (contentBean!=null){
-                        ContentBean.BlocksBean blocksBean = new ContentBean().new BlocksBean();
-                        blocksBean.setKey(MD5Util.crypt(UUID.randomUUID().toString()).substring(0,5));
-                        blocksBean.setText(editText.getText().toString());
-                        blocksBean.setType("unstyled");
-                        blocksBean.setDepth(0);
-                        blocksBean.setInlineStyleRanges(new ArrayList<>());
-                        blocksBean.setEntityRanges(new ArrayList<>());
-                        blocksBean.setData(new ContentBean().new BlocksBean().new DataBean());
-                        if (isAdd){
-                            contentBean.getBlocks().add(blocksBean);
-                        }else {
-                            contentBean.getBlocks().remove(curModifyItem);
-                            contentBean.getBlocks().add(curModifyItem,blocksBean);
-                        }
-                        saveNoteInfo(noteBean);
+        View btnOk = view.findViewById(R.id.btn_ok);
+        View btnCancel = view.findViewById(R.id.btn_cancel);
+        EditText editText = view.findViewById(R.id.et_text);
+        editText.setText(text);
+        btnOk.setOnClickListener(v -> {
+            if (!CommonUtils.isEmpty(editText.getText().toString())){
+                if (contentBean!=null){
+                    ContentBean.BlocksBean blocksBean = new ContentBean().new BlocksBean();
+                    blocksBean.setKey(MD5Util.crypt(UUID.randomUUID().toString()).substring(0,5));
+                    blocksBean.setText(editText.getText().toString());
+                    blocksBean.setType("unstyled");
+                    blocksBean.setDepth(0);
+                    blocksBean.setInlineStyleRanges(new ArrayList<>());
+                    blocksBean.setEntityRanges(new ArrayList<>());
+                    blocksBean.setData(new ContentBean().new BlocksBean().new DataBean());
+                    if (isAdd){
+                        contentBean.getBlocks().add(blocksBean);
+                    }else {
+                        contentBean.getBlocks().remove(curModifyItem);
+                        contentBean.getBlocks().add(curModifyItem,blocksBean);
                     }
+                    saveNoteInfo(noteBean);
                 }
-                popWindow.dissmiss();
-            });
+            }
+            popWindow.dissmiss();
+        });
 
-            btnCancel.setOnClickListener(v -> popWindow.dissmiss());
-        }
+        btnCancel.setOnClickListener(v -> popWindow.dissmiss());
     }
 
     private void initPageData() {
@@ -433,6 +419,9 @@ public class NoteContentActivity extends BaseActivity {
             contentList.add(simpleContentBean);
         }
         noteContentAdapter.notifyDataSetChanged();
+        if (needToScroll){
+            rvNoteContent.scrollToPosition(noteContentAdapter.getData().size()-1);
+        }
     }
 
     @Override
@@ -440,26 +429,31 @@ public class NoteContentActivity extends BaseActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK && requestCode == PhotoPicker.REQUEST_CODE) {
             if (data != null) {
-                ArrayList<String> photos =
-                        data.getStringArrayListExtra(PhotoPicker.KEY_SELECTED_PHOTOS);
-                OssUtil.upload(OssUtil.getService(getBaseContext()), photos, new OssListener() {
-                    @Override
-                    public void onProgress(long progress, long max) {
+                ArrayList<String> photos = new ArrayList<>();
+                if (requestCode == PhotoPicker.REQUEST_CODE) {
+                    photos = data.getStringArrayListExtra(PhotoPicker.KEY_SELECTED_PHOTOS);
+                }else if ( requestCode == REQUEST_CODE_CHOOSE){
+                    photos = data.getStringArrayListExtra("picPath");
+                }
+                if (photos.size()>0) {
+                    OssUtil.upload(OssUtil.getService(getBaseContext()), photos, new OssListener() {
+                        @Override
+                        public void onProgress(long progress, long max) {
 
-                    }
+                        }
 
-                    @Override
-                    public void onSuccess(ArrayList<String> url) {
-                        savePhotos(url);
-                        showToast("上传成功");
-                    }
+                        @Override
+                        public void onSuccess(ArrayList<String> url) {
+                            savePhotos(url);
+                            showToast("上传成功");
+                        }
 
-                    @Override
-                    public void onFail() {
+                        @Override
+                        public void onFail() {
 
-                    }
-                });
-
+                        }
+                    });
+                }
             }
         }
     }
@@ -503,20 +497,16 @@ public class NoteContentActivity extends BaseActivity {
     }
 
     private void saveNoteInfo(NoteBean noteBean) {
-        noteBean.saveAsync().listen(new SaveCallback() {
-            @Override
-            public void onFinish(boolean success) {
-            }
-        });
-        NetUtil.doRetrofitRequest(NetUtil.noteService.addNote(Const.OPEN_ID, noteBean.getBookRef(),
-                noteBean.getName(), noteBean.getContent(), noteBean.getIsKeyNote()), new CallBack<RxReturnData>() {
+        noteBean.update(noteBean.get_id());
+        NetUtil.doRetrofitRequest(NetUtil.noteService.update(Const.OPEN_ID, noteBean.getNoteId(),
+                noteBean.getName(), noteBean.getBookRef(), noteBean.getIsKeyNote(), 0, true, noteBean.getContent()), new CallBack<RxReturnData>() {
             @Override
             public void onSuccess(RxReturnData data) {
                 noteBean.setIsLocal(0);
-                noteBean.setSyncTime(System.currentTimeMillis()+"");
+                noteBean.setSyncTime(System.currentTimeMillis() / 1000 + "");
+                noteBean.setRecentTime(System.currentTimeMillis() / 1000 + "");
                 noteBean.update(noteBean.get_id());
-                noteBean.setRecentTime(System.currentTimeMillis()+"");
-                parseContent(noteBean);
+                showToast("保存成功");
             }
 
             @Override
@@ -528,6 +518,32 @@ public class NoteContentActivity extends BaseActivity {
 
             }
         });
+//        noteBean.saveAsync().listen(new SaveCallback() {
+//            @Override
+//            public void onFinish(boolean success) {
+//            }
+//        });
+//        NetUtil.doRetrofitRequest(NetUtil.noteService.addNote(Const.OPEN_ID, noteBean.getBookRef(),
+//                noteBean.getName(), noteBean.getContent(), noteBean.getIsKeyNote()), new CallBack<RxReturnData>() {
+//            @Override
+//            public void onSuccess(RxReturnData data) {
+//                noteBean.setIsLocal(0);
+//                noteBean.setSyncTime(System.currentTimeMillis()/1000+"");
+//                noteBean.update(noteBean.get_id());
+//                noteBean.setRecentTime(System.currentTimeMillis()/1000+"");
+//                parseContent(noteBean);
+//            }
+//
+//            @Override
+//            public void onError(Throwable throwable) {
+//            }
+//
+//            @Override
+//            public void onFailure(String message) {
+//
+//            }
+//        });
+//    }
     }
 
     @Override
