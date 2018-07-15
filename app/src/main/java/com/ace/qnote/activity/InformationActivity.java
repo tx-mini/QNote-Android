@@ -13,6 +13,12 @@ import com.ace.qnote.util.Const;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 
+import org.litepal.LitePal;
+
+import csu.edu.ice.model.dao.BookBean;
+import csu.edu.ice.model.dao.NoteBean;
+import csu.edu.ice.model.dao.TermBean;
+
 public class InformationActivity extends AppCompatActivity {
 
     @Override
@@ -35,5 +41,10 @@ public class InformationActivity extends AppCompatActivity {
         startActivity(new Intent(this,LoginActivity.class));
         setResult(Const.LOGOUT);
         finish();
+
+        LitePal.deleteAll(NoteBean.class);
+        LitePal.deleteAll(BookBean.class);
+        LitePal.deleteAll(TermBean.class);
+
     }
 }

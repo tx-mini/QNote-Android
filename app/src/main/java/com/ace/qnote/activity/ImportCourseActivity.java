@@ -88,6 +88,11 @@ public class ImportCourseActivity extends BaseActivity {
                     return;
                 }
 
+                if(!password.equals("123456")){
+                    showToast("密码不正确，请重新输入");
+                    return;
+                }
+
                 NetUtil.doRetrofitRequest(NetUtil.courseService.getCourseList(id,password,university, Const.OPEN_ID), new CallBack<List<CustomCourse>>() {
 
 
