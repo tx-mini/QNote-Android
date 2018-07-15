@@ -38,9 +38,24 @@
             <ImageView
                 android:layout_width="@dimen/back_arrow_width"
                 android:layout_height="@dimen/back_arrow_height"
-                android:background="@mipmap/ic_share" />
+                android:background="@mipmap/ic_share_gray" />
 
         </LinearLayout>
+        <LinearLayout
+            android:visibility="gone"
+            android:layout_alignParentEnd="true"
+            android:id="@+id/ll_revoke"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="@dimen/back_arrow_width"
+                android:layout_height="@dimen/back_arrow_height"
+                android:background="@mipmap/ic_share_gray" />
+
+        </LinearLayout>
+
     </RelativeLayout>
     <View
         style="@style/title_bar_divider"/>
@@ -74,25 +89,25 @@
                 android:layout_width="68dp"
                 android:layout_height="68dp" />
         </LinearLayout>
-        <com.github.clans.fab.FloatingActionMenu
-            android:visibility="gone"
-            android:id="@+id/fam_tools"
-            android:layout_gravity="end|bottom"
-            android:layout_marginRight="50dp"
-            android:layout_marginBottom="100dp"
-            app:menu_colorNormal="@color/colorPrimary"
-            app:menu_colorPressed="@color/colorPrimaryDark"
-            app:menu_icon="@mipmap/ic_tools"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-            <com.github.clans.fab.FloatingActionButton
-                android:id="@+id/fab_"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-            <com.github.clans.fab.FloatingActionButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </com.github.clans.fab.FloatingActionMenu>
+        <!--<com.github.clans.fab.FloatingActionMenu-->
+            <!--android:visibility="gone"-->
+            <!--android:id="@+id/fam_tools"-->
+            <!--android:layout_gravity="end|bottom"-->
+            <!--android:layout_marginRight="50dp"-->
+            <!--android:layout_marginBottom="100dp"-->
+            <!--app:menu_colorNormal="@color/colorPrimary"-->
+            <!--app:menu_colorPressed="@color/colorPrimaryDark"-->
+            <!--app:menu_icon="@mipmap/ic_tools"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content">-->
+            <!--<com.github.clans.fab.FloatingActionButton-->
+                <!--android:id="@+id/fab_"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content" />-->
+            <!--<com.github.clans.fab.FloatingActionButton-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content" />-->
+        <!--</com.github.clans.fab.FloatingActionMenu>-->
     </FrameLayout>
 
 </LinearLayout>

@@ -161,7 +161,8 @@
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/rv_notebook"
                 android:layout_width="match_parent"
-                android:layout_height="300dp"></android.support.v7.widget.RecyclerView>
+                android:layout_height="0dp"
+                android:layout_weight="1"></android.support.v7.widget.RecyclerView>
 
             <LinearLayout
                 android:id="@+id/layout_other_book"
@@ -199,10 +200,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
             </LinearLayout>
-            <View
-                android:layout_weight="1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"></View>
             <View
                 android:background="#FFF4F4F4"
                 android:layout_width="match_parent"

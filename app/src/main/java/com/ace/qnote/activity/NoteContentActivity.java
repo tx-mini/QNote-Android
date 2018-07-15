@@ -80,7 +80,6 @@ public class NoteContentActivity extends BaseActivity {
     private LinearLayout llShare;
     private LinearLayout llBack;
     private LinearLayout llAdd;
-    private FloatingActionMenu famTools;
     private boolean isEditing = false;
     private String title = "";
     private String noteId = "";
@@ -122,7 +121,6 @@ public class NoteContentActivity extends BaseActivity {
         llShare = findViewById(R.id.ll_share);
         llBack = findViewById(R.id.ll_back);
         llAdd = findViewById(R.id.ll_add);
-        famTools = findViewById(R.id.fam_tools);
     }
 
     @Override
@@ -233,11 +231,11 @@ public class NoteContentActivity extends BaseActivity {
                 Tencent mTencent = Tencent.createInstance("101488552", this);
                 final Bundle params = new Bundle();
                 params.putInt(QQShare.SHARE_TO_QQ_KEY_TYPE, QQShare.SHARE_TO_QQ_TYPE_DEFAULT);
-                params.putString(QQShare.SHARE_TO_QQ_TITLE, "要分享的标题");
-                params.putString(QQShare.SHARE_TO_QQ_SUMMARY, "要分享的摘要");
+                params.putString(QQShare.SHARE_TO_QQ_TITLE, noteBean.getName());
+                params.putString(QQShare.SHARE_TO_QQ_SUMMARY, "");
                 params.putString(QQShare.SHARE_TO_QQ_TARGET_URL, "http://www.qq.com/news/1.html");
-                params.putString(QQShare.SHARE_TO_QQ_IMAGE_URL, "http://imgcache.qq.com/qzone/space_item/pre/0/66768.gif");
-                params.putString(QQShare.SHARE_TO_QQ_APP_NAME, "测试应用222222");
+                params.putString(QQShare.SHARE_TO_QQ_IMAGE_URL, "http://qnote-1253746866.cos.ap-guangzhou.myqcloud.com/logo.png");
+                params.putString(QQShare.SHARE_TO_QQ_APP_NAME, "企鹅笔记");
 //                params.putInt(QQShare.SHARE_TO_QQ_EXT_INT,  "其他附加功能");
                 mTencent.shareToQQ(this, params, new IUiListener() {
                     @Override
@@ -312,7 +310,7 @@ public class NoteContentActivity extends BaseActivity {
                     }
                     rvNoteContent.setAdapter(noteContentEditAdapter);
                     doFadeOut(llAdd);
-                    doFadeIn(famTools);
+//                    doFadeIn(famTools);
                     noteContentEditAdapter.enableSwipeItem();
                     noteContentEditAdapter.setOnItemSwipeListener(onItemSwipeListener);
                     rvNoteContent.scrollToPosition(position);
@@ -420,7 +418,7 @@ public class NoteContentActivity extends BaseActivity {
         }
         noteContentAdapter.notifyDataSetChanged();
         if (needToScroll){
-            rvNoteContent.scrollToPosition(noteContentAdapter.getData().size()-1);
+            rvNoteContent.scrollToPosition(contentList.size()-1);
         }
     }
 
@@ -551,7 +549,7 @@ public class NoteContentActivity extends BaseActivity {
         if (isEditing){
             rvNoteContent.setAdapter(noteContentAdapter);
             isEditing = false;
-            doFadeOut(famTools);
+//            doFadeOut(famTools);
             doFadeIn(llAdd);
             noteContentEditAdapter.disableSwipeItem();
         }else {
