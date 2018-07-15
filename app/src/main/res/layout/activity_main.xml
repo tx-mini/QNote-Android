@@ -217,6 +217,7 @@
                         android:layout_width="@dimen/drawer_icon_size"
                         android:layout_height="@dimen/drawer_icon_size" />
                     <TextView
+                        android:textSize="10sp"
                         android:textColor="@color/drawer_text_color"
                         android:layout_marginLeft="2dp"
                         android:text="查看课表"
@@ -235,6 +236,8 @@
                         android:layout_width="@dimen/drawer_icon_size"
                         android:layout_height="@dimen/drawer_icon_size" />
                     <TextView
+                        android:textSize="10sp"
+
                         android:textColor="@color/drawer_text_color"
                         android:layout_marginLeft="2dp"
                         android:text="垃圾桶"
@@ -253,6 +256,7 @@
                         android:layout_width="@dimen/drawer_icon_size"
                         android:layout_height="@dimen/drawer_icon_size" />
                     <TextView
+                        android:textSize="10sp"
                         android:textColor="@color/drawer_text_color"
                         android:layout_marginLeft="2dp"
                         android:text="学习园地"

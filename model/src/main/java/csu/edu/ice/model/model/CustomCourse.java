@@ -92,7 +92,7 @@ public class CustomCourse extends LitePalSupport implements Serializable,ICourse
     }
 
     public int getStartSection() {
-        return time*2-1;
+        return time;
     }
 
     public void setStartSection(int startSection) {
@@ -100,7 +100,7 @@ public class CustomCourse extends LitePalSupport implements Serializable,ICourse
     }
 
     public int getEndSection() {
-        return time*2;
+        return time+1;
     }
 
     public void setEndSection(int endSection) {
