@@ -869,8 +869,8 @@ public class MainActivity extends BaseActivity {
                         }
 
                         //显示最新的学期
-//                tvTerm.setText(Const.termToChinese[termList.get(termList.size()-1).getTerm()]);
                         term = termList.get(termList.size() - 1).getTerm();
+                        tvTerm.setText(Const.termToChinese[termList.get(termList.size()-1).getTerm()]);
                         //显示课程名称
 //                tvName.setText(notebook.getName());
 //                showNoteList(notebook.getBookId());
