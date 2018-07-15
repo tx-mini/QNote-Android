@@ -35,7 +35,25 @@ public class NoteBean extends LitePalSupport implements Serializable {
 
     private String syncTime;
 
+    private String createTime;
+
+    private Boolean isLocal;
+
     public NoteBean(){}
+
+    public NoteBean(String id, String name, String bookRef, String openId) {
+        this.id = id;
+        this.name = name;
+        this.isKeyNote = isKeyNote;
+        this.isRubbish = isRubbish;
+        this.content = content;
+        this.recentTime = recentTime;
+        this.bookRef = bookRef;
+        this.openId = openId;
+        this.syncTime = syncTime;
+        this.createTime = createTime;
+        this.isLocal = isLocal;
+    }
 
     public NoteBean(String title) {
         this.name = title;
@@ -135,5 +153,20 @@ public class NoteBean extends LitePalSupport implements Serializable {
                 ", openId='" + openId + '\'' +
                 ", syncTime='" + syncTime + '\'' +
                 '}';
+    }
+    public String getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(String createTime) {
+        this.createTime = createTime;
+    }
+
+    public Boolean getLocal() {
+        return isLocal;
+    }
+
+    public void setLocal(Boolean local) {
+        isLocal = local;
     }
 }

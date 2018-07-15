@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -33,14 +34,23 @@ import com.ace.qnote.adapter.TermAdapter;
 import com.ace.qnote.base.BaseActivity;
 import com.ace.qnote.util.CommonUtils;
 import com.ace.qnote.util.Const;
+import com.ace.qnote.util.oss.OssListener;
+import com.ace.qnote.util.oss.OssUtil;
 import com.ace.qnote.util.permission.ActionCallBackListener;
 import com.ace.qnote.util.permission.RxPermissionUtil;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.zhouwei.library.CustomPopWindow;
+import com.google.gson.Gson;
+import com.tencent.cos.xml.exception.CosXmlClientException;
+import com.tencent.cos.xml.exception.CosXmlServiceException;
+import com.tencent.cos.xml.model.CosXmlRequest;
+import com.tencent.cos.xml.model.CosXmlResult;
 
 import org.litepal.LitePal;
+import org.litepal.crud.callback.FindMultiCallback;
 
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -48,12 +58,15 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.UUID;
 
 import csu.edu.ice.model.dao.BookBean;
 import csu.edu.ice.model.dao.NoteBean;
 import csu.edu.ice.model.dao.TermBean;
 import csu.edu.ice.model.model.CustomCourse;
+import csu.edu.ice.model.model.Notebook;
 import csu.edu.ice.model.model.TermResult;
+import csu.edu.ice.model.model.University;
 import me.iwf.photopicker.PhotoPicker;
 
 public class MainActivity extends BaseActivity {
@@ -440,10 +453,37 @@ public class MainActivity extends BaseActivity {
             EditText editText = view.findViewById(R.id.et_text);
             editText.setText(text);
             btnOk.setOnClickListener(v -> {
+                addTextOrPic(editText.getText().toString(),true);
                 popWindow.dissmiss();
             });
 
             btnCancel.setOnClickListener(v -> popWindow.dissmiss());
+        }
+    }
+
+    private void addTextOrPic(String data, boolean isText) {
+        BookBean bookBean = getNowBookBean();
+        ArrayList<NoteBean> noteBeans = new ArrayList<>();
+        LitePal.where("book_ref = ?",bookBean.getId()).findAsync(BookBean.class).listen(new FindMultiCallback() {
+            @Override
+            public <T> void onFinish(List<T> t) {
+                noteBeans.addAll((List<NoteBean>) t);
+            }
+        });
+        Date nowDate = new Date(System.currentTimeMillis());
+        NoteBean createBean = new NoteBean();
+        createBean.setId(UUID.randomUUID().toString());
+        for (NoteBean noteBean : noteBeans) {
+            Date noteDate = new Date(Long.parseLong(noteBean.getCreateTime()));
+            Calendar noteCalendar = Calendar.getInstance();
+            noteCalendar.setTime(noteDate);
+            Calendar nowCalendar = Calendar.getInstance();
+            nowCalendar.setTime(nowDate);
+            if (noteCalendar.get(Calendar.DAY_OF_YEAR) == nowCalendar.get(Calendar.DAY_OF_YEAR)){
+                createBean = noteBean;
+            }
+        }
+        if (isText){
         }
     }
 
@@ -542,7 +582,22 @@ public class MainActivity extends BaseActivity {
             if (data != null) {
                 ArrayList<String> photos =
                         data.getStringArrayListExtra(PhotoPicker.KEY_SELECTED_PHOTOS);
+                OssUtil.upload(OssUtil.getService(getBaseContext()), photos, new OssListener() {
+                    @Override
+                    public void onProgress(long progress, long max) {
 
+                    }
+
+                    @Override
+                    public void onSuccess(ArrayList<String> url) {
+                        showToast("上传成功");
+                    }
+
+                    @Override
+                    public void onFail() {
+
+                    }
+                });
             }
         }else if(resultCode == Const.LOGOUT && requestCode == Const.TO_INFORMATION){
             finish();
