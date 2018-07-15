@@ -47,7 +47,6 @@ import com.tencent.tauth.Tencent;
 import com.tencent.tauth.UiError;
 
 import org.litepal.LitePal;
-import org.litepal.crud.callback.FindMultiCallback;
 import org.litepal.crud.callback.SaveCallback;
 
 import java.util.ArrayList;
@@ -63,20 +62,20 @@ import me.iwf.photopicker.PhotoPicker;
 public class NoteContentActivity extends BaseActivity {
     private final int REQUEST_CODE_CHOOSE = 1000;
 
-    private RecyclerView rv_note_content;
+    private RecyclerView rvNoteContent;
     private NoteContentAdapter noteContentAdapter;
     private NoteContentEditAdapter noteContentEditAdapter;
     private OnItemDragListener onItemDragListener;
     private OnItemSwipeListener onItemSwipeListener;
-    private ImageView iv_add_text;
-    private ImageView iv_add_pic;
-    private TextView tv_title;
+    private ImageView ivAddText;
+    private ImageView ivAddPic;
+    private TextView tvTitle;
     private String[] m_upLoadImgPermission = {Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
     private List<Uri> mSelected;
-    private LinearLayout ll_share;
-    private LinearLayout ll_back;
-    private LinearLayout ll_add;
-    private FloatingActionMenu fam_tools;
+    private LinearLayout llShare;
+    private LinearLayout llBack;
+    private LinearLayout llAdd;
+    private FloatingActionMenu famTools;
     private boolean isEditing = false;
     private String title = "";
     private String noteId = "";
@@ -94,7 +93,7 @@ public class NoteContentActivity extends BaseActivity {
             noteId = params.getString("noteId");
         }
         contentList = new ArrayList<>();
-        noteBean = LitePal.where("id = ?", noteId).find(NoteBean.class).get(0);
+        noteBean = LitePal.where("noteId = ?", noteId).find(NoteBean.class).get(0);
     }
 
     @Override
@@ -109,23 +108,23 @@ public class NoteContentActivity extends BaseActivity {
 
     @Override
     public void initView(View view) {
-        rv_note_content = findViewById(R.id.rv_note_content);
-        iv_add_pic = findViewById(R.id.iv_add_pic);
-        iv_add_text = findViewById(R.id.iv_add_text);
-        tv_title = findViewById(R.id.tv_title);
-        ll_share = findViewById(R.id.ll_share);
-        ll_back = findViewById(R.id.ll_back);
-        ll_add = findViewById(R.id.ll_add);
-        iv_add_text = findViewById(R.id.iv_add_text);
-        fam_tools = findViewById(R.id.fam_tools);
+        rvNoteContent = findViewById(R.id.rv_note_content);
+        ivAddPic = findViewById(R.id.iv_add_pic);
+        ivAddText = findViewById(R.id.iv_add_text);
+        tvTitle = findViewById(R.id.tv_title);
+        llShare = findViewById(R.id.ll_share);
+        llBack = findViewById(R.id.ll_back);
+        llAdd = findViewById(R.id.ll_add);
+        ivAddText = findViewById(R.id.iv_add_text);
+        famTools = findViewById(R.id.fam_tools);
     }
 
     @Override
     public void setListener() {
-        iv_add_pic.setOnClickListener(this);
-        iv_add_text.setOnClickListener(this);
-        ll_back.setOnClickListener(this);
-        ll_share.setOnClickListener(this);
+        ivAddPic.setOnClickListener(this);
+        ivAddText.setOnClickListener(this);
+        llBack.setOnClickListener(this);
+        llShare.setOnClickListener(this);
         onItemDragListener = new OnItemDragListener() {
             @Override
             public void onItemDragStart(RecyclerView.ViewHolder viewHolder, int pos) {
@@ -184,24 +183,24 @@ public class NoteContentActivity extends BaseActivity {
 
             }
         };
-        iv_add_pic.setOnLongClickListener(new View.OnLongClickListener() {
+        ivAddPic.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
                 addPicFromFile();
                 return false;
             }
         });
-        rv_note_content.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        rvNoteContent.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 if (!isEditing){
                     switch (newState) {
                         case RecyclerView.SCROLL_STATE_DRAGGING:
-                            doFadeOut(ll_add);
+                            doFadeOut(llAdd);
                             break;
                         case RecyclerView.SCROLL_STATE_IDLE:
-                            doFadeIn(ll_add);
+                            doFadeIn(llAdd);
                             break;
                     }
                 }
@@ -304,24 +303,24 @@ public class NoteContentActivity extends BaseActivity {
     @Override
     public void doBusiness(Context mContext) {
         if (!CommonUtils.isEmpty(title)) {
-            tv_title.setText(title);
+            tvTitle.setText(title);
         }
 
         initPageData();
 
-        rv_note_content.setLayoutManager(new LinearLayoutManager(this));
+        rvNoteContent.setLayoutManager(new LinearLayoutManager(this));
         noteContentAdapter = new NoteContentAdapter(R.layout.item_note_content, contentList);
         noteContentAdapter.setOnItemLongClickListener(new BaseQuickAdapter.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(BaseQuickAdapter adapter, View view, int position) {
-                rv_note_content.post(() -> {
+                rvNoteContent.post(() -> {
                     Vibrator vibrator = (Vibrator) getBaseContext().getSystemService(Service.VIBRATOR_SERVICE);
                     if (vibrator != null) {
                         vibrator.vibrate(500);
                     }
-                    rv_note_content.setAdapter(noteContentEditAdapter);
-                    doFadeOut(ll_add);
-                    doFadeIn(fam_tools);
+                    rvNoteContent.setAdapter(noteContentEditAdapter);
+                    doFadeOut(llAdd);
+                    doFadeIn(famTools);
                     noteContentEditAdapter.enableSwipeItem();
                     noteContentEditAdapter.setOnItemSwipeListener(onItemSwipeListener);
                     isEditing = true;
@@ -345,10 +344,10 @@ public class NoteContentActivity extends BaseActivity {
 
         ItemDragAndSwipeCallback itemDragAndSwipeCallback = new ItemDragAndSwipeCallback(noteContentEditAdapter);
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(itemDragAndSwipeCallback);
-        itemTouchHelper.attachToRecyclerView(rv_note_content);
+        itemTouchHelper.attachToRecyclerView(rvNoteContent);
         noteContentEditAdapter.enableDragItem(itemTouchHelper, R.id.cv_content, true);
         noteContentEditAdapter.setOnItemDragListener(onItemDragListener);
-        rv_note_content.setAdapter(noteContentAdapter);
+        rvNoteContent.setAdapter(noteContentAdapter);
     }
 
     private void showModifyTextPopWindow(String text,Boolean isAdd) {
@@ -402,7 +401,7 @@ public class NoteContentActivity extends BaseActivity {
     }
 
     private void initPageData() {
-        NetUtil.doRetrofitRequest(NetUtil.getRetrofitInstance().create(NoteService.class).getNoteContent(Const.OPEN_ID,noteId), new CallBack<NoteBean>() {
+        NetUtil.doRetrofitRequest(NetUtil.getRetrofitInstance().create(NoteService.class).getNoteContent(noteId,Const.OPEN_ID), new CallBack<NoteBean>() {
             @Override
             public void onSuccess(NoteBean data) {
                 String _tempJson = data.getContent();
@@ -422,6 +421,7 @@ public class NoteContentActivity extends BaseActivity {
                     }
                     contentList.add(simpleContentBean);
                 }
+                noteContentAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -451,10 +451,10 @@ public class NoteContentActivity extends BaseActivity {
     @Override
     public void onBackPressed() {
         if (isEditing){
-            rv_note_content.setAdapter(noteContentAdapter);
+            rvNoteContent.setAdapter(noteContentAdapter);
             isEditing = false;
-            doFadeOut(fam_tools);
-            doFadeIn(ll_add);
+            doFadeOut(famTools);
+            doFadeIn(llAdd);
             noteContentEditAdapter.disableSwipeItem();
         }else {
             super.onBackPressed();
