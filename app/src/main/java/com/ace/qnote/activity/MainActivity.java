@@ -32,7 +32,6 @@ import com.ace.qnote.adapter.DrawerNoteAdapter;
 import com.ace.qnote.adapter.NoteAdapter;
 import com.ace.qnote.adapter.TermAdapter;
 import com.ace.qnote.base.BaseActivity;
-import com.ace.qnote.util.CommonUtils;
 import com.ace.qnote.util.Const;
 import com.ace.qnote.util.MD5Util;
 import com.ace.qnote.util.oss.OssListener;
@@ -393,7 +392,7 @@ public class MainActivity extends BaseActivity {
             drawerLayout.closeDrawer(Gravity.LEFT);
             term = termBean.getTerm();
             if(bookList.size()>0) {
-                showLatestNoteList(bookList.get(0).getId());
+                showLatestNoteList(bookList.get(0).getBookId());
             }
             tvName.setText(bookList.get(0).getName());
             notebook = bookList.get(0);
@@ -452,7 +451,7 @@ public class MainActivity extends BaseActivity {
             Bundle bundle = new Bundle();
             NoteBean noteBean = (NoteBean) adapter.getData().get(position);
             bundle.putString("title", noteBean.getName());
-            bundle.putString("noteId", noteBean.getId());
+            bundle.putString("noteId", noteBean.getNoteId());
             startActivity(NoteContentActivity.class,bundle);
         });
         rvNote.setAdapter(noteAdapter);
@@ -471,7 +470,7 @@ public class MainActivity extends BaseActivity {
             BookBean bookbean = bookList.get(position);
             tvName.setText(bookbean.getName());
             notebook = bookbean;
-            showLatestNoteList(bookbean.getId());
+            showLatestNoteList(bookbean.getBookId());
         });
     }
 
@@ -502,18 +501,13 @@ public class MainActivity extends BaseActivity {
         }
         if (bookBean != null){
             ArrayList<NoteBean> noteBeans = new ArrayList<>();
-            LitePal.where("bookRef = ?",bookBean.getId()).findAsync(NoteBean.class).listen(new FindMultiCallback() {
-                @Override
-                public <T> void onFinish(List<T> t) {
-                    noteBeans.addAll((List<NoteBean>) t);
-                }
-            });
+            noteBeans.addAll(LitePal.where("bookRef = ?",bookBean.getBookId()).find(NoteBean.class));
             Date nowDate = new Date(System.currentTimeMillis());
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy年MM月dd日笔记", Locale.CHINESE);
             NoteBean createBean = new NoteBean(
                     MD5Util.crypt(UUID.randomUUID().toString()),
                     simpleDateFormat.format(nowDate),
-                    bookBean.getId(),
+                    bookBean.getBookId(),
                     Const.OPEN_ID
             );
             for (NoteBean noteBean : noteBeans) {
@@ -585,7 +579,7 @@ public class MainActivity extends BaseActivity {
             notebookList = LitePal.where("term = ?", termList.get(termList.size() - 1).getTerm() + "").find(BookBean.class);
             Log.d(TAG, "getDataFromLocal: "+notebookList);
             if(notebookList!=null && notebookList.size()>0) {
-                noteList = LitePal.where("bookRef = ?", notebookList.get(0).getId()).find(NoteBean.class);
+                noteList = LitePal.where("bookRef = ?", notebookList.get(0).getBookId()).find(NoteBean.class);
 
                 removeRubbish(noteList);
                 notebook = notebookList.get(0);
@@ -649,7 +643,7 @@ public class MainActivity extends BaseActivity {
                 term = termList.get(termList.size()-1).getTerm();
                 //显示课程名称
                 tvName.setText(notebook.getName());
-                showNoteList(notebook.getId());
+                showNoteList(notebook.getBookId());
                 initNoteRecyclerView();
                 initDrawerRecyclerView();
 

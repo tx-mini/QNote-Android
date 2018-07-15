@@ -13,7 +13,7 @@ public class BookBean extends LitePalSupport implements Serializable {
     private int _id;
 
     @SerializedName("book_id")
-    private String id;
+    private String bookId;
     private String name;
     private int term;
 
@@ -26,12 +26,12 @@ public class BookBean extends LitePalSupport implements Serializable {
         this._id = _id;
     }
 
-    public String getId() {
-        return id;
+    public String getBookId() {
+        return bookId;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setBookId(String id) {
+        this.bookId = id;
     }
 
     public String getName() {
@@ -54,7 +54,7 @@ public class BookBean extends LitePalSupport implements Serializable {
     public String toString() {
         return "BookBean{" +
                 "_id=" + _id +
-                ", id='" + id + '\'' +
+                ", id='" + bookId + '\'' +
                 ", name='" + name + '\'' +
                 ", term=" + term +
                 '}';
