@@ -71,6 +71,27 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
+        <LinearLayout
+            android:gravity="center"
+            android:orientation="vertical"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            android:id="@+id/layout_loading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ProgressBar
+                android:translationZ="10dp"
+                android:id="@+id/pb_loading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/pb_loading"
+                android:text="数据价值中..."
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
     </RelativeLayout>
     <android.support.design.widget.NavigationView
         android:id="@+id/nav_view"
@@ -123,7 +144,7 @@
                     android:layout_marginLeft="14dp"
                     android:text="2018-2019年下学期"
                     android:textSize="16sp"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
                 <ImageView
                     android:layout_marginLeft="9dp"
@@ -201,7 +222,7 @@
                     <TextView
                         android:textColor="@color/drawer_text_color"
                         android:layout_marginLeft="2dp"
-                        android:text="设置课表"
+                        android:text="查看课表"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
                 </LinearLayout>

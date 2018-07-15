@@ -32,6 +32,7 @@ import com.ace.qnote.adapter.DrawerNoteAdapter;
 import com.ace.qnote.adapter.NoteAdapter;
 import com.ace.qnote.adapter.TermAdapter;
 import com.ace.qnote.base.BaseActivity;
+import com.ace.qnote.util.CommonUtils;
 import com.ace.qnote.util.Const;
 import com.ace.qnote.util.MD5Util;
 import com.ace.qnote.util.oss.OssListener;
@@ -47,7 +48,6 @@ import org.litepal.LitePal;
 import org.litepal.crud.callback.FindMultiCallback;
 import org.litepal.crud.callback.SaveCallback;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -69,6 +69,7 @@ import csu.edu.ice.model.model.TermResult;
 import me.iwf.photopicker.PhotoPicker;
 
 public class MainActivity extends BaseActivity {
+    private LinearLayout layoutLoading;
     private final int REQUEST_CODE_CHOOSE = 1000;
     private ImageView ivEdit,ivTakePhoto;
     private TextView tvNickname;
@@ -128,6 +129,7 @@ public class MainActivity extends BaseActivity {
         drawerLayout = findViewById(R.id.drawer_layout);
         tvNullTip = findViewById(R.id.tv_null_tip);
         ivSync = findViewById(R.id.iv_sync);
+        layoutLoading = findViewById(R.id.layout_loading);
     }
 
     @Override
@@ -389,7 +391,8 @@ public class MainActivity extends BaseActivity {
 
                 @Override
                 public void onError(Throwable throwable) {
-                    showToast("创建失败，请稍后再试！");
+                    showToast("创建失败，请稍后再试！" +
+                            "");
                 }
 
                 @Override
@@ -745,10 +748,10 @@ public class MainActivity extends BaseActivity {
 
                 removeRubbish(noteList);
                 notebook = notebookList.get(0);
-                tvName.setText(notebookList.get(0).getName());
+//                tvName.setText(notebookList.get(0).getName());
                 initNoteRecyclerView();
                 initDrawerRecyclerView();
-                showNoteList(noteList);
+//                showNoteList(noteList);
                 Log.d(TAG, "getDataFromLocal: "+noteList);
 
 
@@ -759,6 +762,7 @@ public class MainActivity extends BaseActivity {
                     tvName.setText(nowBookBean.getName());
                     showNoteList(nowBookBean.getBookId());
                 }
+                layoutLoading.setVisibility(View.GONE);
 
             }else{
                 Toast.makeText(this, "网络状况不佳，请退出重试！", Toast.LENGTH_LONG).show();
@@ -811,11 +815,11 @@ public class MainActivity extends BaseActivity {
                 }
 
                 //显示最新的学期
-                tvTerm.setText(Const.termToChinese[termList.get(termList.size()-1).getTerm()]);
+//                tvTerm.setText(Const.termToChinese[termList.get(termList.size()-1).getTerm()]);
                 term = termList.get(termList.size()-1).getTerm();
                 //显示课程名称
-                tvName.setText(notebook.getName());
-                showNoteList(notebook.getBookId());
+//                tvName.setText(notebook.getName());
+//                showNoteList(notebook.getBookId());
                 initNoteRecyclerView();
                 initDrawerRecyclerView();
 
@@ -832,6 +836,7 @@ public class MainActivity extends BaseActivity {
                     tvName.setText(nowBookBean.getName());
                     showNoteList(nowBookBean.getBookId());
                 }
+                layoutLoading.setVisibility(View.GONE);
 
             }
 
@@ -899,7 +904,7 @@ public class MainActivity extends BaseActivity {
     public BookBean getNowBookBean(){
 
         List<CustomCourse> courses = LitePal.findAll(CustomCourse.class);
-        int week = getWeek(Const.START_DAY);
+        int week = CommonUtils.getWeek(Const.START_DAY);
         Calendar calendar = Calendar.getInstance();
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         int minute = calendar.get(Calendar.MINUTE);
@@ -918,51 +923,6 @@ public class MainActivity extends BaseActivity {
         return null;
     }
 
-    public static int getWeek(String firstDay){
 
-        Date now = new Date(System.currentTimeMillis());
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-        try {
-            Date past = format.parse(firstDay);
-            int days = differentDays(past,now);
-
-            int week = days/7 + 1;
-
-            return week;
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        return -1;
-    }
-
-    public static int differentDays(Date date1,Date date2) {
-        Calendar cal1 = Calendar.getInstance();
-        cal1.setTime(date1);
-
-        Calendar cal2 = Calendar.getInstance();
-        cal2.setTime(date2);
-        int day1= cal1.get(Calendar.DAY_OF_YEAR);
-        int day2 = cal2.get(Calendar.DAY_OF_YEAR);
-
-        int year1 = cal1.get(Calendar.YEAR);
-        int year2 = cal2.get(Calendar.YEAR);
-        if(year1 != year2) {
-            int timeDistance = 0 ;
-            for(int i = year1 ; i < year2 ; i ++) {
-                if(i%4==0 && i%100!=0 || i%400==0) {
-                    timeDistance += 366;
-                }
-                else {
-                    timeDistance += 365;
-                }
-            }
-
-            return timeDistance + (day2-day1) ;
-        }
-        else {
-            return day2-day1;
-        }
-    }
 
 }

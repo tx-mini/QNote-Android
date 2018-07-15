@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
@@ -11,29 +12,34 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.ace.qnote.R;
+import com.ace.qnote.util.CommonUtils;
+import com.ace.qnote.util.Const;
 import com.ace.qnote.view.CourseLayout;
 
 import org.litepal.LitePal;
 
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Calendar;
 import java.util.List;
-import java.util.Random;
 
-import csu.edu.ice.model.model.CustomCourse;
+import csu.edu.ice.model.dao.TermBean;
 import csu.edu.ice.model.interfaze.ICourse;
+import csu.edu.ice.model.model.CustomCourse;
 
 public class CourseActivity extends AppCompatActivity {
 
+    private static final String TAG = "CourseActivity";
     private int nowWeek = 5;
     private View lastClickedView;
     private LinearLayout layoutWeekWrapper;
     private HorizontalScrollView scrollWeek;
     private ImageView imageArrow;
-    private TextView textWeek;
+    private TextView tvTerm;
+    private TextView tvWeek;
     private LinearLayout layoutWeek;
     private List<ICourse> customCourseList;
     private CourseLayout courseLayout;
+    private String term;
 
 
     @Override
@@ -45,8 +51,10 @@ public class CourseActivity extends AppCompatActivity {
         layoutWeekWrapper = findViewById(R.id.layoutWeekWrapper);
         scrollWeek = findViewById(R.id.scrollWeek);
         imageArrow = findViewById(R.id.imageArrow);
-
-        textWeek = findViewById(R.id.textWeek);
+        tvWeek = findViewById(R.id.tv_week);
+        tvTerm = findViewById(R.id.tv_term);
+        List<TermBean> termList = LitePal.findAll(TermBean.class);
+        tvTerm.setText(Const.termToChinese[termList.get(termList.size()-1).getTerm()]);
         layoutWeek = findViewById(R.id.layoutWeek);
         findViewById(R.id.iv_add_course).setOnClickListener(v-> addCourse());
 
@@ -61,14 +69,21 @@ public class CourseActivity extends AppCompatActivity {
                 imageArrow.setRotation(180);
             }
         });
-
-        textWeek.setText("第"+nowWeek+"周");
+        nowWeek = CommonUtils.getWeek(Const.START_DAY);
+        tvWeek.setText("第"+ nowWeek +"周");
         initCourseData();
         courseLayout.addCourses(customCourseList);
         initWeek();
+        Calendar calendar = Calendar.getInstance();
 
-
-        courseLayout.setMondayDate(new Date(System.currentTimeMillis()));
+        int weekday = calendar.get(Calendar.DAY_OF_WEEK);
+        Log.d(TAG, "onCreate: "+weekday);
+        int diff = weekday - 2;
+        if(diff<0){
+            diff = 6;
+        }
+        calendar.add(Calendar.DAY_OF_WEEK,-diff);
+        courseLayout.setMondayDate(calendar.getTime());
     }
 
     private void addCourse() {
@@ -82,10 +97,9 @@ public class CourseActivity extends AppCompatActivity {
         int[] colors ={colorBlue, colorPink};
 
         customCourseList = new ArrayList<>();
-        List<CustomCourse> courseList = LitePal.findAll(CustomCourse.class);
-        Random random = new Random(2);
+        List<CustomCourse> courseList = LitePal.where("term = ?",term).find(CustomCourse.class);
         for (CustomCourse customCourse : courseList) {
-            customCourse.setBackgroundColor(colors[random.nextInt(10)%colors.length]);
+            customCourse.setBackgroundColor(colors[customCourse.getName().hashCode()%colors.length]);
         }
         customCourseList.addAll(courseList);
 

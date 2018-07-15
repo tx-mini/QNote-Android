@@ -1,5 +1,10 @@
 package com.ace.qnote.util;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 public class Const {
     public static final int CHOOSE_UNIVERISTY = 1001;
     public static final String SP_NAME = "sp_name";
@@ -20,4 +25,6 @@ public class Const {
 
     public static final int[] startTimes = {800,1000,1400,1600,1900};
     public static final int courseDuration = 100;
+
+
 }
