@@ -29,7 +29,7 @@ public class NoteContentAdapter extends BaseItemDraggableAdapter<SimpleContentBe
         if (Const.CONTENT_TYPE_IMG==item.getType()){
             helper.setGone(R.id.tv_text,false);
             helper.setGone(R.id.iv_img,true);
-            Glide.with(mContext).load(item.getContent()).into((ImageView) helper.getView(R.id.iv_img));
+            Glide.with(mContext).load("http://"+item.getContent()).into((ImageView) helper.getView(R.id.iv_img));
         }else if (Const.CONTENT_TYPE_TEXT==item.getType()){
             helper.setText(R.id.tv_text, item.getContent());
             helper.setGone(R.id.iv_img,false);

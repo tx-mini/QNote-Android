@@ -24,6 +24,7 @@ import android.widget.TextView;
 import com.ace.network.service.NoteService;
 import com.ace.network.util.CallBack;
 import com.ace.network.util.NetUtil;
+import com.ace.network.util.RxReturnData;
 import com.ace.qnote.R;
 import com.ace.qnote.adapter.NoteContentAdapter;
 import com.ace.qnote.adapter.NoteContentEditAdapter;
@@ -31,6 +32,8 @@ import com.ace.qnote.base.BaseActivity;
 import com.ace.qnote.util.CommonUtils;
 import com.ace.qnote.util.Const;
 import com.ace.qnote.util.MD5Util;
+import com.ace.qnote.util.oss.OssListener;
+import com.ace.qnote.util.oss.OssUtil;
 import com.ace.qnote.util.permission.ActionCallBackListener;
 //import com.ace.qnote.util.permission.RxPermissionUtil;
 import com.ace.qnote.util.permission.RxPermissionUtil;
@@ -51,7 +54,9 @@ import org.litepal.crud.callback.SaveCallback;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import csu.edu.ice.model.dao.NoteBean;
@@ -381,16 +386,7 @@ public class NoteContentActivity extends BaseActivity {
                             contentBean.getBlocks().remove(curModifyItem);
                             contentBean.getBlocks().add(curModifyItem,blocksBean);
                         }
-                        Gson gson = new Gson();
-                        noteBean.setContent(gson.toJson(contentBean));
-                        noteBean.saveAsync().listen(new SaveCallback() {
-                            @Override
-                            public void onFinish(boolean success) {
-                                if (success){
-                                    //TODO:保存成功
-                                }
-                            }
-                        });
+                        saveNoteInfo(noteBean);
                     }
                 }
                 popWindow.dissmiss();
@@ -404,24 +400,7 @@ public class NoteContentActivity extends BaseActivity {
         NetUtil.doRetrofitRequest(NetUtil.getRetrofitInstance().create(NoteService.class).getNoteContent(noteId,Const.OPEN_ID), new CallBack<NoteBean>() {
             @Override
             public void onSuccess(NoteBean data) {
-                String _tempJson = data.getContent();
-//                String _tempJson =
-//                        "{\"blocks\":[{\"key\":\"d5l3p\",\"text\":\"123asdasdasdas23d1as321d856qw4e65wq41651d53as1d8qw4r56qw4f5631asf56a4sf654as5f6a4s56f4as65465\",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}},{\"key\":\"9f3dc\",\"text\":\"\",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}},{\"key\":\"3vq85\",\"text\":\"xxxx\",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}},{\"key\":\"fgknl\",\"text\":\"\",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}},{\"key\":\"uhbi\",\"text\":\"\",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}},{\"key\":\"dk450\",\"text\":\"\",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}},{\"key\":\"13li4\",\"text\":\"\",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}},{\"key\":\"3cjrf\",\"text\":\" \",\"type\":\"atomic\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[{\"offset\":0,\"length\":1,\"key\":0}],\"data\":{}},{\"key\":\"e783e\",\"text\":\" \",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}},{\"key\":\"6dsjs\",\"text\":\"\",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}},{\"key\":\"6g1l5\",\"text\":\"dsadasd\",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}},{\"key\":\"a2oet\",\"text\":\" \",\"type\":\"atomic\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[{\"offset\":0,\"length\":1,\"key\":1}],\"data\":{}},{\"key\":\"dpbis\",\"text\":\"\",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}}],\"entityMap\":{\"0\":{\"type\":\"IMAGE\",\"mutability\":\"IMMUTABLE\",\"data\":{\"url\":\"https://cdn.flutterchina.club/images/flutter-mark-square-100.png\",\"name\":\"QQ20180526-104511@2x.png\",\"type\":\"IMAGE\",\"meta\":{}}},\"1\":{\"type\":\"IMAGE\",\"mutability\":\"IMMUTABLE\",\"data\":{\"url\":\"https://cdn.flutterchina.club/images/flutter-mark-square-100.png\",\"name\":\"QQ20180526-104511@2x.png\",\"type\":\"IMAGE\",\"meta\":{}}}}}";
-                Gson gson = new Gson();
-                contentBean = gson.fromJson(_tempJson,ContentBean.class);
-                for (ContentBean.BlocksBean blocksBean : contentBean.getBlocks()) {
-                    SimpleContentBean simpleContentBean = new SimpleContentBean();
-                    if (blocksBean.getEntityRanges().size()>0){
-                        String key = blocksBean.getEntityRanges().get(0).getKey()+"";
-                        simpleContentBean.setContent(contentBean.getEntityMap().get(key).getData().getUrl());
-                        simpleContentBean.setType(Const.CONTENT_TYPE_IMG);
-                    }else {
-                        simpleContentBean.setContent(blocksBean.getText());
-                        simpleContentBean.setType(Const.CONTENT_TYPE_TEXT);
-                    }
-                    contentList.add(simpleContentBean);
-                }
-                noteContentAdapter.notifyDataSetChanged();
+                parseContent(data);
             }
 
             @Override
@@ -436,6 +415,26 @@ public class NoteContentActivity extends BaseActivity {
         });
     }
 
+    private void parseContent(NoteBean data) {
+        String _tempJson = data.getContent();
+        Gson gson = new Gson();
+        contentBean = gson.fromJson(_tempJson,ContentBean.class);
+        contentList.clear();
+        for (ContentBean.BlocksBean blocksBean : contentBean.getBlocks()) {
+            SimpleContentBean simpleContentBean = new SimpleContentBean();
+            if (blocksBean.getEntityRanges().size()>0){
+                String key = blocksBean.getEntityRanges().get(0).getKey()+"";
+                simpleContentBean.setContent(contentBean.getEntityMap().get(key).getData().getUrl());
+                simpleContentBean.setType(Const.CONTENT_TYPE_IMG);
+            }else {
+                simpleContentBean.setContent(blocksBean.getText());
+                simpleContentBean.setType(Const.CONTENT_TYPE_TEXT);
+            }
+            contentList.add(simpleContentBean);
+        }
+        noteContentAdapter.notifyDataSetChanged();
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -443,9 +442,92 @@ public class NoteContentActivity extends BaseActivity {
             if (data != null) {
                 ArrayList<String> photos =
                         data.getStringArrayListExtra(PhotoPicker.KEY_SELECTED_PHOTOS);
+                OssUtil.upload(OssUtil.getService(getBaseContext()), photos, new OssListener() {
+                    @Override
+                    public void onProgress(long progress, long max) {
+
+                    }
+
+                    @Override
+                    public void onSuccess(ArrayList<String> url) {
+                        savePhotos(url);
+                        showToast("上传成功");
+                    }
+
+                    @Override
+                    public void onFail() {
+
+                    }
+                });
 
             }
         }
+    }
+
+    private void savePhotos(ArrayList<String> photos) {
+        int imgSize = 0;
+        for (ContentBean.BlocksBean blocksBean : contentBean.getBlocks()) {
+            if (blocksBean.getEntityRanges().size()>0){
+                imgSize++;
+            }
+        }
+        for (int i = 0; i < photos.size(); i++) {
+            String picPath = photos.get(i);
+            ContentBean.BlocksBean blocksBean = new ContentBean().new BlocksBean();
+            blocksBean.setKey(MD5Util.crypt(UUID.randomUUID().toString()).substring(0,5));
+            blocksBean.setDepth(0);
+            blocksBean.setInlineStyleRanges(new ArrayList<>());
+            blocksBean.setEntityRanges(new ArrayList<>());
+            blocksBean.setData(new ContentBean().new BlocksBean().new DataBean());
+            blocksBean.setText(" ");
+            blocksBean.setType("atomic");
+            ContentBean.BlocksBean.EntityRangesBean entityRangesBean = new ContentBean().new BlocksBean().new EntityRangesBean();
+            entityRangesBean.setKey(imgSize+i+1);
+            entityRangesBean.setLength(1);
+            entityRangesBean.setOffset(0);
+            blocksBean.getEntityRanges().add(entityRangesBean);
+            contentBean.getBlocks().add(blocksBean);
+
+            ContentBean.EntityBean entityBean = new ContentBean().new EntityBean();
+            ContentBean.EntityBean.DataBean dataBean = new ContentBean().new EntityBean().new DataBean();
+            dataBean.setMeta(new ContentBean().new EntityBean().new DataBean().new MetaBean());
+            dataBean.setName(MD5Util.crypt(UUID.randomUUID().toString()));
+            dataBean.setUrl(picPath);
+            dataBean.setType("IMAGE");
+            entityBean.setData(dataBean);
+            entityBean.setMutability("IMMUTABLE");
+            entityBean.setType("IMAGE");
+            contentBean.getEntityMap().put((imgSize+i+1)+"",entityBean);
+        }
+        saveNoteInfo(noteBean);
+    }
+
+    private void saveNoteInfo(NoteBean noteBean) {
+        noteBean.saveAsync().listen(new SaveCallback() {
+            @Override
+            public void onFinish(boolean success) {
+            }
+        });
+        NetUtil.doRetrofitRequest(NetUtil.noteService.addNote(Const.OPEN_ID, noteBean.getBookRef(),
+                noteBean.getName(), noteBean.getContent(), noteBean.getIsKeyNote()), new CallBack<RxReturnData>() {
+            @Override
+            public void onSuccess(RxReturnData data) {
+                noteBean.setIsLocal(0);
+                noteBean.setSyncTime(System.currentTimeMillis()+"");
+                noteBean.update(noteBean.get_id());
+                noteBean.setRecentTime(System.currentTimeMillis()+"");
+                parseContent(noteBean);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+            }
+
+            @Override
+            public void onFailure(String message) {
+
+            }
+        });
     }
 
     @Override

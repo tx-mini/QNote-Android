@@ -544,44 +544,44 @@ public class MainActivity extends BaseActivity {
 
     private void addTextOrPic(ArrayList<String> data, boolean isText) {
         BookBean bookBean = getNowBookBean();
-        if (bookBean==null){
-            bookBean = notebook;
+        if (bookBean == null){
+            bookBean = new BookBean();
+            bookBean.setBookId("-1");
         }
-        if (bookBean != null){
-            ArrayList<NoteBean> noteBeans = new ArrayList<>();
-            BookBean finalBookBean = bookBean;
-            LitePal.where("bookRef = ?",bookBean.getBookId()).findAsync(NoteBean.class).listen(new FindMultiCallback() {
-                @Override
-                public <T> void onFinish(List<T> t) {
-                    noteBeans.addAll((List<NoteBean>) t);
-                    Date nowDate = new Date(System.currentTimeMillis());
-                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy年MM月dd日笔记", Locale.CHINESE);
-                    NoteBean createBean = new NoteBean(
-                            MD5Util.crypt(UUID.randomUUID().toString()),
-                            simpleDateFormat.format(nowDate),
-                            finalBookBean.getBookId(),
-                            Const.OPEN_ID
-                    );
-                    for (NoteBean noteBean : noteBeans) {
-                        Date noteDate = new Date(Long.parseLong(noteBean.getCreateTime()));
-                        Calendar noteCalendar = Calendar.getInstance();
-                        noteCalendar.setTime(noteDate);
-                        Calendar nowCalendar = Calendar.getInstance();
-                        nowCalendar.setTime(nowDate);
-                        if (noteCalendar.get(Calendar.DAY_OF_YEAR) == nowCalendar.get(Calendar.DAY_OF_YEAR)){
-                            createBean = noteBean;
-                        }
+        ArrayList<NoteBean> noteBeans = new ArrayList<>();
+        BookBean finalBookBean = bookBean;
+        LitePal.where("bookRef = ?",bookBean.getBookId()).findAsync(NoteBean.class).listen(new FindMultiCallback() {
+            @Override
+            public <T> void onFinish(List<T> t) {
+                noteBeans.addAll((List<NoteBean>) t);
+                Date nowDate = new Date(System.currentTimeMillis());
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy年MM月dd日笔记", Locale.CHINESE);
+                NoteBean createBean = new NoteBean(
+                        MD5Util.crypt(UUID.randomUUID().toString()),
+                        simpleDateFormat.format(nowDate),
+                        finalBookBean.getBookId(),
+                        Const.OPEN_ID
+                );
+                for (NoteBean noteBean : noteBeans) {
+                    Date noteDate = new Date(Long.parseLong(noteBean.getCreateTime()));
+                    Calendar noteCalendar = Calendar.getInstance();
+                    noteCalendar.setTime(noteDate);
+                    Calendar nowCalendar = Calendar.getInstance();
+                    nowCalendar.setTime(nowDate);
+                    if (noteCalendar.get(Calendar.DAY_OF_YEAR) == nowCalendar.get(Calendar.DAY_OF_YEAR)){
+                        createBean = noteBean;
                     }
-
-                    if (createBean.getContent()==null){
-                        addNoteToEmpty(data,isText,createBean);
-                    }else {
-                        addNoteToExist(data,isText,createBean);
-                    }
-
                 }
-            });
-        }
+
+                if (createBean.getContent()==null){
+                    addNoteToEmpty(data,isText,createBean);
+                }else {
+                    addNoteToExist(data,isText,createBean);
+                }
+
+            }
+        });
+
     }
 
     private void addNoteToEmpty(ArrayList<String> data, boolean isText, NoteBean createBean) {
@@ -715,7 +715,8 @@ public class MainActivity extends BaseActivity {
                 createBean.setIsLocal(0);
                 createBean.setSyncTime(System.currentTimeMillis()+"");
                 createBean.update(createBean.get_id());
-
+                createBean.setRecentTime(System.currentTimeMillis()+"");
+                showLatestNoteList(createBean.getNoteId(),false);
             }
 
             @Override

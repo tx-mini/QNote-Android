@@ -28,7 +28,7 @@ public class NoteContentEditAdapter extends BaseItemDraggableAdapter<SimpleConte
         if (Const.CONTENT_TYPE_IMG==item.getType()){
             helper.setGone(R.id.tv_text_edit,false);
             helper.setGone(R.id.iv_img_edit,true);
-            Glide.with(mContext).load(item.getContent()).into((ImageView) helper.getView(R.id.iv_img_edit));
+            Glide.with(mContext).load("http://"+item.getContent()).into((ImageView) helper.getView(R.id.iv_img_edit));
         }else if (Const.CONTENT_TYPE_TEXT==item.getType()){
             helper.setText(R.id.tv_text_edit, item.getContent());
             helper.setGone(R.id.iv_img_edit,false);
