@@ -94,7 +94,7 @@ public class NoteContentActivity extends BaseActivity {
             noteId = params.getString("noteId");
         }
         contentList = new ArrayList<>();
-        LitePal.where("note_id = ?", noteId).findAsync(NoteBean.class).listen(new FindMultiCallback() {
+        LitePal.where("id = ?", noteId).findAsync(NoteBean.class).listen(new FindMultiCallback() {
             @Override
             public <T> void onFinish(List<T> t) {
                 noteBean = (NoteBean) t.get(0);

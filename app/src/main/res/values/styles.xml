@@ -26,6 +26,7 @@
     </style>
 
     <style name="welcome_edittext">
+        <item name="android:maxLines">1</item>
         <item name="android:layout_marginTop">20dp</item>
         <item name="android:textSize">14sp</item>
         <item name="android:textColorHint">#FF676767</item>

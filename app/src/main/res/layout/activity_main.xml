@@ -5,7 +5,7 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:openDrawer="off">
+    tools:openDrawer="start">
 
 
     <RelativeLayout
@@ -95,6 +95,8 @@
                     android:layout_width="55dp"
                     android:layout_height="55dp" />
                 <TextView
+                    android:layout_marginRight="20dp"
+                    android:layout_weight="1"
                     android:id="@+id/tv_nickname"
                     android:text="昵称"
                     android:layout_marginLeft="15dp"
@@ -102,6 +104,12 @@
                     android:textSize="18sp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
+                <ImageView
+                    android:id="@+id/iv_sync"
+                    android:layout_marginRight="16dp"
+                    android:src="@mipmap/sync"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp" />
             </LinearLayout>
 
             <LinearLayout

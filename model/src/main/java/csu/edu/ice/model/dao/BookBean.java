@@ -49,4 +49,14 @@ public class BookBean extends LitePalSupport implements Serializable {
     public void setTerm(int term) {
         this.term = term;
     }
+
+    @Override
+    public String toString() {
+        return "BookBean{" +
+                "_id=" + _id +
+                ", id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", term=" + term +
+                '}';
+    }
 }

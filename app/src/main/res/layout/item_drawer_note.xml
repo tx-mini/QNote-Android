@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout android:gravity="center_vertical"
     android:paddingLeft="27dp"
+    android:paddingRight="27dp"
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="40dp"
@@ -10,10 +11,11 @@
         android:layout_width="@dimen/drawer_icon_size"
         android:layout_height="@dimen/drawer_icon_size" />
     <TextView
+        android:maxLines="1"
         android:id="@+id/tv_text"
         android:textColor="@color/drawer_text_color"
         android:layout_marginLeft="2dp"
         android:text="归档笔记"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 </LinearLayout>

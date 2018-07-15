@@ -6,15 +6,17 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.RotateAnimation;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -24,6 +26,7 @@ import android.widget.Toast;
 import com.ace.network.service.NoteService;
 import com.ace.network.util.CallBack;
 import com.ace.network.util.NetUtil;
+import com.ace.network.util.RxReturnData;
 import com.ace.qnote.R;
 import com.ace.qnote.adapter.DrawerNoteAdapter;
 import com.ace.qnote.adapter.NoteAdapter;
@@ -36,26 +39,22 @@ import com.ace.qnote.util.oss.OssListener;
 import com.ace.qnote.util.oss.OssUtil;
 import com.ace.qnote.util.permission.ActionCallBackListener;
 import com.ace.qnote.util.permission.RxPermissionUtil;
-import com.ace.qnote.view.CourseTable;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.zhouwei.library.CustomPopWindow;
 import com.google.gson.Gson;
-import com.tencent.cos.xml.exception.CosXmlClientException;
-import com.tencent.cos.xml.exception.CosXmlServiceException;
-import com.tencent.cos.xml.model.CosXmlRequest;
-import com.tencent.cos.xml.model.CosXmlResult;
 
 import org.litepal.LitePal;
 import org.litepal.crud.callback.FindMultiCallback;
+import org.litepal.crud.callback.SaveCallback;
 
-import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
@@ -65,9 +64,7 @@ import csu.edu.ice.model.dao.NoteBean;
 import csu.edu.ice.model.dao.TermBean;
 import csu.edu.ice.model.model.ContentBean;
 import csu.edu.ice.model.model.CustomCourse;
-import csu.edu.ice.model.model.Notebook;
 import csu.edu.ice.model.model.TermResult;
-import csu.edu.ice.model.model.University;
 import me.iwf.photopicker.PhotoPicker;
 
 public class MainActivity extends BaseActivity {
@@ -85,12 +82,15 @@ public class MainActivity extends BaseActivity {
     private View rootView;
     private DrawerNoteAdapter drawerNoteAdapter;
     private NoteAdapter noteAdapter;
-    private ArrayList<NoteBean> noteList;
+    private List<NoteBean> noteList;
     private BookBean notebook;
     private TextView tvName;
     private DrawerLayout drawerLayout;
     private int term;
     private TextView tvNullTip;
+    private ImageView ivSync;
+    private boolean isSync;
+
     @Override
     public void initParams(Bundle params) {
         notebookList = new ArrayList<>();
@@ -126,6 +126,7 @@ public class MainActivity extends BaseActivity {
         tvName = findViewById(R.id.tv_name);
         drawerLayout = findViewById(R.id.drawer_layout);
         tvNullTip = findViewById(R.id.tv_null_tip);
+        ivSync = findViewById(R.id.iv_sync);
     }
 
     @Override
@@ -144,6 +145,7 @@ public class MainActivity extends BaseActivity {
             addPicFromFile();
             return false;
         });
+        ivSync.setOnClickListener(this);
     }
 
     private void addPicFromFile() {
@@ -164,7 +166,7 @@ public class MainActivity extends BaseActivity {
             case R.id.layout_archive:
                 break;
             case R.id.layout_course_table:
-                if(LitePal.count(CourseTable.class)>0){
+                if(LitePal.count(CustomCourse.class)>0){
                     startActivity(new Intent(this,CourseActivity.class));
                 }else{
                     NetUtil.doRetrofitRequest(NetUtil.courseService.getCourseList(Const.OPEN_ID), new CallBack<List<CustomCourse>>() {
@@ -200,7 +202,7 @@ public class MainActivity extends BaseActivity {
                 startActivityForResult(new Intent(this,InformationActivity.class),Const.TO_INFORMATION);
                 break;
             case R.id.iv_edit:
-
+                showAddTextPopWindow();
                 break;
             case R.id.iv_take_photo:
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -219,9 +221,62 @@ public class MainActivity extends BaseActivity {
                     addPic();
                 }
                 break;
-
+            case R.id.iv_sync:
+                if(isSync){
+                    showToast("正在同步中......");
+                    return;
+                }
+                syncToServer();
+                break;
         }
     }
+
+    private void syncToServer() {
+
+        RotateAnimation rotateAnimation = new RotateAnimation(0f,360f,RotateAnimation.RELATIVE_TO_SELF,0.5f,RotateAnimation.RELATIVE_TO_SELF,0.5f);
+        rotateAnimation.setRepeatCount(RotateAnimation.INFINITE);
+        rotateAnimation.setDuration(1000);
+        rotateAnimation.setInterpolator(new LinearInterpolator());
+        ivSync.startAnimation(rotateAnimation);
+        showToast("正在同步......");
+        isSync = true;
+        //查询所有未同步的
+        List<NoteBean> unSyncList = LitePal.where("isLocal = ?", "1").find(NoteBean.class);
+        //进行笔记创建，或者更新
+        createNote(unSyncList);
+
+    }
+
+    private void createNote(List<NoteBean> unSyncList) {
+        if(unSyncList.size() == 0){
+            syncDataFromServer();
+            return;
+        }
+        NoteBean noteBean = unSyncList.get(0);
+        NetUtil.doRetrofitRequest(NetUtil.noteService.addNote(Const.OPEN_ID, noteBean.getBookRef(),
+                noteBean.getName(), noteBean.getContent(), noteBean.getIsKeyNote()), new CallBack<RxReturnData>() {
+            @Override
+            public void onSuccess(RxReturnData data) {
+                noteBean.setLocal(0);
+                noteBean.update(noteBean.get_id());
+                unSyncList.remove(0);
+                createNote(unSyncList);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                isSync = false;
+                ivSync.clearAnimation();
+                showToast("同步出差啦！还差"+unSyncList.size()+"篇笔记未同步");
+            }
+
+            @Override
+            public void onFailure(String message) {
+
+            }
+        });
+    }
+
 
     private void openDustbin() {
         NetUtil.doRetrofitRequest(NetUtil.noteService.getNoteList(Const.OPEN_ID,"",1,0), new CallBack<List<NoteBean>>() {
@@ -245,6 +300,7 @@ public class MainActivity extends BaseActivity {
     }
 
     private void showNoteList(List<NoteBean> data) {
+
         if(tvName.getText().equals("垃圾桶")){
             tvNullTip.setText("垃圾桶暂无笔记");
         }else{
@@ -254,6 +310,8 @@ public class MainActivity extends BaseActivity {
             tvNullTip.setVisibility(View.VISIBLE);
         }else{
             tvNullTip.setVisibility(View.INVISIBLE);
+            LitePal.deleteAll(NoteBean.class,"bookRef = ?" ,data.get(0).getBookRef());
+            LitePal.saveAll(data);
         }
         noteList.clear();
         noteList.addAll(data);
@@ -380,7 +438,7 @@ public class MainActivity extends BaseActivity {
 
         if(NetUtil.isNetworkConnected(this)){
             //有网络 从服务器请求
-            syncDataFromNet();
+            syncDataFromServer();
         }else {
             getDataFromLocal();
         }
@@ -402,6 +460,7 @@ public class MainActivity extends BaseActivity {
             tvNullTip.setVisibility(View.VISIBLE);
         }
     }
+
     private void initDrawerRecyclerView() {
         drawerNoteAdapter = new DrawerNoteAdapter(R.layout.item_drawer_note,notebookList);
         rvNotebook.setAdapter(drawerNoteAdapter);
@@ -413,75 +472,103 @@ public class MainActivity extends BaseActivity {
         });
     }
 
-    private void showModifyTextPopWindow(String text) {
-        if (!CommonUtils.isEmpty(text)){
-            View view = LayoutInflater.from(this).inflate(R.layout.layout_pop_add_text,null);
-            CustomPopWindow popWindow = new CustomPopWindow.PopupWindowBuilder(this)
-                    .setView(view)//显示的布局
-                    .enableBackgroundDark(true) //弹出popWindow时，背景是否变暗
-                    .setBgDarkAlpha(0.7f) // 控制亮度
-                    .create()//创建PopupWindow
-                    .showAtLocation(getmContextView(), Gravity.CENTER,0, 0);//显示PopupWindow
+    private void showAddTextPopWindow() {
+        View view = LayoutInflater.from(this).inflate(R.layout.layout_pop_add_text,null);
+        CustomPopWindow popWindow = new CustomPopWindow.PopupWindowBuilder(this)
+                .setView(view)//显示的布局
+                .enableBackgroundDark(true) //弹出popWindow时，背景是否变暗
+                .setBgDarkAlpha(0.7f) // 控制亮度
+                .create()//创建PopupWindow
+                .showAtLocation(getmContextView(), Gravity.CENTER,0, 0);//显示PopupWindow
 
-            View btnOk = view.findViewById(R.id.btn_ok);
-            View btnCancel = view.findViewById(R.id.btn_cancel);
-            EditText editText = view.findViewById(R.id.et_text);
-            editText.setText(text);
-            btnOk.setOnClickListener(v -> {
-                addTextOrPic(editText.getText().toString(),true);
-                popWindow.dissmiss();
-            });
+        View btnOk = view.findViewById(R.id.btn_ok);
+        View btnCancel = view.findViewById(R.id.btn_cancel);
+        EditText editText = view.findViewById(R.id.et_text);
+        btnOk.setOnClickListener(v -> {
+            addTextOrPic(editText.getText().toString(),true);
+            popWindow.dissmiss();
+        });
 
-            btnCancel.setOnClickListener(v -> popWindow.dissmiss());
-        }
+        btnCancel.setOnClickListener(v -> popWindow.dissmiss());
     }
 
     private void addTextOrPic(String data, boolean isText) {
         BookBean bookBean = getNowBookBean();
-        ArrayList<NoteBean> noteBeans = new ArrayList<>();
-        LitePal.where("book_ref = ?",bookBean.getId()).findAsync(BookBean.class).listen(new FindMultiCallback() {
-            @Override
-            public <T> void onFinish(List<T> t) {
-                noteBeans.addAll((List<NoteBean>) t);
+        if (bookBean==null){
+            bookBean = notebook;
+        }
+        if (bookBean != null){
+            ArrayList<NoteBean> noteBeans = new ArrayList<>();
+            LitePal.where("bookRef = ?",bookBean.getId()).findAsync(NoteBean.class).listen(new FindMultiCallback() {
+                @Override
+                public <T> void onFinish(List<T> t) {
+                    noteBeans.addAll((List<NoteBean>) t);
+                }
+            });
+            Date nowDate = new Date(System.currentTimeMillis());
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy年MM月dd日笔记", Locale.CHINESE);
+            NoteBean createBean = new NoteBean(
+                    MD5Util.crypt(UUID.randomUUID().toString()),
+                    simpleDateFormat.format(nowDate),
+                    bookBean.getId(),
+                    Const.OPEN_ID
+            );
+            for (NoteBean noteBean : noteBeans) {
+                Date noteDate = new Date(Long.parseLong(noteBean.getCreateTime()));
+                Calendar noteCalendar = Calendar.getInstance();
+                noteCalendar.setTime(noteDate);
+                Calendar nowCalendar = Calendar.getInstance();
+                nowCalendar.setTime(nowDate);
+                if (noteCalendar.get(Calendar.DAY_OF_YEAR) == nowCalendar.get(Calendar.DAY_OF_YEAR)){
+                    createBean = noteBean;
+                }
             }
-        });
-        Date nowDate = new Date(System.currentTimeMillis());
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy年MM月dd日笔记", Locale.CHINESE);
-        NoteBean createBean = new NoteBean(
-                MD5Util.crypt(UUID.randomUUID().toString()),
-                simpleDateFormat.format(nowDate),
-                bookBean.getId(),
-                Const.OPEN_ID
-                );
-        for (NoteBean noteBean : noteBeans) {
-            Date noteDate = new Date(Long.parseLong(noteBean.getCreateTime()));
-            Calendar noteCalendar = Calendar.getInstance();
-            noteCalendar.setTime(noteDate);
-            Calendar nowCalendar = Calendar.getInstance();
-            nowCalendar.setTime(nowDate);
-            if (noteCalendar.get(Calendar.DAY_OF_YEAR) == nowCalendar.get(Calendar.DAY_OF_YEAR)){
-                createBean = noteBean;
+
+            ContentBean.BlocksBean blocksBean = new ContentBean().new BlocksBean();
+            blocksBean.setKey(MD5Util.crypt(UUID.randomUUID().toString()).substring(0,5));
+            blocksBean.setText(data);
+            blocksBean.setType("unstyled");
+            blocksBean.setDepth(0);
+            blocksBean.setInlineStyleRanges(new ArrayList<>());
+            blocksBean.setEntityRanges(new ArrayList<>());
+            blocksBean.setData(new ContentBean().new BlocksBean().new DataBean());
+            if (isText){
+                if (createBean.getContent()==null){
+                    ArrayList<ContentBean.BlocksBean> blocksBeans = new ArrayList<>();
+                    blocksBeans.add(blocksBean);
+                    ContentBean contentBean = new ContentBean(new HashMap<String,ContentBean.EntityBean>(),blocksBeans);
+                    Gson gson = new Gson();
+                    createBean.setContent(gson.toJson(contentBean));
+                }
             }
+
+            createBean.saveAsync().listen(new SaveCallback() {
+                @Override
+                public void onFinish(boolean success) {
+                }
+            });
+            NoteBean finalCreateBean = createBean;
+            NetUtil.doRetrofitRequest(NetUtil.noteService.addNote(Const.OPEN_ID, createBean.getBookRef(),
+                    createBean.getName(), createBean.getContent(), createBean.getIsKeyNote()), new CallBack<RxReturnData>() {
+                @Override
+                public void onSuccess(RxReturnData data) {
+                    finalCreateBean.setLocal(0);
+                    finalCreateBean.setSyncTime(System.currentTimeMillis()+"");
+                    finalCreateBean.update(finalCreateBean.get_id());
+                }
+
+                @Override
+                public void onError(Throwable throwable) {
+                }
+
+                @Override
+                public void onFailure(String message) {
+
+                }
+            });
+
         }
 
-        ContentBean.BlocksBean blocksBean = new ContentBean().new BlocksBean();
-        blocksBean.setKey(MD5Util.crypt(UUID.randomUUID().toString()).substring(0,5));
-        blocksBean.setText(data);
-        blocksBean.setType("unstyled");
-        blocksBean.setDepth(0);
-        blocksBean.setInlineStyleRanges(new ArrayList<>());
-        blocksBean.setEntityRanges(new ArrayList<>());
-        blocksBean.setData(new ContentBean().new BlocksBean().new DataBean());
-        if (isText){
-            if (createBean.getContent()==null){
-                ArrayList<ContentBean.BlocksBean> blocksBeans = new ArrayList<>();
-                blocksBeans.add(blocksBean);
-                ContentBean contentBean = new ContentBean(new HashMap<String,ContentBean.EntityBean>(),blocksBeans);
-                Gson gson = new Gson();
-                createBean.setContent(gson.toJson(contentBean));
-            }
-        }
-        createBean.saveAsync();
     }
 
     private void showNoteList(String book_id){
@@ -490,16 +577,40 @@ public class MainActivity extends BaseActivity {
     }
 
     private void getDataFromLocal() {
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
+        termList = LitePal.findAll(TermBean.class);
+        if(termList!=null && termList.size()>0) {
+            notebookList = LitePal.where("term = ?", termList.get(termList.size() - 1).getTerm() + "").find(BookBean.class);
+            Log.d(TAG, "getDataFromLocal: "+notebookList);
+            if(notebookList!=null && notebookList.size()>0) {
+                noteList = LitePal.where("bookRef = ?", notebookList.get(0).getId()).find(NoteBean.class);
 
+                removeRubbish(noteList);
+
+                tvName.setText(notebookList.get(0).getName());
+                initNoteRecyclerView();
+                showNoteList(noteList);
+                Log.d(TAG, "getDataFromLocal: "+noteList);
+            }else{
+                Toast.makeText(this, "网络状况不佳，请退出重试！", Toast.LENGTH_LONG).show();
             }
-        });
-        thread.run();
+        }else{
+            Toast.makeText(this, "网络状况不佳，请退出重试！", Toast.LENGTH_LONG).show();
+        }
+
     }
 
-    private void syncDataFromNet() {
+    private void removeRubbish(List<NoteBean> noteList) {
+        if(noteList==null ||noteList.size() == 0)return;
+        Iterator<NoteBean> it = noteList.iterator();
+        while (it.hasNext()){
+            NoteBean noteBean = it.next();
+            if(noteBean.getIsRubbish()==1){
+                it.remove();
+            }
+        }
+    }
+
+    private void syncDataFromServer() {
         NetUtil.doRetrofitRequest(NetUtil.getRetrofitInstance().create(NoteService.class).getTermAndRubbish(Const.OPEN_ID),
                 new CallBack<TermResult>() {
             @Override
@@ -533,11 +644,24 @@ public class MainActivity extends BaseActivity {
                 tvName.setText(notebook.getName());
                 showNoteList(notebook.getId());
                 initNoteRecyclerView();
+
+                if(isSync){
+                    isSync = false;
+                    ivSync.clearAnimation();
+                    showToast("同步完成！");
+                }
+
             }
 
             @Override
             public void onError(Throwable throwable) {
-
+                showToast( "网络出现了问题，从本地读取笔记！");
+                getDataFromLocal();
+                if(isSync){
+                    isSync = false;
+                    ivSync.clearAnimation();
+                    showToast("同步失败，请检查网络！");
+                }
             }
 
             @Override

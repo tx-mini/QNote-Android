@@ -223,12 +223,19 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         Log.d(TAG, "onDestroy()");
     }
 
+    Toast toast;
+
     /**
      * [简化Toast]
      * @param msg
      */
     protected void showToast(String msg) {
-        Toast.makeText(this,msg,Toast.LENGTH_SHORT).show();
+        if(toast == null){
+            toast = Toast.makeText(this,msg,Toast.LENGTH_SHORT);
+        }else{
+            toast.setText(msg);
+        }
+        toast.show();
     }
 
     /**

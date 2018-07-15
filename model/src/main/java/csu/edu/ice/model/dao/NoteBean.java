@@ -139,6 +139,21 @@ public class NoteBean extends LitePalSupport implements Serializable {
         this.syncTime = syncTime;
     }
 
+    @Override
+    public String toString() {
+        return "NoteBean{" +
+                "_id=" + _id +
+                ", id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", isKeyNote=" + isKeyNote +
+                ", isRubbish=" + isRubbish +
+                ", content='" + content + '\'' +
+                ", recentTime='" + recentTime + '\'' +
+                ", bookRef='" + bookRef + '\'' +
+                ", openId='" + openId + '\'' +
+                ", syncTime='" + syncTime + '\'' +
+                '}';
+    }
     public String getCreateTime() {
         return createTime;
     }
