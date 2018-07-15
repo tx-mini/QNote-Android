@@ -69,6 +69,8 @@
 
         </android.support.v7.widget.RecyclerView>
         <LinearLayout
+            android:paddingRight="42dp"
+            android:paddingLeft="42dp"
             android:id="@+id/ll_add"
             android:layout_marginBottom="90dp"
             android:gravity="center"
@@ -77,15 +79,16 @@
             android:layout_height="wrap_content">
             <ImageView
                 android:id="@+id/iv_add_text"
-                android:background="@mipmap/ic_add_text"
+                android:background="@mipmap/picture"
                 android:layout_width="68dp"
                 android:layout_height="68dp" />
             <android.support.v4.widget.Space
-                android:layout_width="80dp"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content" />
             <ImageView
                 android:id="@+id/iv_add_pic"
-                android:background="@mipmap/ic_add_photo"
+                android:background="@mipmap/take_photo"
                 android:layout_width="68dp"
                 android:layout_height="68dp" />
         </LinearLayout>

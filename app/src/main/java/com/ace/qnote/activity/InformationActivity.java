@@ -36,6 +36,7 @@ public class InformationActivity extends AppCompatActivity {
     }
 
     public void logout(View v){
+        Const.MAIN_ACTIVITY_REFRESH = true;
         SharedPreferences sp = getSharedPreferences(Const.SP_NAME, MODE_PRIVATE);
         sp.edit().putString("openId",null).putString("nickname",null).putBoolean("autoLogin",false).commit();
         startActivity(new Intent(this,LoginActivity.class));

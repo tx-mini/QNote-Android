@@ -5,7 +5,7 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:openDrawer="off">
+    tools:openDrawer="end">
 
 
     <RelativeLayout
@@ -213,7 +213,7 @@
                     android:id="@+id/layout_course_table"
                     style="@style/drawer_bottom_layout">
                     <ImageView
-                        android:scaleType="center"
+                        android:scaleType="centerCrop"
                         android:src="@mipmap/setting_layout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
@@ -222,7 +222,7 @@
                     android:id="@+id/layout_dustbin"
                     style="@style/drawer_bottom_layout">
                     <ImageView
-                        android:scaleType="center"
+                        android:scaleType="centerCrop"
                         android:src="@mipmap/dustbin_layout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
@@ -231,7 +231,7 @@
                     android:id="@+id/layout_study"
                     style="@style/drawer_bottom_layout">
                     <ImageView
-                        android:scaleType="center"
+                        android:scaleType="centerCrop"
                         android:src="@mipmap/study_layout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />

@@ -26,7 +26,10 @@ import com.example.zhouwei.library.CustomPopWindow;
 
 import org.litepal.LitePal;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import csu.edu.ice.model.dao.BookBean;
 import csu.edu.ice.model.dao.NoteBean;
@@ -52,7 +55,9 @@ public class NoteAdapter extends BaseQuickAdapter<NoteBean, BaseViewHolder> {
     protected void convert(BaseViewHolder helper, NoteBean item) {
         helper.setText(R.id.tv_note_title, item.getName());
         if (item.getRecentTime() != null) {
-            helper.setText(R.id.tv_date, item.getRecentTime().toString());
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.CHINESE);
+            Date date = new Date(Long.valueOf(item.getRecentTime()));
+            helper.setText(R.id.tv_date, simpleDateFormat.format(date));
         }
 
         if (item.getIsRubbish() == 0) {

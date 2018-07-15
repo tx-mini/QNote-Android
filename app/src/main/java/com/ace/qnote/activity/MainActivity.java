@@ -983,5 +983,9 @@ public class MainActivity extends BaseActivity {
         return null;
     }
 
-
+    @Override
+    protected void onDestroy() {
+        Const.MAIN_ACTIVITY_REFRESH = true;
+        super.onDestroy();
+    }
 }
