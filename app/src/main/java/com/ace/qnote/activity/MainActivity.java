@@ -31,6 +31,7 @@ import com.ace.qnote.adapter.TermAdapter;
 import com.ace.qnote.base.BaseActivity;
 import com.ace.qnote.util.CommonUtils;
 import com.ace.qnote.util.Const;
+import com.ace.qnote.util.MD5Util;
 import com.ace.qnote.util.oss.OssListener;
 import com.ace.qnote.util.oss.OssUtil;
 import com.ace.qnote.util.permission.ActionCallBackListener;
@@ -54,12 +55,15 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 import csu.edu.ice.model.dao.BookBean;
 import csu.edu.ice.model.dao.NoteBean;
 import csu.edu.ice.model.dao.TermBean;
+import csu.edu.ice.model.model.ContentBean;
 import csu.edu.ice.model.model.CustomCourse;
 import csu.edu.ice.model.model.Notebook;
 import csu.edu.ice.model.model.TermResult;
@@ -442,8 +446,13 @@ public class MainActivity extends BaseActivity {
             }
         });
         Date nowDate = new Date(System.currentTimeMillis());
-        NoteBean createBean = new NoteBean();
-        createBean.setId(UUID.randomUUID().toString());
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy年MM月dd日笔记", Locale.CHINESE);
+        NoteBean createBean = new NoteBean(
+                MD5Util.crypt(UUID.randomUUID().toString()),
+                simpleDateFormat.format(nowDate),
+                bookBean.getId(),
+                Const.OPEN_ID
+                );
         for (NoteBean noteBean : noteBeans) {
             Date noteDate = new Date(Long.parseLong(noteBean.getCreateTime()));
             Calendar noteCalendar = Calendar.getInstance();
@@ -454,8 +463,25 @@ public class MainActivity extends BaseActivity {
                 createBean = noteBean;
             }
         }
+
+        ContentBean.BlocksBean blocksBean = new ContentBean().new BlocksBean();
+        blocksBean.setKey(MD5Util.crypt(UUID.randomUUID().toString()).substring(0,5));
+        blocksBean.setText(data);
+        blocksBean.setType("unstyled");
+        blocksBean.setDepth(0);
+        blocksBean.setInlineStyleRanges(new ArrayList<>());
+        blocksBean.setEntityRanges(new ArrayList<>());
+        blocksBean.setData(new ContentBean().new BlocksBean().new DataBean());
         if (isText){
+            if (createBean.getContent()==null){
+                ArrayList<ContentBean.BlocksBean> blocksBeans = new ArrayList<>();
+                blocksBeans.add(blocksBean);
+                ContentBean contentBean = new ContentBean(new HashMap<String,ContentBean.EntityBean>(),blocksBeans);
+                Gson gson = new Gson();
+                createBean.setContent(gson.toJson(contentBean));
+            }
         }
+        createBean.saveAsync();
     }
 
     private void showNoteList(String book_id){

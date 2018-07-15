@@ -30,6 +30,7 @@ import com.ace.qnote.adapter.NoteContentEditAdapter;
 import com.ace.qnote.base.BaseActivity;
 import com.ace.qnote.util.CommonUtils;
 import com.ace.qnote.util.Const;
+import com.ace.qnote.util.MD5Util;
 import com.ace.qnote.util.permission.ActionCallBackListener;
 //import com.ace.qnote.util.permission.RxPermissionUtil;
 import com.ace.qnote.util.permission.RxPermissionUtil;
@@ -52,6 +53,7 @@ import org.litepal.crud.callback.SaveCallback;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 import csu.edu.ice.model.dao.NoteBean;
 import csu.edu.ice.model.model.ContentBean;
@@ -372,7 +374,7 @@ public class NoteContentActivity extends BaseActivity {
                 if (!CommonUtils.isEmpty(editText.getText().toString())){
                     if (contentBean!=null){
                         ContentBean.BlocksBean blocksBean = new ContentBean().new BlocksBean();
-                        blocksBean.setKey("abcde");
+                        blocksBean.setKey(MD5Util.crypt(UUID.randomUUID().toString()).substring(0,5));
                         blocksBean.setText(editText.getText().toString());
                         blocksBean.setType("unstyled");
                         blocksBean.setDepth(0);

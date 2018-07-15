@@ -13,6 +13,14 @@ public class ContentBean {
     private Map<String,EntityBean> entityMap;
     private List<BlocksBean> blocks;
 
+    public ContentBean() {
+    }
+
+    public ContentBean(Map<String, EntityBean> entityMap, List<BlocksBean> blocks) {
+        this.entityMap = entityMap;
+        this.blocks = blocks;
+    }
+
     public List<BlocksBean> getBlocks() {
         return blocks;
     }
