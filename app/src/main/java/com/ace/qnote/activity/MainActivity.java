@@ -294,6 +294,27 @@ public class MainActivity extends BaseActivity {
         });
     }
 
+    private void openOtherBook(){
+        NetUtil.doRetrofitRequest(NetUtil.noteService.getNoteList(Const.OPEN_ID, "-1", 0, 0), new CallBack<List<NoteBean>>() {
+            @Override
+            public void onSuccess(List<NoteBean> data) {
+                tvName.setText("归档笔记");
+                showNoteList(data);
+                drawerLayout.closeDrawer(Gravity.LEFT);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                showToast("网络可能有问题，请重试！");
+            }
+
+            @Override
+            public void onFailure(String message) {
+
+            }
+        });
+    }
+
     private void showNoteList(List<NoteBean> data) {
 
         if(tvName.getText().equals("垃圾桶")){
