@@ -684,6 +684,14 @@ public class MainActivity extends BaseActivity {
                     showToast("同步完成！");
                 }
 
+                BookBean nowBookBean = getNowBookBean();
+                if(nowBookBean == null){
+                    openOtherBook();
+                }else{
+                    tvName.setText(nowBookBean.getName());
+                    showNoteList(nowBookBean.getBookId());
+                }
+
             }
 
             @Override
