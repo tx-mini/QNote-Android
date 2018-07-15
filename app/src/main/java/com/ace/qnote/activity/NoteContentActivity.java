@@ -387,6 +387,8 @@ public class NoteContentActivity extends BaseActivity {
                         contentBean.getBlocks().remove(curModifyItem);
                         contentBean.getBlocks().add(curModifyItem,blocksBean);
                     }
+                    Gson gson = new Gson();
+                    noteBean.setContent(gson.toJson(contentBean));
                     saveNoteInfo(noteBean);
                 }
             }
@@ -441,7 +443,7 @@ public class NoteContentActivity extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK && requestCode == PhotoPicker.REQUEST_CODE) {
+        if (resultCode == RESULT_OK && (requestCode == PhotoPicker.REQUEST_CODE||requestCode == REQUEST_CODE_CHOOSE)) {
             if (data != null) {
                 ArrayList<String> photos = new ArrayList<>();
                 if (requestCode == PhotoPicker.REQUEST_CODE) {
@@ -459,7 +461,6 @@ public class NoteContentActivity extends BaseActivity {
                         @Override
                         public void onSuccess(ArrayList<String> url) {
                             savePhotos(url);
-                            showToast("上传成功");
                         }
 
                         @Override
@@ -507,7 +508,22 @@ public class NoteContentActivity extends BaseActivity {
             entityBean.setType("IMAGE");
             contentBean.getEntityMap().put((imgSize+i+1)+"",entityBean);
         }
+        Gson gson = new Gson();
+        noteBean.setContent(gson.toJson(contentBean));
         saveNoteInfo(noteBean);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (isEditing){
+            rvNoteContent.setAdapter(noteContentAdapter);
+            isEditing = false;
+//            doFadeOut(famTools);
+            doFadeIn(llAdd);
+            noteContentEditAdapter.disableSwipeItem();
+        }else {
+            super.onBackPressed();
+        }
     }
 
     private void saveNoteInfo(NoteBean noteBean) {
@@ -520,6 +536,7 @@ public class NoteContentActivity extends BaseActivity {
                 noteBean.setSyncTime(System.currentTimeMillis() / 1000 + "");
                 noteBean.setRecentTime(System.currentTimeMillis() / 1000 + "");
                 noteBean.update(noteBean.get_id());
+                parseContent(noteBean);
                 showToast("保存成功");
             }
 
@@ -558,18 +575,5 @@ public class NoteContentActivity extends BaseActivity {
 //            }
 //        });
 //    }
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (isEditing){
-            rvNoteContent.setAdapter(noteContentAdapter);
-            isEditing = false;
-//            doFadeOut(famTools);
-            doFadeIn(llAdd);
-            noteContentEditAdapter.disableSwipeItem();
-        }else {
-            super.onBackPressed();
-        }
     }
 }

@@ -21,5 +21,7 @@ public class Const {
     public static final int[] startTimes = {800,1000,1400,1600,1900};
     public static final int courseDuration = 100;
 
+    public static boolean MAIN_ACTIVITY_REFRESH = true;
+
 
 }

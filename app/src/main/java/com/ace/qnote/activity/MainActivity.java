@@ -479,15 +479,28 @@ public class MainActivity extends BaseActivity {
         ((TextView) findViewById(R.id.tv_nickname)).setText(getSharedPreferences(Const.SP_NAME, MODE_PRIVATE).getString("nickname", "加载失败"));
 
 
-        if (NetUtil.isNetworkConnected(this)) {
-            //有网络 从服务器请求
-            syncDataFromServer();
-        } else {
-            getDataFromLocal();
-        }
+//        if (NetUtil.isNetworkConnected(this)) {
+//            //有网络 从服务器请求
+//            syncDataFromServer();
+//        } else {
+//            getDataFromLocal();
+//        }
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (Const.MAIN_ACTIVITY_REFRESH){
+            if (NetUtil.isNetworkConnected(this)) {
+                //有网络 从服务器请求
+                syncDataFromServer();
+            } else {
+                getDataFromLocal();
+            }
+            Const.MAIN_ACTIVITY_REFRESH = false;
+        }
+    }
 
     private void initNoteRecyclerView() {
 
@@ -550,6 +563,7 @@ public class MainActivity extends BaseActivity {
     }
 
     private void addTextOrPic(ArrayList<String> data, boolean isText) {
+        Const.MAIN_ACTIVITY_REFRESH = true;
         BookBean bookBean = getNowBookBean();
         if (bookBean == null) {
             bookBean = new BookBean();
