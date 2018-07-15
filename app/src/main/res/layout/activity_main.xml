@@ -143,7 +143,7 @@
                 android:layout_height="300dp"></android.support.v7.widget.RecyclerView>
 
             <LinearLayout
-                android:id="@+id/layout_archive"
+                android:id="@+id/layout_other_book"
                 android:gravity="center_vertical"
                 android:paddingLeft="27dp"
                 android:orientation="horizontal"

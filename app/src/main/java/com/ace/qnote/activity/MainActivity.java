@@ -74,7 +74,7 @@ public class MainActivity extends BaseActivity {
     private TextView tvNickname;
     private TextView tvTerm;
     private LinearLayout layoutTerm;
-    private LinearLayout layoutArchive,layoutNewNote, layoutCourseTable,layoutDustbin,layoutStudy;
+    private LinearLayout layoutOtherBook,layoutNewNote, layoutCourseTable,layoutDustbin,layoutStudy;
     private RecyclerView rvNotebook,rvNote;
     private String[] m_upLoadImgPermission =  {Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
     private List<Uri> mSelected;
@@ -117,7 +117,7 @@ public class MainActivity extends BaseActivity {
         layoutTerm = findViewById(R.id.layout_term);
         layoutDustbin = findViewById(R.id.layout_dustbin);
         layoutStudy = findViewById(R.id.layout_study);
-        layoutArchive = findViewById(R.id.layout_archive);
+        layoutOtherBook = findViewById(R.id.layout_other_book);
         layoutNewNote = findViewById(R.id.layout_new_notebook);
         layoutCourseTable = findViewById(R.id.layout_course_table);
         rvNotebook = findViewById(R.id.rv_notebook);
@@ -137,7 +137,7 @@ public class MainActivity extends BaseActivity {
         layoutTerm.setOnClickListener(this);
         layoutDustbin.setOnClickListener(this);
         layoutStudy.setOnClickListener(this);
-        layoutArchive.setOnClickListener(this);
+        layoutOtherBook.setOnClickListener(this);
         layoutNewNote.setOnClickListener(this);
         layoutCourseTable.setOnClickListener(this);
         ivEdit.setOnClickListener(this);
@@ -164,7 +164,8 @@ public class MainActivity extends BaseActivity {
             case R.id.tv_term:
                 showChooseTermPopwindow();
                 break;
-            case R.id.layout_archive:
+            case R.id.layout_other_book:
+                showOtherBook();
                 break;
             case R.id.layout_course_table:
                 if(LitePal.count(CustomCourse.class)>0){
@@ -232,6 +233,11 @@ public class MainActivity extends BaseActivity {
         }
     }
 
+    private void showOtherBook() {
+        tvName.setText("归档笔记");
+        showNoteList("-1");
+    }
+
     private void syncToServer() {
 
         RotateAnimation rotateAnimation = new RotateAnimation(0f,360f,RotateAnimation.RELATIVE_TO_SELF,0.5f,RotateAnimation.RELATIVE_TO_SELF,0.5f);
@@ -283,9 +289,9 @@ public class MainActivity extends BaseActivity {
         NetUtil.doRetrofitRequest(NetUtil.noteService.getNoteList(Const.OPEN_ID,"",1,0), new CallBack<List<NoteBean>>() {
             @Override
             public void onSuccess(List<NoteBean> data) {
+                tvName.setText("垃圾桶");
                 showNoteList(data);
                 drawerLayout.closeDrawer(Gravity.LEFT);
-                tvName.setText("垃圾桶");
             }
 
             @Override
@@ -298,6 +304,7 @@ public class MainActivity extends BaseActivity {
 
             }
         });
+
     }
 
     private void openOtherBook(){
@@ -322,37 +329,32 @@ public class MainActivity extends BaseActivity {
     }
 
     private void showNoteList(List<NoteBean> data) {
+        Log.d(TAG, "showNoteList: 展示的数据："+data);
         //TODO:后台返回创建时间后删除
         for (NoteBean datum : data) {
             datum.setCreateTime(System.currentTimeMillis()+"");
         }
-
-        if(tvName.getText().equals("垃圾桶")){
-            tvNullTip.setText("垃圾桶暂无笔记");
-        }else{
-            tvNullTip.setText("暂无笔记\n点击下方的按钮创建笔记吧");
-        }
-        if(data ==null || data.size() == 0){
-            tvNullTip.setVisibility(View.VISIBLE);
-        }else{
-            tvNullTip.setVisibility(View.INVISIBLE);
+        if(data !=null && data.size() > 0){
             LitePal.deleteAll(NoteBean.class,"bookRef = ?" ,data.get(0).getBookRef());
             LitePal.saveAll(data);
         }
         noteList.clear();
         noteList.addAll(data);
-        noteAdapter.notifyDataSetChanged();
+        noteAdapter.setNewData(noteList);
+        updateTip();
     }
 
-    private void showDeleteNoteBookPopwindow() {
-        View view = LayoutInflater.from(this).inflate(R.layout.layout_pop_delete_note,null);
-        TextView tvMessage = view.findViewById(R.id.tv_message);
-        CustomPopWindow popWindow = showWindow(view);
-        view.findViewById(R.id.btn_cancel).setOnClickListener(v-> popWindow.dissmiss());
-        view.findViewById(R.id.btn_ok).setOnClickListener(v -> {
-            //删除笔记本
-            popWindow.dissmiss();
-        });
+    private void updateTip(){
+        if(tvName.getText().equals("垃圾桶")){
+            tvNullTip.setText("垃圾桶暂无笔记");
+        }else{
+            tvNullTip.setText("暂无笔记\n点击下方的按钮创建笔记吧");
+        }
+        if(noteAdapter.getData() ==null || noteAdapter.getData().size()== 0){
+            tvNullTip.setVisibility(View.VISIBLE);
+        }else {
+            tvNullTip.setVisibility(View.INVISIBLE);
+        }
     }
 
     private CustomPopWindow showWindow(View view){
@@ -387,7 +389,7 @@ public class MainActivity extends BaseActivity {
 
                 @Override
                 public void onError(Throwable throwable) {
-
+                    showToast("创建失败，请稍后再试！");
                 }
 
                 @Override
@@ -418,7 +420,7 @@ public class MainActivity extends BaseActivity {
             drawerLayout.closeDrawer(Gravity.LEFT);
             term = termBean.getTerm();
             if(bookList.size()>0) {
-                showLatestNoteList(bookList.get(0).getBookId());
+                showLatestNoteList(bookList.get(0).getBookId(),false);
             }
             tvName.setText(bookList.get(0).getName());
             notebook = bookList.get(0);
@@ -427,10 +429,20 @@ public class MainActivity extends BaseActivity {
 
     }
 
-    private void showLatestNoteList(String  bookId){
+    private void showLatestNoteList(String  bookId,boolean isRubbish){
         NetUtil.doRetrofitRequest(NetUtil.noteService.getNoteList(Const.OPEN_ID,bookId,0,0), new CallBack<List<NoteBean>>() {
             @Override
             public void onSuccess(List<NoteBean> data) {
+                Log.d(TAG, "onSuccess: 获取的数据："+data);
+                if(!isRubbish){
+                    Iterator<NoteBean> it = data.iterator();
+                    while (it.hasNext()){
+                        NoteBean tempBean = it.next();
+                        if(tempBean.getIsRubbish() == 1){
+                            it.remove();
+                        }
+                    }
+                }
                 showNoteList(data);
                 drawerLayout.closeDrawer(Gravity.LEFT);
             }
@@ -469,6 +481,7 @@ public class MainActivity extends BaseActivity {
         }else {
             getDataFromLocal();
         }
+
     }
     private void initNoteRecyclerView() {
 
@@ -485,6 +498,13 @@ public class MainActivity extends BaseActivity {
         if(noteList == null || noteList.size()==0){
             tvNullTip.setVisibility(View.VISIBLE);
         }
+
+        noteAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onChanged() {
+                updateTip();
+            }
+        });
     }
 
     private void initDrawerRecyclerView() {
@@ -496,7 +516,7 @@ public class MainActivity extends BaseActivity {
             BookBean bookbean = bookList.get(position);
             tvName.setText(bookbean.getName());
             notebook = bookbean;
-            showLatestNoteList(bookbean.getBookId());
+            showLatestNoteList(bookbean.getBookId(),false);
         });
     }
 
@@ -711,7 +731,7 @@ public class MainActivity extends BaseActivity {
 
     private void showNoteList(String book_id){
         noteList = new ArrayList<>();
-        showLatestNoteList(book_id);
+        showLatestNoteList(book_id,false);
     }
 
     private void getDataFromLocal() {
@@ -729,6 +749,16 @@ public class MainActivity extends BaseActivity {
                 initDrawerRecyclerView();
                 showNoteList(noteList);
                 Log.d(TAG, "getDataFromLocal: "+noteList);
+
+
+                BookBean nowBookBean = getNowBookBean();
+                if(nowBookBean == null){
+                    openOtherBook();
+                }else{
+                    tvName.setText(nowBookBean.getName());
+                    showNoteList(nowBookBean.getBookId());
+                }
+
             }else{
                 Toast.makeText(this, "网络状况不佳，请退出重试！", Toast.LENGTH_LONG).show();
             }

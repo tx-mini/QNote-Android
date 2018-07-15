@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -64,7 +65,7 @@ public class NoteAdapter extends BaseQuickAdapter<NoteBean, BaseViewHolder> {
         curPosition = helper.getAdapterPosition();
     }
 
-    private void showRubbishNotePop(BaseViewHolder helper, NoteBean item) {
+    private void showNormalNotePop(BaseViewHolder helper, NoteBean item) {
         helper.getView(R.id.layout_root)
                 .setOnLongClickListener(v -> {
                     //弹出菜单
@@ -103,7 +104,8 @@ public class NoteAdapter extends BaseQuickAdapter<NoteBean, BaseViewHolder> {
     }
 
 
-    private void showNormalNotePop(BaseViewHolder helper, NoteBean item) {
+    private void showRubbishNotePop(BaseViewHolder helper, NoteBean item) {
+        Log.d(TAG, "showRubbishNotePop: 长按了垃圾桶里面的元素 弹出菜单");
         helper.getView(R.id.layout_root)
                 .setOnLongClickListener(v -> {
                     //弹出菜单
@@ -118,17 +120,35 @@ public class NoteAdapter extends BaseQuickAdapter<NoteBean, BaseViewHolder> {
                             .showAsDropDown(v, xOffset, -CommonUtils.dip2px(mContext, 25), Gravity.CENTER);
 
                     TextView tvDelete = menuView.findViewById(R.id.tv_delete);
-                    //删除
+                    //彻底删除
                     tvDelete.setOnClickListener(v1 -> {
                         popMenuWindow.dissmiss();
                         showDeletePopwindow(rootView, item);
                     });
 
-                    //重命名
+                    //恢复
                     TextView tvRename = menuView.findViewById(R.id.tv_restore);
                     tvRename.setOnClickListener(v12 -> {
+                        NetUtil.doRetrofitRequest(NetUtil.noteService.update(Const.OPEN_ID, item.getNoteId(),
+                                item.getName(), item.getBookRef(), item.getIsKeyNote(), 0, false, null), new CallBack<RxReturnData>() {
+                            @Override
+                            public void onSuccess(RxReturnData data) {
+                                getData().remove(item);
+                                notifyDataSetChanged();
+                                Toast.makeText(activity, "笔记已经恢复", Toast.LENGTH_SHORT).show();
+                            }
+
+                            @Override
+                            public void onError(Throwable throwable) {
+                                Toast.makeText(activity, "发生了错误呢，请重试！", Toast.LENGTH_SHORT).show();
+                            }
+
+                            @Override
+                            public void onFailure(String message) {
+
+                            }
+                        });
                         popMenuWindow.dissmiss();
-                        showRenameNotePopwindow(rootView, item);
                     });
 
                     return false;
@@ -154,13 +174,14 @@ public class NoteAdapter extends BaseQuickAdapter<NoteBean, BaseViewHolder> {
             //确定删除
             if(item.getIsRubbish()==1){
                 //已经是垃圾桶里面的了 直接删除
-                NetUtil.doRetrofitRequest(NetUtil.noteService.deleteNote(Const.OPEN_ID, item.getNoteId()), new CallBack<String>() {
+                NetUtil.doRetrofitRequest(NetUtil.noteService.deleteNote(Const.OPEN_ID, item.getNoteId()), new CallBack<RxReturnData>() {
                     @Override
-                    public void onSuccess(String data) {
+                    public void onSuccess(RxReturnData data) {
                         LitePal.delete(NoteBean.class,item.get_id());
                         getData().remove(item);
                         notifyDataSetChanged();
                         Toast.makeText(activity, "删除成功", Toast.LENGTH_SHORT).show();
+                        popDeleteWindow.dissmiss();
                     }
 
                     @Override
