@@ -71,8 +71,8 @@ public class NoteBean extends LitePalSupport implements Serializable {
         return noteId;
     }
 
-    public void setNoteId(String id) {
-        this.noteId = id;
+    public void setNoteId(String noteId) {
+        this.noteId = noteId;
     }
 
     public String getName() {
@@ -139,11 +139,12 @@ public class NoteBean extends LitePalSupport implements Serializable {
         this.syncTime = syncTime;
     }
 
+
     @Override
     public String toString() {
         return "NoteBean{" +
                 "_id=" + _id +
-                ", id='" + noteId + '\'' +
+                ", noteId='" + noteId + '\'' +
                 ", name='" + name + '\'' +
                 ", isKeyNote=" + isKeyNote +
                 ", isRubbish=" + isRubbish +
@@ -152,8 +153,11 @@ public class NoteBean extends LitePalSupport implements Serializable {
                 ", bookRef='" + bookRef + '\'' +
                 ", openId='" + openId + '\'' +
                 ", syncTime='" + syncTime + '\'' +
+                ", createTime='" + createTime + '\'' +
+                ", isLocal=" + isLocal +
                 '}';
     }
+
     public String getCreateTime() {
         return createTime;
     }
