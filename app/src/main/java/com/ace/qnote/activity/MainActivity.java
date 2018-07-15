@@ -46,19 +46,24 @@ import com.tencent.cos.xml.model.CosXmlRequest;
 import com.tencent.cos.xml.model.CosXmlResult;
 
 import org.litepal.LitePal;
+import org.litepal.crud.callback.FindMultiCallback;
 
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import csu.edu.ice.model.dao.BookBean;
 import csu.edu.ice.model.dao.NoteBean;
 import csu.edu.ice.model.dao.TermBean;
 import csu.edu.ice.model.model.CustomCourse;
+import csu.edu.ice.model.model.Notebook;
 import csu.edu.ice.model.model.TermResult;
+import csu.edu.ice.model.model.University;
 import me.iwf.photopicker.PhotoPicker;
 
 public class MainActivity extends BaseActivity {
@@ -419,10 +424,37 @@ public class MainActivity extends BaseActivity {
             EditText editText = view.findViewById(R.id.et_text);
             editText.setText(text);
             btnOk.setOnClickListener(v -> {
+                addTextOrPic(editText.getText().toString(),true);
                 popWindow.dissmiss();
             });
 
             btnCancel.setOnClickListener(v -> popWindow.dissmiss());
+        }
+    }
+
+    private void addTextOrPic(String data, boolean isText) {
+        BookBean bookBean = getNowBookBean();
+        ArrayList<NoteBean> noteBeans = new ArrayList<>();
+        LitePal.where("book_ref = ?",bookBean.getId()).findAsync(BookBean.class).listen(new FindMultiCallback() {
+            @Override
+            public <T> void onFinish(List<T> t) {
+                noteBeans.addAll((List<NoteBean>) t);
+            }
+        });
+        Date nowDate = new Date(System.currentTimeMillis());
+        NoteBean createBean = new NoteBean();
+        createBean.setId(UUID.randomUUID().toString());
+        for (NoteBean noteBean : noteBeans) {
+            Date noteDate = new Date(Long.parseLong(noteBean.getCreateTime()));
+            Calendar noteCalendar = Calendar.getInstance();
+            noteCalendar.setTime(noteDate);
+            Calendar nowCalendar = Calendar.getInstance();
+            nowCalendar.setTime(nowDate);
+            if (noteCalendar.get(Calendar.DAY_OF_YEAR) == nowCalendar.get(Calendar.DAY_OF_YEAR)){
+                createBean = noteBean;
+            }
+        }
+        if (isText){
         }
     }
 
