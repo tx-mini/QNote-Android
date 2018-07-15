@@ -157,6 +157,7 @@ public class NoteAdapter extends BaseQuickAdapter<NoteBean, BaseViewHolder> {
                 NetUtil.doRetrofitRequest(NetUtil.noteService.deleteNote(Const.OPEN_ID, item.getId()), new CallBack<String>() {
                     @Override
                     public void onSuccess(String data) {
+                        LitePal.delete(NoteBean.class,item.get_id());
                         getData().remove(item);
                         notifyDataSetChanged();
                         Toast.makeText(activity, "删除成功", Toast.LENGTH_SHORT).show();

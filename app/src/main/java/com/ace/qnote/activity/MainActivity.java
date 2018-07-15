@@ -10,10 +10,13 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.RotateAnimation;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -32,7 +35,6 @@ import com.ace.qnote.util.CommonUtils;
 import com.ace.qnote.util.Const;
 import com.ace.qnote.util.permission.ActionCallBackListener;
 import com.ace.qnote.util.permission.RxPermissionUtil;
-import com.ace.qnote.view.CourseTable;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.zhouwei.library.CustomPopWindow;
@@ -44,6 +46,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import csu.edu.ice.model.dao.BookBean;
@@ -68,12 +71,14 @@ public class MainActivity extends BaseActivity {
     private View rootView;
     private DrawerNoteAdapter drawerNoteAdapter;
     private NoteAdapter noteAdapter;
-    private ArrayList<NoteBean> noteList;
+    private List<NoteBean> noteList;
     private BookBean notebook;
     private TextView tvName;
     private DrawerLayout drawerLayout;
     private int term;
     private TextView tvNullTip;
+    private ImageView ivSync;
+
     @Override
     public void initParams(Bundle params) {
         notebookList = new ArrayList<>();
@@ -109,6 +114,7 @@ public class MainActivity extends BaseActivity {
         tvName = findViewById(R.id.tv_name);
         drawerLayout = findViewById(R.id.drawer_layout);
         tvNullTip = findViewById(R.id.tv_null_tip);
+        ivSync = findViewById(R.id.iv_sync);
     }
 
     @Override
@@ -127,6 +133,7 @@ public class MainActivity extends BaseActivity {
             addPicFromFile();
             return false;
         });
+        ivSync.setOnClickListener(this);
     }
 
     private void addPicFromFile() {
@@ -147,7 +154,7 @@ public class MainActivity extends BaseActivity {
             case R.id.layout_archive:
                 break;
             case R.id.layout_course_table:
-                if(LitePal.count(CourseTable.class)>0){
+                if(LitePal.count(CustomCourse.class)>0){
                     startActivity(new Intent(this,CourseActivity.class));
                 }else{
                     NetUtil.doRetrofitRequest(NetUtil.courseService.getCourseList(Const.OPEN_ID), new CallBack<List<CustomCourse>>() {
@@ -202,8 +209,26 @@ public class MainActivity extends BaseActivity {
                     addPic();
                 }
                 break;
-
+            case R.id.iv_sync:
+                syncToServer();
+                break;
         }
+    }
+
+    private void syncToServer() {
+
+        RotateAnimation rotateAnimation = new RotateAnimation(0f,360f,RotateAnimation.RELATIVE_TO_SELF,0.5f,RotateAnimation.RELATIVE_TO_SELF,0.5f);
+        rotateAnimation.setRepeatCount(RotateAnimation.INFINITE);
+        rotateAnimation.setDuration(1000);
+        rotateAnimation.setInterpolator(new LinearInterpolator());
+        ivSync.startAnimation(rotateAnimation);
+        showToast("正在同步......");
+        //查询所有未同步的
+        //进行笔记创建，或者更新
+
+        //下载最新的notebookList
+
+        //同步完成
     }
 
     private void openDustbin() {
@@ -228,6 +253,7 @@ public class MainActivity extends BaseActivity {
     }
 
     private void showNoteList(List<NoteBean> data) {
+
         if(tvName.getText().equals("垃圾桶")){
             tvNullTip.setText("垃圾桶暂无笔记");
         }else{
@@ -237,6 +263,8 @@ public class MainActivity extends BaseActivity {
             tvNullTip.setVisibility(View.VISIBLE);
         }else{
             tvNullTip.setVisibility(View.INVISIBLE);
+            LitePal.deleteAll(NoteBean.class,"bookRef = ?" ,data.get(0).getBookRef());
+            LitePal.saveAll(data);
         }
         noteList.clear();
         noteList.addAll(data);
@@ -385,6 +413,7 @@ public class MainActivity extends BaseActivity {
             tvNullTip.setVisibility(View.VISIBLE);
         }
     }
+
     private void initDrawerRecyclerView() {
         drawerNoteAdapter = new DrawerNoteAdapter(R.layout.item_drawer_note,notebookList);
         rvNotebook.setAdapter(drawerNoteAdapter);
@@ -424,13 +453,37 @@ public class MainActivity extends BaseActivity {
     }
 
     private void getDataFromLocal() {
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
+        termList = LitePal.findAll(TermBean.class);
+        if(termList!=null && termList.size()>0) {
+            notebookList = LitePal.where("term = ?", termList.get(termList.size() - 1).getTerm() + "").find(BookBean.class);
+            Log.d(TAG, "getDataFromLocal: "+notebookList);
+            if(notebookList!=null && notebookList.size()>0) {
+                noteList = LitePal.where("bookRef = ?", notebookList.get(0).getId()).find(NoteBean.class);
 
+                removeRubbish(noteList);
+
+                tvName.setText(notebookList.get(0).getName());
+                initNoteRecyclerView();
+                showNoteList(noteList);
+                Log.d(TAG, "getDataFromLocal: "+noteList);
+            }else{
+                Toast.makeText(this, "网络状况不佳，请退出重试！", Toast.LENGTH_LONG).show();
             }
-        });
-        thread.run();
+        }else{
+            Toast.makeText(this, "网络状况不佳，请退出重试！", Toast.LENGTH_LONG).show();
+        }
+
+    }
+
+    private void removeRubbish(List<NoteBean> noteList) {
+        if(noteList==null ||noteList.size() == 0)return;
+        Iterator<NoteBean> it = noteList.iterator();
+        while (it.hasNext()){
+            NoteBean noteBean = it.next();
+            if(noteBean.getIsRubbish()==1){
+                it.remove();
+            }
+        }
     }
 
     private void syncDataFromNet() {
@@ -471,7 +524,8 @@ public class MainActivity extends BaseActivity {
 
             @Override
             public void onError(Throwable throwable) {
-
+                Toast.makeText(MainActivity.this, "网络出现了问题，从本地读取笔记！", Toast.LENGTH_SHORT).show();
+                getDataFromLocal();
             }
 
             @Override
