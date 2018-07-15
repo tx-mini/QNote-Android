@@ -52,6 +52,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -394,7 +395,8 @@ public class MainActivity extends BaseActivity {
             if(bookList.size()>0) {
                 showLatestNoteList(bookList.get(0).getId());
             }
-
+            tvName.setText(bookList.get(0).getName());
+            notebook = bookList.get(0);
         });
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -442,7 +444,6 @@ public class MainActivity extends BaseActivity {
         }else {
             getDataFromLocal();
         }
-        initDrawerRecyclerView();
     }
     private void initNoteRecyclerView() {
 
@@ -466,8 +467,10 @@ public class MainActivity extends BaseActivity {
         rvNotebook.setAdapter(drawerNoteAdapter);
         rvNotebook.setLayoutManager(new LinearLayoutManager(this));
         drawerNoteAdapter.setOnItemClickListener((adapter, view, position) -> {
-            BookBean bookbean = notebookList.get(position);
+            List<BookBean> bookList = drawerNoteAdapter.getData();
+            BookBean bookbean = bookList.get(position);
             tvName.setText(bookbean.getName());
+            notebook = bookbean;
             showLatestNoteList(bookbean.getId());
         });
     }
@@ -585,9 +588,10 @@ public class MainActivity extends BaseActivity {
                 noteList = LitePal.where("bookRef = ?", notebookList.get(0).getId()).find(NoteBean.class);
 
                 removeRubbish(noteList);
-
+                notebook = notebookList.get(0);
                 tvName.setText(notebookList.get(0).getName());
                 initNoteRecyclerView();
+                initDrawerRecyclerView();
                 showNoteList(noteList);
                 Log.d(TAG, "getDataFromLocal: "+noteList);
             }else{
@@ -616,7 +620,7 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onSuccess(TermResult data) {
                 notebookList.clear();
-                notebookList.addAll(data.getTermList().get(0).getChildren());
+                Collections.sort(data.getTermList(), (o1, o2) -> o1.getTerm() - o2.getTerm());
                 for (TermBean termBean : data.getTermList()) {
                     for (BookBean bookBean : termBean.getChildren()) {
                         bookBean.setTerm(termBean.getTerm());
@@ -624,17 +628,20 @@ public class MainActivity extends BaseActivity {
                     notebookList.addAll(termBean.getChildren());
                 }
 
-                termList.clear();
-                termList.addAll(data.getTermList());
                 LitePal.deleteAll(BookBean.class);
                 LitePal.saveAll(notebookList);
+
+                notebookList = data.getTermList().get(data.getTermList().size()-1).getChildren();
+
+                termList.clear();
+                termList.addAll(data.getTermList());
+
                 LitePal.deleteAll(TermBean.class);
                 LitePal.saveAll(termList);
-                drawerNoteAdapter.notifyDataSetChanged();
                 if(notebookList!=null && notebookList.size()>0) {
                     notebook = notebookList.get(0);
                 }else{
-                    Toast.makeText(MainActivity.this, "笔记本数量为0", Toast.LENGTH_SHORT).show();
+                    showToast("暂无笔记");
                 }
 
                 //显示最新的学期
@@ -644,6 +651,7 @@ public class MainActivity extends BaseActivity {
                 tvName.setText(notebook.getName());
                 showNoteList(notebook.getId());
                 initNoteRecyclerView();
+                initDrawerRecyclerView();
 
                 if(isSync){
                     isSync = false;
