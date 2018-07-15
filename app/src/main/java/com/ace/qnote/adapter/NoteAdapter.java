@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.ace.network.util.CallBack;
 import com.ace.network.util.NetUtil;
 import com.ace.network.util.RxReturnData;
+import com.ace.qnote.TermCallback;
 import com.ace.qnote.R;
 import com.ace.qnote.util.CommonUtils;
 import com.ace.qnote.util.Const;
@@ -39,13 +40,12 @@ public class NoteAdapter extends BaseQuickAdapter<NoteBean, BaseViewHolder> {
     View rootView;
     private int moveToIndex;
     private int curPosition;
-    private BookBean noteBook;
-
-    public NoteAdapter(int layoutResId, @Nullable List<NoteBean> data, Activity activity, BookBean notebook, View rootView) {
+    private TermCallback termCallback;
+    public NoteAdapter(int layoutResId, @Nullable List<NoteBean> data, Activity activity, TermCallback termCallback, View rootView) {
         super(layoutResId, data);
         this.activity = activity;
         this.rootView = rootView;
-        this.noteBook = notebook;
+        this.termCallback = termCallback;
     }
 
     @Override
@@ -225,11 +225,11 @@ public class NoteAdapter extends BaseQuickAdapter<NoteBean, BaseViewHolder> {
     private void showMoveNotePopwindow(View rootView, NoteBean item) {
         //初始化为-1
         moveToIndex = -1;
-        List<BookBean> bookList = LitePal.where("term = ?", noteBook.getTerm() + "").find(BookBean.class);
+        List<BookBean> bookList = LitePal.where("term = ?",termCallback.getTerm() + "").find(BookBean.class);
         DrawerNoteAdapter bookAdapter = new DrawerNoteAdapter(R.layout.item_text_line, bookList);
         View view = LayoutInflater.from(mContext).inflate(R.layout.layout_move_note, null);
         TextView tvTitle = view.findViewById(R.id.tv_title);
-        tvTitle.setText(Const.termToChinese[noteBook.getTerm()]);
+        tvTitle.setText(Const.termToChinese[termCallback.getTerm()]);
         RecyclerView recyclerView = view.findViewById(R.id.rv_notebook);
         recyclerView.setAdapter(bookAdapter);
         bookAdapter.setOnItemClickListener((adapter, selectedView, position) -> {

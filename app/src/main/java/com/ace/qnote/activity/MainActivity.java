@@ -236,7 +236,7 @@ public class MainActivity extends BaseActivity {
     }
 
     private void showOtherBook() {
-        tvName.setText("归档笔记");
+        tvName.setText("其他笔记");
         showNoteList("-1");
     }
 
@@ -313,7 +313,7 @@ public class MainActivity extends BaseActivity {
         NetUtil.doRetrofitRequest(NetUtil.noteService.getNoteList(Const.OPEN_ID, "-1", 0, 0), new CallBack<List<NoteBean>>() {
             @Override
             public void onSuccess(List<NoteBean> data) {
-                tvName.setText("归档笔记");
+                tvName.setText("其他笔记");
                 showNoteList(data);
                 drawerLayout.closeDrawer(Gravity.LEFT);
             }
@@ -391,8 +391,7 @@ public class MainActivity extends BaseActivity {
 
                 @Override
                 public void onError(Throwable throwable) {
-                    showToast("创建失败，请稍后再试！" +
-                            "");
+                    showToast("创建失败，请稍后再试！");
                 }
 
                 @Override
@@ -422,6 +421,7 @@ public class MainActivity extends BaseActivity {
             popWindow.dissmiss();
             drawerLayout.closeDrawer(Gravity.LEFT);
             term = termBean.getTerm();
+            Log.d(TAG, "showChooseTermPopwindow: 选择了"+Const.termToChinese[term]);
             if(bookList.size()>0) {
                 showLatestNoteList(bookList.get(0).getBookId(),false);
             }
@@ -486,9 +486,12 @@ public class MainActivity extends BaseActivity {
         }
 
     }
+
+
+
     private void initNoteRecyclerView() {
 
-        noteAdapter = new NoteAdapter(R.layout.item_note,noteList,this,notebook,rootView);
+        noteAdapter = new NoteAdapter(R.layout.item_note, noteList, this, () -> notebook.getTerm(), rootView);
         noteAdapter.setOnItemClickListener((adapter, view, position) -> {
             Bundle bundle = new Bundle();
             NoteBean noteBean = (NoteBean) adapter.getData().get(position);

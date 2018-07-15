@@ -20,6 +20,7 @@ import org.litepal.LitePal;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.LinkedList;
 import java.util.List;
 
 import csu.edu.ice.model.dao.TermBean;
@@ -57,22 +58,21 @@ public class CourseActivity extends AppCompatActivity {
         tvTerm.setText(Const.termToChinese[termList.get(termList.size()-1).getTerm()]);
         layoutWeek = findViewById(R.id.layoutWeek);
         findViewById(R.id.iv_add_course).setOnClickListener(v-> addCourse());
-
+        nowWeek = CommonUtils.getWeek(Const.START_DAY);
         layoutWeek.setOnClickListener(v -> {
             if (scrollWeek.getVisibility() == View.VISIBLE) {
                 scrollWeek.setVisibility(View.GONE);
                 imageArrow.setRotation(0);
                 courseLayout.clearCourse();
-                courseLayout.addCourses(customCourseList);
+                courseLayout.addCourses(getCoursesByWeek(nowWeek));
             } else {
                 scrollWeek.setVisibility(View.VISIBLE);
                 imageArrow.setRotation(180);
             }
         });
-        nowWeek = CommonUtils.getWeek(Const.START_DAY);
         tvWeek.setText("第"+ nowWeek +"周");
         initCourseData();
-        courseLayout.addCourses(customCourseList);
+        courseLayout.addCourses(getCoursesByWeek(nowWeek));
         initWeek();
         Calendar calendar = Calendar.getInstance();
 
@@ -97,7 +97,7 @@ public class CourseActivity extends AppCompatActivity {
         int[] colors ={colorBlue, colorPink};
 
         customCourseList = new ArrayList<>();
-        List<CustomCourse> courseList = LitePal.where("term = ?",term).find(CustomCourse.class);
+        List<CustomCourse> courseList = LitePal.where("term = ?","4").find(CustomCourse.class);
         for (CustomCourse customCourse : courseList) {
             customCourse.setBackgroundColor(colors[customCourse.getName().hashCode()%colors.length]);
         }
@@ -124,7 +124,7 @@ public class CourseActivity extends AppCompatActivity {
                 v.setBackgroundColor(Color.WHITE);
                 lastClickedView = v;
 
-                courseLayout.addCourses(customCourseList);
+                courseLayout.addCourses(getCoursesByWeek(week));
 
             });
             layoutWeekWrapper.addView(view);
@@ -132,6 +132,17 @@ public class CourseActivity extends AppCompatActivity {
     }
 
 
+    private List<ICourse> getCoursesByWeek(int week){
+
+        List<ICourse> courses = new LinkedList<>();
+        for (int j = 0; j < customCourseList.size(); j++) {
+            CustomCourse course = (CustomCourse) customCourseList.get(j);
+            if(course.getStartWeek()<=week && course.getEndWeek()>=week) {
+                courses.add(course);
+            }
+        }
+        return courses;
+    }
 
 
 }
