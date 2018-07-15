@@ -37,7 +37,7 @@ public class NoteBean extends LitePalSupport implements Serializable {
 
     private String createTime;
 
-    private Boolean isLocal;
+    private Integer isLocal;
 
     public NoteBean(){}
 
@@ -162,11 +162,11 @@ public class NoteBean extends LitePalSupport implements Serializable {
         this.createTime = createTime;
     }
 
-    public Boolean getLocal() {
+    public Integer getLocal() {
         return isLocal;
     }
 
-    public void setLocal(Boolean local) {
+    public void setLocal(Integer local) {
         isLocal = local;
     }
 }

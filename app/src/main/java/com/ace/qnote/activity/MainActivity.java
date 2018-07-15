@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -27,6 +26,7 @@ import android.widget.Toast;
 import com.ace.network.service.NoteService;
 import com.ace.network.util.CallBack;
 import com.ace.network.util.NetUtil;
+import com.ace.network.util.RxReturnData;
 import com.ace.qnote.R;
 import com.ace.qnote.adapter.DrawerNoteAdapter;
 import com.ace.qnote.adapter.NoteAdapter;
@@ -41,16 +41,10 @@ import com.ace.qnote.util.permission.RxPermissionUtil;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.zhouwei.library.CustomPopWindow;
-import com.google.gson.Gson;
-import com.tencent.cos.xml.exception.CosXmlClientException;
-import com.tencent.cos.xml.exception.CosXmlServiceException;
-import com.tencent.cos.xml.model.CosXmlRequest;
-import com.tencent.cos.xml.model.CosXmlResult;
 
 import org.litepal.LitePal;
 import org.litepal.crud.callback.FindMultiCallback;
 
-import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -64,9 +58,7 @@ import csu.edu.ice.model.dao.BookBean;
 import csu.edu.ice.model.dao.NoteBean;
 import csu.edu.ice.model.dao.TermBean;
 import csu.edu.ice.model.model.CustomCourse;
-import csu.edu.ice.model.model.Notebook;
 import csu.edu.ice.model.model.TermResult;
-import csu.edu.ice.model.model.University;
 import me.iwf.photopicker.PhotoPicker;
 
 public class MainActivity extends BaseActivity {
@@ -91,6 +83,7 @@ public class MainActivity extends BaseActivity {
     private int term;
     private TextView tvNullTip;
     private ImageView ivSync;
+    private boolean isSync;
 
     @Override
     public void initParams(Bundle params) {
@@ -223,6 +216,10 @@ public class MainActivity extends BaseActivity {
                 }
                 break;
             case R.id.iv_sync:
+                if(isSync){
+                    showToast("正在同步中......");
+                    return;
+                }
                 syncToServer();
                 break;
         }
@@ -236,13 +233,44 @@ public class MainActivity extends BaseActivity {
         rotateAnimation.setInterpolator(new LinearInterpolator());
         ivSync.startAnimation(rotateAnimation);
         showToast("正在同步......");
+        isSync = true;
         //查询所有未同步的
+        List<NoteBean> unSyncList = LitePal.where("isLocal = ?", "1").find(NoteBean.class);
         //进行笔记创建，或者更新
+        createNote(unSyncList);
 
-        //下载最新的notebookList
-
-        //同步完成
     }
+
+    private void createNote(List<NoteBean> unSyncList) {
+        if(unSyncList.size() == 0){
+            syncDataFromServer();
+            return;
+        }
+        NoteBean noteBean = unSyncList.get(0);
+        NetUtil.doRetrofitRequest(NetUtil.noteService.addNote(Const.OPEN_ID, noteBean.getBookRef(),
+                noteBean.getName(), noteBean.getContent(), noteBean.getIsKeyNote()), new CallBack<RxReturnData>() {
+            @Override
+            public void onSuccess(RxReturnData data) {
+                noteBean.setLocal(0);
+                noteBean.update(noteBean.get_id());
+                unSyncList.remove(0);
+                createNote(unSyncList);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                isSync = false;
+                ivSync.clearAnimation();
+                showToast("同步出差啦！还差"+unSyncList.size()+"篇笔记未同步");
+            }
+
+            @Override
+            public void onFailure(String message) {
+
+            }
+        });
+    }
+
 
     private void openDustbin() {
         NetUtil.doRetrofitRequest(NetUtil.noteService.getNoteList(Const.OPEN_ID,"",1,0), new CallBack<List<NoteBean>>() {
@@ -404,7 +432,7 @@ public class MainActivity extends BaseActivity {
 
         if(NetUtil.isNetworkConnected(this)){
             //有网络 从服务器请求
-            syncDataFromNet();
+            syncDataFromServer();
         }else {
             getDataFromLocal();
         }
@@ -526,7 +554,7 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-    private void syncDataFromNet() {
+    private void syncDataFromServer() {
         NetUtil.doRetrofitRequest(NetUtil.getRetrofitInstance().create(NoteService.class).getTermAndRubbish(Const.OPEN_ID),
                 new CallBack<TermResult>() {
             @Override
@@ -560,12 +588,24 @@ public class MainActivity extends BaseActivity {
                 tvName.setText(notebook.getName());
                 showNoteList(notebook.getId());
                 initNoteRecyclerView();
+
+                if(isSync){
+                    isSync = false;
+                    ivSync.clearAnimation();
+                    showToast("同步完成！");
+                }
+
             }
 
             @Override
             public void onError(Throwable throwable) {
-                Toast.makeText(MainActivity.this, "网络出现了问题，从本地读取笔记！", Toast.LENGTH_SHORT).show();
+                showToast( "网络出现了问题，从本地读取笔记！");
                 getDataFromLocal();
+                if(isSync){
+                    isSync = false;
+                    ivSync.clearAnimation();
+                    showToast("同步失败，请检查网络！");
+                }
             }
 
             @Override
