@@ -338,7 +338,7 @@ public class MainActivity extends BaseActivity {
         }
         noteList.clear();
         noteList.addAll(data);
-        noteAdapter.notifyDataSetChanged();
+        noteAdapter.setNewData(noteList);
         updateTip();
     }
 
