@@ -254,7 +254,6 @@ public class NoteAdapter extends BaseQuickAdapter<NoteBean, BaseViewHolder> {
         View btnCancel = view.findViewById(R.id.btn_cancel);
         btnMove.setOnClickListener(v -> {
             popWindow.dissmiss();
-            //Todo 移动
             NetUtil.doRetrofitRequest(NetUtil.noteService.update(Const.OPEN_ID, item.getNoteId(),
                     item.getName(),bookList.get(moveToIndex).getBookId(), item.getIsKeyNote(), item.getIsRubbish(), false, null), new CallBack<RxReturnData>() {
                 @Override
