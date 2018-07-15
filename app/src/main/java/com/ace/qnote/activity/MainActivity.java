@@ -695,6 +695,7 @@ public class MainActivity extends BaseActivity {
                 createBean.setIsLocal(0);
                 createBean.setSyncTime(System.currentTimeMillis()+"");
                 createBean.update(createBean.get_id());
+
             }
 
             @Override
