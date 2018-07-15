@@ -752,6 +752,7 @@ public class MainActivity extends BaseActivity {
                 createBean.setIsLocal(0);
                 createBean.setSyncTime(System.currentTimeMillis()/1000 + "");
                 createBean.setRecentTime(System.currentTimeMillis()/1000 + "");
+                createBean.setNoteId(data.getMsg());
                 createBean.update(createBean.get_id());
                 showToast("添加成功");
                 Bundle bundle = new Bundle();
