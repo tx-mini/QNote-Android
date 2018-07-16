@@ -963,14 +963,18 @@ public class MainActivity extends BaseActivity {
 
     public BookBean getNowBookBean() {
 
+
         List<CustomCourse> courses = LitePal.findAll(CustomCourse.class);
         int week = CommonUtils.getWeek(Const.START_DAY);
         Calendar calendar = Calendar.getInstance();
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        int weekday = calendar.get(Calendar.DAY_OF_WEEK);
+        weekday = weekday -1;
+        if(weekday==0)weekday= 7;
         int minute = calendar.get(Calendar.MINUTE);
         int nowTime = hour * 100 + minute;
         for (CustomCourse course : courses) {
-            if (course.getStartWeek() <= week && course.getEndWeek() >= week) {
+            if (course.getStartWeek() <= week && course.getEndWeek() >= week && course.getWeekday() == weekday) {
                 if (Const.startTimes[course.getStartSection()] <= nowTime && Const.startTimes[course.getStartSection()] + Const.courseDuration >= nowTime) {
                     List<BookBean> books = LitePal.where("term = ? and name = ?", course.getTerm() + "", course.getName()).find(BookBean.class);
                     if (books.size() > 0) {

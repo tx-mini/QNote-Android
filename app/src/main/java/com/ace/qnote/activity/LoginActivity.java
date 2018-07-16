@@ -186,7 +186,6 @@ public class LoginActivity extends BaseActivity {
                             Const.OPEN_ID = openId;
                             editor.commit();
                             Log.d(TAG, "onComplete: "+response.toString());
-                            Toast.makeText(LoginActivity.this, "欢迎"+nickname, Toast.LENGTH_LONG).show();
 
                             registerToServer(openId,figureUrl,nickname);
 
@@ -205,7 +204,7 @@ public class LoginActivity extends BaseActivity {
             mInfo.getUserInfo(listener);
 
         } else {
-            Toast.makeText(this, "tencent == null || !tencent.isSessionValid()", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, "tencent == null || !tencent.isSessionValid()", Toast.LENGTH_SHORT).show();
         }
     }
 
